@@ -1,4 +1,3 @@
-import Puzzle from "@/modules/puzzle";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import React from "react";
 import { ActivityIndicator } from "react-native";

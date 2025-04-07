@@ -28,7 +28,7 @@ const getMockData = async (
 
 export default async function Puzzle() {
   const data = await getMockData("test mocking");
-  return <PuzzleContainer data={data} />;
+  return <PuzzleContainer />;
 }
 
 const styles = StyleSheet.create({
