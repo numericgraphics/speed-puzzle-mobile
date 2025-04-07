@@ -11,7 +11,7 @@ export default function HomeScreen() {
         <ActivityIndicator />
       }
     >
-      <Puzzle />
+      <PuzzleContainer />
     </React.Suspense>
   );
 }

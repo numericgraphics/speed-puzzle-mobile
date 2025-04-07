@@ -1,9 +1,9 @@
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 
-import Draggable from "./draggable";
+import Draggable from "../../components/draggable";
 import { getColor } from "@/helpers/colors";
-import Slide from "./slide/image-slide";
+import Slide from "../../components/slide/image-slide";
 
 const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;

@@ -13,7 +13,7 @@ import ReorderableList, {
   ReorderableListReorderEvent,
   reorderItems,
 } from "react-native-reorderable-list";
-import { Slide, SlideProps } from "./slide";
+import { Slide, SlideProps } from "../../components/slide";
 import { runOnJS } from "react-native-reanimated";
 import { getColor } from "@/helpers/colors";
 import { Image } from "expo-image";
