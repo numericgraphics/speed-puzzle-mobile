@@ -1,6 +1,7 @@
-import Puzzle from "@/modules/puzzle";
-import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
-import React from "react";
+import fetchPuzzle from "@/actions/fetch-puzzle";
+import Puzzle from "@/actions/fetch-puzzle";
+import React, { lazy } from "react";
+
 import { ActivityIndicator } from "react-native";
 
 export default function HomeScreen() {
@@ -11,7 +12,7 @@ export default function HomeScreen() {
         <ActivityIndicator />
       }
     >
-      <Puzzle />
+      {fetchPuzzle()}
     </React.Suspense>
   );
 }
