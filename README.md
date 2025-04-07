@@ -5,8 +5,9 @@ This Project use the Continuous Native Generation [`CNG`](https://docs.expo.dev/
 
 ## Stack
 
-- [Reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/) -[Gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation)
-- [Draggable-flatlist](https://github.com/computerjazz/react-native-draggable-flatlist)
+- [Reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/)  
+- -[Gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation)  
+
 
 ## Install
 
