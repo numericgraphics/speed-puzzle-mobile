@@ -4,6 +4,7 @@ import { useSharedValue } from "react-native-reanimated";
 import Draggable from "../../components/draggable";
 import { getColor } from "@/helpers/colors";
 import Slide from "../../components/slide/image-slide";
+import { useUnsplash } from "@/providers/unsplash-provider";
 
 const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -22,15 +23,16 @@ export interface ISlide {
   backgroundColor?: string;
 }
 
-export default function PuzzleContainer({ data }: any) {
-  console.log("PuzzleContainer data", data);
+export default function PuzzleContainer() {
+  const { images } = useUnsplash();
+  console.log("PuzzleContainer data");
   const arr = new Array(NUM_ITEMS).fill("").map((_, i) => i);
   const initialData: ISlide[] = [...Array(NUM_ITEMS)].map((d, index) => {
     const backgroundColor = getColor(index, NUM_ITEMS);
     return {
       id: `slide-${index}`,
       index,
-      url: imageUrl,
+      url: images[0].url,
       slideWidth: SCREEN_WIDTH,
       slideHeight: SLIDE_HEIGHT,
       imageHeight: IMAGE_HEIGHT,
