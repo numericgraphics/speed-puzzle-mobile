@@ -25,14 +25,14 @@ export interface ISlide {
 
 export default function PuzzleContainer() {
   const { images } = useUnsplash();
-  console.log("PuzzleContainer data");
+  console.log("PuzzleContainer images", images);
   const arr = new Array(NUM_ITEMS).fill("").map((_, i) => i);
   const initialData: ISlide[] = [...Array(NUM_ITEMS)].map((d, index) => {
     const backgroundColor = getColor(index, NUM_ITEMS);
     return {
       id: `slide-${index}`,
       index,
-      url: images[0].url,
+      url: images[0]?.url,
       slideWidth: SCREEN_WIDTH,
       slideHeight: SLIDE_HEIGHT,
       imageHeight: IMAGE_HEIGHT,

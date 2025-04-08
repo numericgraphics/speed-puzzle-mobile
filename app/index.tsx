@@ -1,16 +1,18 @@
-import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
+import PuzzleContainer from "@/modules/puzzle";
 import React from "react";
 import { ActivityIndicator } from "react-native";
 
-export default function HomeScreen() {
-  return (
-    <React.Suspense
-      fallback={
-        // The view that will render while the Server Function is awaiting data.
-        <ActivityIndicator />
-      }
-    >
-      <PuzzleContainer />
-    </React.Suspense>
-  );
+export default function Page() {
+  return <PuzzleContainer />;
+
+  // TODO : use RSC
+  // return (
+  //   <React.Suspense
+  //     fallback={
+  //       <ActivityIndicator />
+  //     }
+  //   >
+  //     <PuzzleContainer />
+  //   </React.Suspense>
+  // );
 }
