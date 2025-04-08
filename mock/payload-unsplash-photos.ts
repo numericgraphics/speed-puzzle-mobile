@@ -1,4 +1,12 @@
-export const data = [
+export type ImockedUnsplashData = {
+  description: string | null;
+  id: string;
+  link: string;
+  url: string;
+  user: string;
+}[];
+
+export const mockedUnsplashData: ImockedUnsplashData = [
   {
     description: "Entering another dimension...",
     id: "sp-p7uuT0tw",
