@@ -1,45 +1,48 @@
-"use server";
+// TODO : use RSC
+// "use server";
+// return (
+//   <React.Suspense
+//     fallback={
+//       <ActivityIndicator />
+//     }
+//   >
+//     <PuzzleContainer />
+//   </React.Suspense>
+// );
 
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import PuzzleContainer from "./puzzle-container-draggable";
+import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
+import { useGame } from "@/providers/game";
 
-const getMockData = async (
-  data: string = "",
-  error: string = "unknown server error",
-  delay: number = 1000
-) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (!!data) {
-        resolve({
-          type: "Success ✅",
-          data,
-        });
-      } else {
-        reject({
-          type: "Error ❌",
-          message: error,
-        });
-      }
-    }, delay || 1000);
-  });
-};
+export default function Puzzle() {
+  const { getCurrentChallenge, isReady } = useGame();
+  const currentChallenge = getCurrentChallenge();
+  if (!isReady) {
+    return (
+      <View style={styles.rowItem}>
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    );
+  }
 
-export default async function Puzzle() {
-  const data = await getMockData("test mocking");
-  return <PuzzleContainer data={data} />;
+  if (!currentChallenge) {
+    throw new Error("No current challenge available");
+  }
+
+  const url = currentChallenge.image.url;
+  return <PuzzleContainer url={url} />;
 }
 
 const styles = StyleSheet.create({
   rowItem: {
-    height: 100,
+    height: "100%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
-    color: "white",
+    color: "yellow",
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",

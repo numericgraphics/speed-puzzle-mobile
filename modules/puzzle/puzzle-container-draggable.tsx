@@ -22,21 +22,20 @@ export interface ISlide {
   backgroundColor?: string;
 }
 
-export default function PuzzleContainer({ data }: any) {
-  console.log("PuzzleContainer data", data);
-  const arr = new Array(NUM_ITEMS).fill("").map((_, i) => i);
+export default function PuzzleContainer({ url = imageUrl }: { url?: string }) {
   const initialData: ISlide[] = [...Array(NUM_ITEMS)].map((d, index) => {
     const backgroundColor = getColor(index, NUM_ITEMS);
     return {
       id: `slide-${index}`,
       index,
-      url: imageUrl,
+      url: url,
       slideWidth: SCREEN_WIDTH,
       slideHeight: SLIDE_HEIGHT,
       imageHeight: IMAGE_HEIGHT,
       backgroundColor,
     };
   });
+
   const positions = useSharedValue(
     Object.assign(
       {},
