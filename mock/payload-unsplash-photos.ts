@@ -1,12 +1,6 @@
-export type ImockedUnsplashData = {
-  description: string | null;
-  id: string;
-  link: string;
-  url: string;
-  user: string;
-}[];
+import { UnsplashImageData } from "@/types";
 
-export const mockedUnsplashData: ImockedUnsplashData = [
+export const mockedUnsplashData: UnsplashImageData[] = [
   {
     description: "Entering another dimension...",
     id: "sp-p7uuT0tw",

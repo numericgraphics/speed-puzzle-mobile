@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { UnsplashProvider } from "@/providers/unsplash-provider";
+import { GameProvider } from "@/providers/game";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,12 +30,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={DefaultTheme}>
-        <UnsplashProvider>
+        <GameProvider>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
           </Stack>
           <StatusBar style="auto" />
-        </UnsplashProvider>
+        </GameProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );
