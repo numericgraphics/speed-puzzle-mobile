@@ -1,9 +1,12 @@
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
+import { SharedValue, useSharedValue } from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
 import { getColor } from "@/helpers/colors";
 import Slide from "../../components/slide/image-slide";
+import { PuzzlePieceType, UnsplashImageData } from "@/types";
+import { PUZZLE_SLIDE_NUMBER } from "@/constants";
+import PuzzlePieces from "@/helpers/puzzle";
 
 const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -12,7 +15,7 @@ const IMAGE_HEIGHT = SLIDE_HEIGHT * NUM_ITEMS; // Image height should cover all 
 const imageUrl =
   "https://media.admagazine.fr/photos/646dcd1c261b65c3279fdfd2/16:9/w_2240,c_limit/GettyImages-1347979016%20(1).jpg";
 
-export interface ISlide {
+export interface SlideType {
   id: string;
   index: number;
   url: string;
@@ -22,42 +25,88 @@ export interface ISlide {
   backgroundColor?: string;
 }
 
-export default function PuzzleContainer({ url = imageUrl }: { url?: string }) {
-  const initialData: ISlide[] = [...Array(NUM_ITEMS)].map((d, index) => {
-    const backgroundColor = getColor(index, NUM_ITEMS);
-    return {
-      id: `slide-${index}`,
-      index,
-      url: url,
-      slideWidth: SCREEN_WIDTH,
-      slideHeight: SLIDE_HEIGHT,
-      imageHeight: IMAGE_HEIGHT,
-      backgroundColor,
-    };
-  });
+export interface PuzzleContainerProps {
+  image: UnsplashImageData;
+  pieces: PuzzlePieceType[];
+}
+
+export default function PuzzleContainer({
+  image,
+  pieces,
+}: PuzzleContainerProps) {
+  const { url } = image;
+  // const initialData: SlideType[] = [...Array(PUZZLE_SLIDE_NUMBER)].map(
+  //   (d, index) => {
+  //     const backgroundColor = getColor(index, PUZZLE_SLIDE_NUMBER);
+  //     return {
+  //       id: `slide-${index}`,
+  //       index,
+  //       url: url,
+  //       slideWidth: SCREEN_WIDTH,
+  //       slideHeight: SLIDE_HEIGHT,
+  //       imageHeight: IMAGE_HEIGHT,
+  //       backgroundColor,
+  //     };
+  //   }
+  // );
 
   const positions = useSharedValue(
     Object.assign(
       {},
-      ...initialData.map((item: ISlide) => ({ [item.index]: item.index }))
+      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     )
   );
+
+  // return (
+  //   <SafeAreaView style={styles.container}>
+  //     <View style={styles.wrapper}>
+  //       {initialData.map((item) => {
+  //         console.log("item", item);
+  //         return (
+  //           <Draggable key={item.index} positions={positions} id={item.index}>
+  //             <Slide
+  //               key={item.index}
+  //               id={item.id}
+  //               index={item.index}
+  //               url={item.url}
+  //               slideWidth={item.slideWidth}
+  //               slideHeight={item.slideHeight}
+  //               imageHeight={item.imageHeight}
+  //             />
+  //           </Draggable>
+  //         );
+  //       })}
+  //     </View>
+  //   </SafeAreaView>
+  // );
+
+  const onDragEnd = (event: SharedValue<Record<string, number>>) => {
+    "worklet";
+    console.log(
+      "onDragEnd - ordered ? : ",
+      PuzzlePieces.checkPuzzleOrderMobile(event.value)
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
-        {initialData.map((item) => {
-          console.log("item", item);
+        {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
-            <Draggable key={item.index} positions={positions} id={item.index}>
+            <Draggable
+              key={index}
+              positions={positions}
+              id={index}
+              onDragEnd={onDragEnd}
+            >
               <Slide
-                key={item.index}
-                id={item.id}
-                index={item.index}
-                url={item.url}
-                slideWidth={item.slideWidth}
-                slideHeight={item.slideHeight}
-                imageHeight={item.imageHeight}
+                key={index}
+                id={index.toString()}
+                index={index}
+                url={url}
+                slideWidth={SCREEN_WIDTH}
+                slideHeight={SLIDE_HEIGHT}
+                imageHeight={IMAGE_HEIGHT}
               />
             </Draggable>
           );
