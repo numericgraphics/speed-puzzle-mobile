@@ -1,4 +1,4 @@
-import { createImageDataArray } from "@/helpers/unsplash-photo";
+/*import { createImageDataArray } from "@/helpers/unsplash-photo";
 import { mockUnsplashApiCall } from "@/mock/promises/unsplash-api-call";
 import { UnsplashImageData } from "@/types";
 import React, { createContext, useContext, useState, ReactNode } from "react";
@@ -40,9 +40,10 @@ const UnsplashProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       const imagesURL = await fetchImages("forest", 10);
       if (imagesURL) {
         setImages(imagesURL?.data);
+        setLoading(false);
       }
     };
-
+    setLoading(true);
     initializeImages();
   }, []);
 
@@ -67,4 +68,4 @@ const useUnsplash = (): UnsplashContextType => {
 
 export { UnsplashProvider, useUnsplash };
 
-// https://api.unsplash.com/search/photos?query=forest&count=1&client_id=GI7iicKrMIXmDXE2wPJDglSC10TkfcYhtYe_VcU9mbc
+*/

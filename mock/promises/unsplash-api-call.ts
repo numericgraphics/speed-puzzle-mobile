@@ -1,12 +1,10 @@
-import {
-  ImockedUnsplashData,
-  mockedUnsplashData,
-} from "../payload-unsplash-photos";
+import { UnsplashImageData } from "@/types";
+import { mockedUnsplashData } from "../payload-unsplash-photos";
 
 type MockResponse = {
   success: boolean;
   message: string;
-  data: ImockedUnsplashData;
+  data: UnsplashImageData[];
 };
 
 export async function mockUnsplashApiCall(): Promise<MockResponse> {
