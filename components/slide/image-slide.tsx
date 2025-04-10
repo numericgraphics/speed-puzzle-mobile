@@ -1,9 +1,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { ISlide } from "../../modules/puzzle/puzzle-container-draggable";
+import { SlideType } from "@/modules/puzzle/puzzle-container-draggable";
 
-const Slide = ({ id, index, url, slideHeight, imageHeight }: ISlide) => {
+const Slide = ({ id, index, url, slideHeight, imageHeight }: SlideType) => {
   return (
     <View style={[styles.container, { height: slideHeight }]}>
       <Image
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   image: {
-    position: "absolute",
     width: "100%",
   },
 });

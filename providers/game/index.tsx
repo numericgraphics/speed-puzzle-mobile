@@ -98,10 +98,10 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!loading && images.length > 0) {
+    if (!loading && images.length > 0 && !imagesError) {
       buildChallenges();
     }
-  }, [images, loading]);
+  }, [images, loading, imagesError]);
 
   const resetGame = () => {
     setChallenges([]);

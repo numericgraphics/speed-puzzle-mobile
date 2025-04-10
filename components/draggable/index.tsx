@@ -36,6 +36,8 @@ type DraggableProps = {
   children: React.ReactNode;
   /** Height of each item (used for calculating positions) */
   itemHeight?: number;
+
+  onDragEnd: (event: any) => void;
 };
 
 const Draggable: React.FC<DraggableProps> = ({
@@ -43,6 +45,7 @@ const Draggable: React.FC<DraggableProps> = ({
   positions,
   children,
   itemHeight = 120,
+  onDragEnd,
 }) => {
   const idKey = id.toString();
   // Shared values for the drag state
@@ -91,7 +94,7 @@ const Draggable: React.FC<DraggableProps> = ({
         positions.value = objectMove(positions.value, currentIndex, newIndex);
       }
     })
-    .onFinalize(() => {
+    .onFinalize((event) => {
       // Drag finished (finger released or gesture cancelled)
       // Mark the item as no longer dragging
       isDragging.value = false;
@@ -100,6 +103,7 @@ const Draggable: React.FC<DraggableProps> = ({
       // Snap the item to its final position in the list
       const finalPositionY = (positions.value[idKey] ?? 0) * itemHeight;
       offsetY.value = withSpring(finalPositionY);
+      onDragEnd(positions);
     });
 
   // Animated style applied to the draggable item

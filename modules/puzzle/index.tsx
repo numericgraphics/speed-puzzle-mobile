@@ -1,14 +1,4 @@
-// TODO : use RSC
-// "use server";
-// return (
-//   <React.Suspense
-//     fallback={
-//       <ActivityIndicator />
-//     }
-//   >
-//     <PuzzleContainer />
-//   </React.Suspense>
-// );
+// TODO : use RSC// "use server";
 
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
@@ -30,8 +20,12 @@ export default function Puzzle() {
     throw new Error("No current challenge available");
   }
 
-  const url = currentChallenge.image.url;
-  return <PuzzleContainer url={url} />;
+  return (
+    <PuzzleContainer
+      image={currentChallenge.image}
+      pieces={currentChallenge.pieces}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
