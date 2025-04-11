@@ -16,14 +16,14 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({ message }) => {
 
 const styles = StyleSheet.create({
   rowItem: {
-    // sample styling
-    flexDirection: "row",
-    justifyContent: "center",
+    height: "100%",
+    width: "100%",
     alignItems: "center",
+    justifyContent: "center",
     padding: 12,
   },
   text: {
     fontSize: 16,
-    color: "#fff", // or any color
+    color: "yellow",
   },
 });

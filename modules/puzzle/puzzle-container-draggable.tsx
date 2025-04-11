@@ -1,12 +1,11 @@
+import { useEffect } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import { runOnJS, SharedValue, useSharedValue } from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
-import { getColor } from "@/helpers/colors";
 import Slide from "../../components/slide/image-slide";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
-import PuzzlePieces from "@/helpers/puzzle";
 import { useGameStoreActions } from "@/stores/game";
 
 const NUM_ITEMS = 4;
@@ -37,20 +36,6 @@ export default function PuzzleContainer({
 }: PuzzleContainerProps) {
   const { url } = image;
   const { checkPuzzleOrderMobile } = useGameStoreActions();
-  // const initialData: SlideType[] = [...Array(PUZZLE_SLIDE_NUMBER)].map(
-  //   (d, index) => {
-  //     const backgroundColor = getColor(index, PUZZLE_SLIDE_NUMBER);
-  //     return {
-  //       id: `slide-${index}`,
-  //       index,
-  //       url: url,
-  //       slideWidth: SCREEN_WIDTH,
-  //       slideHeight: SLIDE_HEIGHT,
-  //       imageHeight: IMAGE_HEIGHT,
-  //       backgroundColor,
-  //     };
-  //   }
-  // );
 
   const positions = useSharedValue(
     Object.assign(
@@ -59,35 +44,15 @@ export default function PuzzleContainer({
     )
   );
 
-  // return (
-  //   <SafeAreaView style={styles.container}>
-  //     <View style={styles.wrapper}>
-  //       {initialData.map((item) => {
-  //         console.log("item", item);
-  //         return (
-  //           <Draggable key={item.index} positions={positions} id={item.index}>
-  //             <Slide
-  //               key={item.index}
-  //               id={item.id}
-  //               index={item.index}
-  //               url={item.url}
-  //               slideWidth={item.slideWidth}
-  //               slideHeight={item.slideHeight}
-  //               imageHeight={item.imageHeight}
-  //             />
-  //           </Draggable>
-  //         );
-  //       })}
-  //     </View>
-  //   </SafeAreaView>
-  // );
+  useEffect(() => {
+    positions.value = Object.assign(
+      {},
+      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
+    );
+  }, [pieces, positions]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
-    // console.log(
-    //   "onDragEnd - ordered ? : ",
-    //   PuzzlePieces.checkPuzzleOrderMobile(event.value)
-    // );
     runOnJS(checkPuzzleOrderMobile)(event.value);
   };
 
