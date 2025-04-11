@@ -32,8 +32,12 @@ export default function Puzzle() {
   }, [loading, images, buildChallenges]);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
     if (currentChallenge && currentChallenge?.completed) {
-      nextChallenge();
+      timer = setTimeout(() => {
+        nextChallenge();
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [currentChallenge, nextChallenge]);
 
@@ -106,5 +110,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "regular",
     textAlign: "center",
+    paddingBottom: 10,
   },
 });
