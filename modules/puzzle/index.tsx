@@ -1,7 +1,7 @@
 // TODO : use RSC// "use server";
 
 import React, { useEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Button } from "react-native";
 
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
 import { useGameStore, useGameStoreActions } from "@/stores/game";
@@ -14,7 +14,7 @@ export default function Puzzle() {
   const { isReady, completed } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
-  const { buildChallenges, nextChallenge, getCurrentChallenge } =
+  const { buildChallenges, nextChallenge, getCurrentChallenge, resetGame } =
     useGameStoreActions();
   const currentChallenge = getCurrentChallenge();
 
@@ -66,6 +66,14 @@ export default function Puzzle() {
         <Text style={styles.text}>
           You could display a final score or share options, etc.
         </Text>
+        <Button
+          title="Start Again"
+          onPress={() => {
+            // Reset the game state and rebuild a new puzzle set
+            resetGame();
+            buildChallenges();
+          }}
+        />
       </View>
     );
   }
