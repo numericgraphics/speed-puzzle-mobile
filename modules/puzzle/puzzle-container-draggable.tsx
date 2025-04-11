@@ -1,5 +1,5 @@
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
-import { SharedValue, useSharedValue } from "react-native-reanimated";
+import { runOnJS, SharedValue, useSharedValue } from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
 import { getColor } from "@/helpers/colors";
@@ -7,6 +7,7 @@ import Slide from "../../components/slide/image-slide";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import PuzzlePieces from "@/helpers/puzzle";
+import { useGameStoreActions } from "@/stores/game";
 
 const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -35,6 +36,7 @@ export default function PuzzleContainer({
   pieces,
 }: PuzzleContainerProps) {
   const { url } = image;
+  const { checkPuzzleOrderMobile } = useGameStoreActions();
   // const initialData: SlideType[] = [...Array(PUZZLE_SLIDE_NUMBER)].map(
   //   (d, index) => {
   //     const backgroundColor = getColor(index, PUZZLE_SLIDE_NUMBER);
@@ -82,10 +84,11 @@ export default function PuzzleContainer({
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
-    console.log(
-      "onDragEnd - ordered ? : ",
-      PuzzlePieces.checkPuzzleOrderMobile(event.value)
-    );
+    // console.log(
+    //   "onDragEnd - ordered ? : ",
+    //   PuzzlePieces.checkPuzzleOrderMobile(event.value)
+    // );
+    runOnJS(checkPuzzleOrderMobile)(event.value);
   };
 
   return (
