@@ -30,12 +30,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={DefaultTheme}>
-        <GameProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </GameProvider>
+        {/* <GameProvider> */}
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+        {/* </GameProvider> */}
       </ThemeProvider>
     </GestureHandlerRootView>
   );
