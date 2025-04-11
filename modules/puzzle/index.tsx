@@ -1,9 +1,10 @@
 // TODO : use RSC// "use server";
 
 import React, { useEffect } from "react";
+import { Text, View, StyleSheet } from "react-native";
+
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
 import { useGameStore, useGameStoreActions } from "@/stores/game";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import { StatusMessage } from "@/components/message-display";
 
@@ -77,39 +78,23 @@ export default function Puzzle() {
   );
 }
 
-/*
-import { useGame } from "@/providers/game";
-  const { getCurrentChallenge, isReady } = useGame();
-  const currentChallenge = getCurrentChallenge();
-  if (!isReady) {
-    return (
-      <View style={styles.rowItem}>
-        <Text style={styles.text}>Loading...</Text>
-      </View>
-    );
-  }
-
-  if (!currentChallenge) {
-    throw new Error("No current challenge available");
-  }
-
-  */
-
 const styles = StyleSheet.create({
   rowItem: {
     height: "100%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+    padding: 15,
   },
   title: {
     color: "red",
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    paddingBottom: 10,
   },
   text: {
-    color: "yellow",
+    color: "gray",
     fontSize: 16,
     fontWeight: "regular",
     textAlign: "center",
