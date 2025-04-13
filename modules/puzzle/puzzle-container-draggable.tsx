@@ -8,10 +8,9 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
 
-const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
-const IMAGE_HEIGHT = SLIDE_HEIGHT * NUM_ITEMS; // Image height should cover all slides
+const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
 const imageUrl =
   "https://media.admagazine.fr/photos/646dcd1c261b65c3279fdfd2/16:9/w_2240,c_limit/GettyImages-1347979016%20(1).jpg";
 
@@ -87,11 +86,17 @@ export default function PuzzleContainer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    // width: "100%",
     backgroundColor: "black",
   },
   wrapper: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    // flexDirection: "row",
+    // flexWrap: "wrap",
+    width: "100%",
+    height: IMAGE_HEIGHT,
     padding: 16,
+    backgroundColor: "pink",
   },
 });
