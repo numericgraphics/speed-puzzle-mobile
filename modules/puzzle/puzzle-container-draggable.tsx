@@ -15,6 +15,7 @@ import Slide from "../../components/slide/image-slide";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
+import { PuzzleLegend } from "./image-legend";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -108,6 +109,7 @@ export default function PuzzleContainer({
           );
         })}
       </Animated.View>
+      <PuzzleLegend image={image} />
     </SafeAreaView>
   );
 }
