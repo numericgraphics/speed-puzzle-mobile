@@ -19,6 +19,7 @@ interface GameStoreActions {
   getCurrentChallenge: () => GameChallengeType | null;
   triggerNextChallenge: () => () => void;
   checkPuzzleOrderMobile: (positions: Record<string, number>) => void;
+  startGame: () => void;
 }
 
 interface GameStoreState {
@@ -26,6 +27,7 @@ interface GameStoreState {
   currentChallengeIndex: number;
   needNextChallenge: boolean;
   isReady: boolean;
+  started: boolean;
   completed: boolean;
   loading: boolean;
   actions: GameStoreActions;
@@ -37,14 +39,12 @@ export const useGameStore = create<GameStoreState>()(
     currentChallengeIndex: 0,
     needNextChallenge: false,
     isReady: false,
+    started: false,
     completed: false,
     loading: false,
 
     actions: {
       buildChallenges: async () => {
-        // Turn on loading
-        set({ loading: true });
-
         // Grab images from the Unsplash store
         const { images } = useUnsplashStore.getState();
         if (!images || images.length === 0) {
@@ -88,6 +88,8 @@ export const useGameStore = create<GameStoreState>()(
           currentChallengeIndex: 0,
           isReady: false,
           completed: false, // Reset to false on new game
+          started: false,
+          needNextChallenge: false,
         });
       },
 
@@ -142,11 +144,18 @@ export const useGameStore = create<GameStoreState>()(
           });
         }
       },
+
+      startGame: () => {
+        // Turn on loading
+        set({ loading: true, started: true });
+      },
     },
   }))
 );
 
 export const useNeedNextChallenge = () =>
   useGameStore((state) => state.needNextChallenge);
+
+export const useStarted = () => useGameStore((state) => state.started);
 
 export const useGameStoreActions = () => useGameStore((state) => state.actions);
