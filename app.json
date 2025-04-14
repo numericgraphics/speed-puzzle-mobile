@@ -15,7 +15,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "package": "com.thepark001.expodnd"
     },
@@ -32,12 +32,20 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#000000"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a42a5238-0871-4372-b941-847c052c9f87"
+      }
     }
   }
 }
