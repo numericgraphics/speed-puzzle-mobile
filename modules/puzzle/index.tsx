@@ -8,36 +8,48 @@ import {
   useGameStore,
   useGameStoreActions,
   useNeedNextChallenge,
+  useStarted,
 } from "@/stores/game";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import { StatusMessage } from "@/components/message-display";
+import { CompletedPuzzle } from "./complete-screen";
+import { StartPuzzle } from "./start-screen";
 
 export default function Puzzle() {
   // Store slices
-  const { images, loading, error } = useUnsplashStore();
-  const { isReady, completed } = useGameStore();
+  const { images, error } = useUnsplashStore();
+  const { loading, completed } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
-  const { buildChallenges, getCurrentChallenge, resetGame, nextChallenge } =
-    useGameStoreActions();
+  const {
+    buildChallenges,
+    getCurrentChallenge,
+    resetGame,
+    nextChallenge,
+    startGame,
+  } = useGameStoreActions();
   const needNextChallenge = useNeedNextChallenge();
   const currentChallenge = getCurrentChallenge();
+  const started = useStarted();
 
   // On mount, fetch images
   useEffect(() => {
-    fetchImages("forest", 10);
-  }, []);
+    console.log("STARTED CHALLENGES! fetch images ", started);
+    if (started) {
+      fetchImages("forest", 10);
+    }
+  }, [started]);
 
   // Once images are fetched, build the challenges
   useEffect(() => {
-    if (!loading && images.length > 0) {
+    console.log("BUILD CHALLENGES! fetch images ", images);
+    if (images.length > 0) {
       console.log("BUILD CHALLENGES! Images fetched");
       buildChallenges();
     }
   }, [loading, images, buildChallenges]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
     if (currentChallenge?.completed && needNextChallenge) {
       nextChallenge();
     }
@@ -61,33 +73,31 @@ export default function Puzzle() {
     return <StatusMessage message={`Error: ${error}`} />;
   }
 
-  if (!isReady) {
-    return <StatusMessage message="Please wait, building the game..." />;
+  if (!started) {
+    return (
+      <StartPuzzle
+        onStart={() => {
+          startGame();
+        }}
+      />
+    );
   }
 
   if (completed) {
     return (
-      <View style={styles.rowItem}>
-        <Text style={styles.title}>Congrats, you finished the game!</Text>
-        <Text style={styles.text}>
-          You could display a final score or share options, etc.
-        </Text>
-        <Button
-          title="Start Again"
-          onPress={() => {
-            // Reset the game state and rebuild a new puzzle set
-            resetGame();
-            buildChallenges();
-          }}
-        />
-      </View>
+      <CompletedPuzzle
+        onRestart={() => {
+          resetGame();
+          startGame();
+        }}
+      />
     );
   }
 
   return (
     <PuzzleContainer
-      image={currentChallenge.image}
-      pieces={currentChallenge.pieces}
+      image={currentChallenge?.image}
+      pieces={currentChallenge?.pieces}
     />
   );
 }
