@@ -17,12 +17,14 @@ interface GameStoreActions {
   nextChallenge: () => void;
   prevChallenge: () => void;
   getCurrentChallenge: () => GameChallengeType | null;
+  triggerNextChallenge: () => () => void;
   checkPuzzleOrderMobile: (positions: Record<string, number>) => void;
 }
 
 interface GameStoreState {
   challenges: GameChallengeType[];
   currentChallengeIndex: number;
+  needNextChallenge: boolean;
   isReady: boolean;
   completed: boolean;
   loading: boolean;
@@ -33,6 +35,7 @@ export const useGameStore = create<GameStoreState>()(
   devtools((set, get) => ({
     challenges: [],
     currentChallengeIndex: 0,
+    needNextChallenge: false,
     isReady: false,
     completed: false,
     loading: false,
@@ -98,12 +101,21 @@ export const useGameStore = create<GameStoreState>()(
           // Otherwise, we're at the last challenge
           set({ completed: true });
         }
+        set({ needNextChallenge: false });
       },
 
       prevChallenge: () => {
         const { currentChallengeIndex } = get();
         if (currentChallengeIndex > 0) {
           set({ currentChallengeIndex: currentChallengeIndex - 1 });
+        }
+      },
+
+      triggerNextChallenge: () => {
+        const { challenges, currentChallengeIndex } = get();
+        const { completed } = challenges[currentChallengeIndex];
+        if (completed) {
+          set({ needNextChallenge: true });
         }
       },
 
@@ -133,5 +145,8 @@ export const useGameStore = create<GameStoreState>()(
     },
   }))
 );
+
+export const useNeedNextChallenge = () =>
+  useGameStore((state) => state.needNextChallenge);
 
 export const useGameStoreActions = () => useGameStore((state) => state.actions);

@@ -1,6 +1,14 @@
 import { useEffect } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
-import { runOnJS, SharedValue, useSharedValue } from "react-native-reanimated";
+import {
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
 import Slide from "../../components/slide/image-slide";
@@ -8,10 +16,9 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
 
-const NUM_ITEMS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
-const IMAGE_HEIGHT = SLIDE_HEIGHT * NUM_ITEMS; // Image height should cover all slides
+const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
 const imageUrl =
   "https://media.admagazine.fr/photos/646dcd1c261b65c3279fdfd2/16:9/w_2240,c_limit/GettyImages-1347979016%20(1).jpg";
 
@@ -35,21 +42,41 @@ export default function PuzzleContainer({
   pieces,
 }: PuzzleContainerProps) {
   const { url } = image;
-  const { checkPuzzleOrderMobile } = useGameStoreActions();
-
+  const { checkPuzzleOrderMobile, getCurrentChallenge, triggerNextChallenge } =
+    useGameStoreActions();
+  const currentChallenge = getCurrentChallenge();
   const positions = useSharedValue(
     Object.assign(
       {},
       ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     )
   );
+  const opacity = useSharedValue(1); // fully opaque
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   useEffect(() => {
     positions.value = Object.assign(
       {},
       ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     );
+    opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
+
+  useEffect(() => {
+    if (currentChallenge?.completed) {
+      opacity.value = withDelay(
+        1000,
+        withTiming(0, { duration: 500 }, (finished) => {
+          if (finished) {
+            // maybe run onJS -> nextChallenge or something
+            runOnJS(triggerNextChallenge)();
+          }
+        })
+      );
+    }
+  }, [currentChallenge, pieces, positions]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
@@ -58,7 +85,7 @@ export default function PuzzleContainer({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
+      <Animated.View style={[styles.wrapper, animatedStyle]}>
         {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
             <Draggable
@@ -79,7 +106,7 @@ export default function PuzzleContainer({
             </Draggable>
           );
         })}
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -87,11 +114,17 @@ export default function PuzzleContainer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    // width: "100%",
     backgroundColor: "black",
   },
   wrapper: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    // flexDirection: "row",
+    // flexWrap: "wrap",
+    width: "100%",
+    height: IMAGE_HEIGHT,
     padding: 16,
+    backgroundColor: "pink",
   },
 });
