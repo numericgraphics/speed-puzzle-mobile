@@ -113,7 +113,7 @@ const Draggable: React.FC<DraggableProps> = ({
     left: 0,
     right: 0,
     zIndex: isDragging.value ? 1 : 0,
-    transform: [{ scale: scale.value }],
+    // transform: [{ scale: scale.value }],
   }));
 
   return (
