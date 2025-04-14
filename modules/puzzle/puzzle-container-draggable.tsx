@@ -51,7 +51,7 @@ export default function PuzzleContainer({
       ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     )
   );
-  const opacity = useSharedValue(1); // fully opaque
+  const opacity = useSharedValue(0); // fully opaque
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
@@ -92,6 +92,7 @@ export default function PuzzleContainer({
               key={index}
               positions={positions}
               id={index}
+              itemHeight={SLIDE_HEIGHT}
               onDragEnd={onDragEnd}
             >
               <Slide
@@ -125,6 +126,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: IMAGE_HEIGHT,
     padding: 16,
-    backgroundColor: "pink",
+    backgroundColor: "black",
   },
 });
