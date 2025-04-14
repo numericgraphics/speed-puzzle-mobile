@@ -1,6 +1,14 @@
 import { useEffect } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
-import { runOnJS, SharedValue, useSharedValue } from "react-native-reanimated";
+import {
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
 import Slide from "../../components/slide/image-slide";
@@ -34,21 +42,41 @@ export default function PuzzleContainer({
   pieces,
 }: PuzzleContainerProps) {
   const { url } = image;
-  const { checkPuzzleOrderMobile } = useGameStoreActions();
-
+  const { checkPuzzleOrderMobile, getCurrentChallenge, triggerNextChallenge } =
+    useGameStoreActions();
+  const currentChallenge = getCurrentChallenge();
   const positions = useSharedValue(
     Object.assign(
       {},
       ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     )
   );
+  const opacity = useSharedValue(1); // fully opaque
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   useEffect(() => {
     positions.value = Object.assign(
       {},
       ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
     );
+    opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
+
+  useEffect(() => {
+    if (currentChallenge?.completed) {
+      opacity.value = withDelay(
+        1000,
+        withTiming(0, { duration: 500 }, (finished) => {
+          if (finished) {
+            // maybe run onJS -> nextChallenge or something
+            runOnJS(triggerNextChallenge)();
+          }
+        })
+      );
+    }
+  }, [currentChallenge, pieces, positions]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
@@ -57,7 +85,7 @@ export default function PuzzleContainer({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
+      <Animated.View style={[styles.wrapper, animatedStyle]}>
         {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
             <Draggable
@@ -78,7 +106,7 @@ export default function PuzzleContainer({
             </Draggable>
           );
         })}
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }
