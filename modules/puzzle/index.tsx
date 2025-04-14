@@ -4,7 +4,11 @@ import React, { useEffect } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
-import { useGameStore, useGameStoreActions } from "@/stores/game";
+import {
+  useGameStore,
+  useGameStoreActions,
+  useNeedNextChallenge,
+} from "@/stores/game";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import { StatusMessage } from "@/components/message-display";
 
@@ -14,8 +18,9 @@ export default function Puzzle() {
   const { isReady, completed } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
-  const { buildChallenges, nextChallenge, getCurrentChallenge, resetGame } =
+  const { buildChallenges, getCurrentChallenge, resetGame, nextChallenge } =
     useGameStoreActions();
+  const needNextChallenge = useNeedNextChallenge();
   const currentChallenge = getCurrentChallenge();
 
   // On mount, fetch images
@@ -32,10 +37,11 @@ export default function Puzzle() {
   }, [loading, images, buildChallenges]);
 
   useEffect(() => {
-    if (currentChallenge && currentChallenge?.completed) {
+    let timer: NodeJS.Timeout | undefined;
+    if (currentChallenge?.completed && needNextChallenge) {
       nextChallenge();
     }
-  }, [currentChallenge, nextChallenge]);
+  }, [currentChallenge, nextChallenge, needNextChallenge]);
 
   // Listen for the end-of-game
   useEffect(() => {
@@ -106,5 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "regular",
     textAlign: "center",
+    paddingBottom: 10,
   },
 });
