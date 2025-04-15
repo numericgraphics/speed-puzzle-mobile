@@ -16,6 +16,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
 import { PuzzleLegend } from "./image-legend";
+import RectangleLogo from "@/components/logo/rectangles";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -86,6 +87,7 @@ export default function PuzzleContainer({
 
   return (
     <SafeAreaView style={styles.container}>
+      <RectangleLogo width={30} height={30} style={{ marginBottom: 20 }} />
       <Animated.View style={[styles.wrapper, animatedStyle]}>
         {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
@@ -119,15 +121,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // width: "100%",
     backgroundColor: "black",
   },
   wrapper: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
     width: "100%",
     height: IMAGE_HEIGHT,
     padding: 16,
-    backgroundColor: "black",
+    backgroundColor: "white",
   },
 });
