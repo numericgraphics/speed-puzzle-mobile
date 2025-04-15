@@ -6,7 +6,7 @@ import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
   return (
     <Animated.View
-      entering={FadeIn.duration(300)}
+      entering={FadeIn.duration(1500)}
       exiting={FadeOut.duration(300)}
       style={styles.container}
     >
