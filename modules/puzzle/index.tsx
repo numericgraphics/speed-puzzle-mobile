@@ -32,6 +32,16 @@ export default function Puzzle() {
   const currentChallenge = getCurrentChallenge();
   const started = useStarted();
 
+  const onStartGame = () => {
+    console.log("STARTING GAME!");
+    startGame();
+  };
+  const onRestartGame = () => {
+    console.log("RESTARTING GAME!");
+    resetGame();
+    startGame();
+  };
+
   // On mount, fetch images
   useEffect(() => {
     console.log("STARTED CHALLENGES! fetch images ", started);
@@ -74,24 +84,11 @@ export default function Puzzle() {
   }
 
   if (!started) {
-    return (
-      <StartPuzzle
-        onStart={() => {
-          startGame();
-        }}
-      />
-    );
+    return <StartPuzzle onStart={onStartGame} />;
   }
 
   if (completed) {
-    return (
-      <CompletedPuzzle
-        onRestart={() => {
-          resetGame();
-          startGame();
-        }}
-      />
-    );
+    return <CompletedPuzzle onRestart={onRestartGame} />;
   }
 
   return (
@@ -101,27 +98,3 @@ export default function Puzzle() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  rowItem: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-  },
-  title: {
-    color: "red",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-  text: {
-    color: "gray",
-    fontSize: 16,
-    fontWeight: "regular",
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-});
