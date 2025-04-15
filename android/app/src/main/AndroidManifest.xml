@@ -26,6 +26,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.thepark001.expodnd"/>
+        <data android:scheme="exp+expo-dnd"/>
       </intent-filter>
     </activity>
   </application>
