@@ -12,7 +12,6 @@ import {
 } from "@expo-google-fonts/fredoka";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { GameProvider } from "@/providers/game";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,12 +37,10 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={DefaultTheme}>
-        {/* <GameProvider> */}
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
-        {/* </GameProvider> */}
       </ThemeProvider>
     </GestureHandlerRootView>
   );

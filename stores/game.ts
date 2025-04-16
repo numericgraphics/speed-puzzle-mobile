@@ -4,11 +4,15 @@ import { devtools } from "zustand/middleware";
 import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
+import { ArrayExtended } from "@/utils/array";
 
 interface GameChallengeType {
   image: UnsplashImageData;
   completed: boolean;
   pieces: PuzzlePieceType[];
+  complexity: number;
+  moves: number;
+  timerValue: number;
 }
 
 interface GameStoreActions {
@@ -17,9 +21,10 @@ interface GameStoreActions {
   nextChallenge: () => void;
   prevChallenge: () => void;
   getCurrentChallenge: () => GameChallengeType | null;
-  triggerNextChallenge: () => () => void;
+  triggerNextChallenge: () => void;
   checkPuzzleOrderMobile: (positions: Record<string, number>) => void;
   startGame: () => void;
+  incrementChallengeMove: () => void;
 }
 
 interface GameStoreState {
@@ -59,16 +64,18 @@ export const useGameStore = create<GameStoreState>()(
             const puzzlePieces = await PuzzlePieces.getPuzzlePieces(
               PUZZLE_SLIDE_NUMBER
             );
+            console.log("buildChallenges puzzlePieces", puzzlePieces);
             return {
               image,
               completed: false,
               pieces: puzzlePieces,
+              complexity: PuzzlePieces.checkPuzzleComplexity(puzzlePieces),
             } as GameChallengeType;
           });
 
           // Resolve all puzzlePromises in parallel
           const newChallenges = await Promise.all(puzzlePromises);
-
+          console.log("BUILDING challenges newChallenges", newChallenges);
           // Store them in the game state
           set({
             challenges: newChallenges,
@@ -148,6 +155,20 @@ export const useGameStore = create<GameStoreState>()(
       startGame: () => {
         // Turn on loading
         set({ loading: true, started: true });
+      },
+
+      incrementChallengeMove: () => {
+        const { challenges, currentChallengeIndex } = get();
+
+        const updatedChallenges = [...challenges];
+        const currentChallenge = updatedChallenges[currentChallengeIndex];
+
+        updatedChallenges[currentChallengeIndex] = {
+          ...currentChallenge,
+          moves: (currentChallenge.moves || 0) + 1,
+        };
+
+        set({ challenges: updatedChallenges });
       },
     },
   }))
