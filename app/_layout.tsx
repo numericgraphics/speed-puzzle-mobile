@@ -10,11 +10,21 @@ import {
   Fredoka_300Light,
   Fredoka_400Regular,
 } from "@expo-google-fonts/fredoka";
+import {
+  Nunito_300Light,
+  Nunito_400Regular,
+  Nunito_900Black,
+} from "@expo-google-fonts/nunito";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -22,6 +32,9 @@ export default function RootLayout() {
     LuckiestGuy_400Regular,
     Fredoka_300Light,
     Fredoka_400Regular,
+    Nunito_300Light,
+    Nunito_400Regular,
+    Nunito_900Black,
   });
 
   useEffect(() => {
