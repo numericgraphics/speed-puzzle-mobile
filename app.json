@@ -14,7 +14,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/speed-puzzle-splash-icon.png",
         "backgroundColor": "#000000"
       },
       "package": "com.thepark001.expodnd"
@@ -29,10 +29,21 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/speed-puzzle-splash-icon.png",
+          "imageWidth": 100,
           "resizeMode": "contain",
-          "backgroundColor": "#000000"
+          "backgroundColor": "#000000",
+          "android": {
+            "image": "./assets/images/speed-puzzle-splash-icon.png",
+            "imageWidth": 100,
+            "resizeMode": "cover"
+          }
+        }
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "PORTRAIT"
         }
       ]
     ],

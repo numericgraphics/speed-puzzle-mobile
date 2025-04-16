@@ -5,9 +5,13 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
+import {
+  Fredoka_300Light,
+  Fredoka_400Regular,
+} from "@expo-google-fonts/fredoka";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { GameProvider } from "@/providers/game";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -15,6 +19,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    LuckiestGuy_400Regular,
+    Fredoka_300Light,
+    Fredoka_400Regular,
   });
 
   useEffect(() => {
@@ -30,12 +37,10 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={DefaultTheme}>
-        {/* <GameProvider> */}
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
-        {/* </GameProvider> */}
       </ThemeProvider>
     </GestureHandlerRootView>
   );

@@ -16,11 +16,11 @@ const PuzzlePieces = {
     });
   },
 
-  checkPuzzleComplexity(array: any[]) {
-    const test = array.map((item: { index: any }) => {
-      return item.index + 1;
+  checkPuzzleComplexity(array: PuzzlePieceType[]) {
+    const test = array.map((item) => {
+      return item.index;
     });
-    console.log("checkPuzzleComplexity", test);
+    console.log("checkPuzzleComplexity test array", test.toString());
     const result = ArrayExtended.getMinimumOperationsToSortArray(test);
     console.log("checkPuzzleComplexity result", result);
     return result;
@@ -40,7 +40,6 @@ const PuzzlePieces = {
     const randomArray = ArrayExtended.getRandomArray(
       items
     ) as PuzzlePieceType[];
-    console.log("recursiveRandomArray");
     if (PuzzlePieces.checkPuzzleOrder(randomArray)) {
       return await PuzzlePieces.recursiveRandomArray(items);
     }
@@ -48,7 +47,6 @@ const PuzzlePieces = {
   },
 
   async getPuzzlePieces(num: number) {
-    console.log("getPuzzlePieces", num);
     return PuzzlePieces.recursiveRandomArray(
       PuzzlePieces.getInitialItemArray(num)
     );

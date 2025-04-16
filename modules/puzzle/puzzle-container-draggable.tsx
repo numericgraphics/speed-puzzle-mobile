@@ -44,8 +44,12 @@ export default function PuzzleContainer({
   pieces,
 }: PuzzleContainerProps) {
   const { url } = image;
-  const { checkPuzzleOrderMobile, getCurrentChallenge, triggerNextChallenge } =
-    useGameStoreActions();
+  const {
+    checkPuzzleOrderMobile,
+    getCurrentChallenge,
+    triggerNextChallenge,
+    incrementChallengeMove,
+  } = useGameStoreActions();
   const currentChallenge = getCurrentChallenge();
   const positions = useSharedValue(
     Object.assign(
@@ -82,6 +86,7 @@ export default function PuzzleContainer({
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
+    runOnJS(incrementChallengeMove)();
     runOnJS(checkPuzzleOrderMobile)(event.value);
   };
 
@@ -127,6 +132,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: IMAGE_HEIGHT,
     padding: 16,
-    backgroundColor: "white",
+    backgroundColor: "black",
   },
 });
