@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "expo-dnd",
-    "slug": "expo-dnd",
-    "version": "1.0.0",
+    "name": "speed-puzzle",
+    "slug": "speed-puzzle",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -10,14 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thepark001.expodnd"
+      "bundleIdentifier": "com.thepark001.speedpuzzle"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/speed-puzzle-splash-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.thepark001.expodnd"
+      "package": "com.thepark001.speedpuzzle"
     },
     "web": {
       "bundler": "metro",
