@@ -18,7 +18,7 @@ import { StartPuzzle } from "./start-screen";
 export default function Puzzle() {
   // Store slices
   const { images, error } = useUnsplashStore();
-  const { loading, completed } = useGameStore();
+  const { loading, completed, challenges } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
   const {
@@ -44,7 +44,6 @@ export default function Puzzle() {
 
   // On mount, fetch images
   useEffect(() => {
-    console.log("STARTED CHALLENGES! fetch images ", started);
     if (started) {
       fetchImages("forest", 10);
     }
@@ -52,7 +51,6 @@ export default function Puzzle() {
 
   // Once images are fetched, build the challenges
   useEffect(() => {
-    console.log("BUILD CHALLENGES! fetch images ", images);
     if (images.length > 0) {
       console.log("BUILD CHALLENGES! Images fetched");
       buildChallenges();
@@ -61,6 +59,7 @@ export default function Puzzle() {
 
   useEffect(() => {
     if (currentChallenge?.completed && needNextChallenge) {
+      console.log("NEXT CHALLENGE! ", currentChallenge);
       nextChallenge();
     }
   }, [currentChallenge, nextChallenge, needNextChallenge]);
@@ -69,7 +68,8 @@ export default function Puzzle() {
   useEffect(() => {
     if (completed) {
       console.log(
-        "GAME COMPLETE! You could show a final score here or navigate away."
+        "GAME COMPLETE! You could show a final score here or navigate away.",
+        challenges
       );
       // e.g., navigate('/results') or set some "show end screen" state
     }
