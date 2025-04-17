@@ -11,23 +11,26 @@ interface CompletedPuzzleProps {
 
 export function CompletedPuzzle({ onRestart }: CompletedPuzzleProps) {
   const { styles, theme } = useTheme();
+  const { containers, typography, buttons } = styles;
   return (
     <Animated.View
       entering={FadeIn.duration(300)} // Optional: customize duration
       exiting={FadeOut.duration(300)}
-      style={styles.container}
+      style={containers.centeredFullScreen}
     >
       <RectangleLogo
         width={50}
         height={50}
         style={{ marginBottom: theme.spacer[4].y }}
       />
-      <Text style={styles.title}>Congrats, you finished the game !</Text>
-      <Text style={styles.text}>
+      <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
+        Congrats, you finished the game !
+      </Text>
+      <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         You could display a final score or share options, etc.
       </Text>
       <Text
-        style={styles.linkButton}
+        style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
         onPress={() => {
           onRestart();
         }}
