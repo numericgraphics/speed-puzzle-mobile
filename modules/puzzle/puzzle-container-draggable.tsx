@@ -44,7 +44,8 @@ export default function PuzzleContainer({
   image,
   pieces,
 }: PuzzleContainerProps) {
-  const { theme } = useTheme();
+  const { theme, styles, isDark } = useTheme();
+  const { containers } = styles;
   const { url } = image;
   const {
     checkPuzzleOrderMobile,
@@ -92,29 +93,24 @@ export default function PuzzleContainer({
     runOnJS(checkPuzzleOrderMobile)(event.value);
   };
 
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "black",
-        },
-        wrapper: {
-          width: "100%",
-          height: IMAGE_HEIGHT,
-          padding: theme.spacer[3].x,
-          backgroundColor: theme.color[600],
-        },
-      }),
-    [theme]
-  );
-
   return (
-    <SafeAreaView style={styles.container}>
-      <RectangleLogo width={30} height={30} style={{ marginBottom: 20 }} />
-      <Animated.View style={[styles.wrapper, animatedStyle]}>
+    <SafeAreaView style={containers.centeredFullScreen}>
+      <RectangleLogo
+        width={30}
+        height={30}
+        style={[{ marginBottom: theme.spacer[3].y }]}
+        color={isDark ? theme.color.white : theme.color.black}
+      />
+      <Animated.View
+        style={[
+          containers.fullWidth,
+          {
+            height: IMAGE_HEIGHT,
+            padding: theme.spacer[3].x,
+          },
+          animatedStyle,
+        ]}
+      >
         {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
             <Draggable
