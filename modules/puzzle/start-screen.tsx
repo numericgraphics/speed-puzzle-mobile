@@ -12,22 +12,27 @@ interface StartScreenPuzzleProps {
 
 export function StartPuzzle({ onStart }: StartScreenPuzzleProps) {
   const { styles, theme } = useTheme();
-  console.log("StartPuzzle - styles", theme.spacer[8]);
+  const { containers, typography, buttons } = styles;
+
   return (
     <Animated.View
       entering={FadeIn.duration(1500)}
       exiting={FadeOut.duration(300)}
-      style={styles.container}
+      style={containers.centeredFullScreen}
     >
       <RectangleLogo
         width={50}
         height={50}
         style={{ marginBottom: theme.spacer[4].y }}
       />
-      <Text style={styles.title}>Welcome to the Puzzle Game !</Text>
-      <Text style={styles.text}>Tap the button below to start the game.</Text>
+      <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
+        Welcome to the Puzzle Game !
+      </Text>
+      <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
+        Tap the button below to start the game.
+      </Text>
       <Text
-        style={styles.linkButton}
+        style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
         onPress={() => {
           onStart();
         }}

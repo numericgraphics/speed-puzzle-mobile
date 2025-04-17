@@ -2,21 +2,28 @@ import React from "react";
 import { View, Text, Linking, StyleSheet } from "react-native";
 import { UnsplashImageData } from "@/types";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useTheme } from "@/hooks/useTheme";
 
 export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
+  const { styles, theme } = useTheme();
+  const { containers, typography, buttons } = styles;
   return (
     <Animated.View
       entering={FadeIn.duration(1500)}
       exiting={FadeOut.duration(300)}
-      style={styles.container}
+      style={[containers.left, { marginTop: theme.spacer[2].y }]}
     >
-      <View style={styles.row}>
-        <Text style={styles.label}>Photo by:</Text>
-        <Text style={styles.value}>{image.user}</Text>
-      </View>
-      <View style={styles.row}>
+      <View style={[containers.row, { marginBottom: theme.spacer[1].y }]}>
         <Text
-          style={styles.linkButton}
+          style={[typography.labelBold, { marginRight: theme.spacer[1].x }]}
+        >
+          Photo by :
+        </Text>
+        <Text style={typography.label}>{image.user}</Text>
+      </View>
+      <View style={containers.row}>
+        <Text
+          style={buttons.linkButton}
           onPress={() => {
             Linking.openURL(image.link);
           }}
@@ -27,33 +34,3 @@ export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    marginTop: 50,
-    paddingHorizontal: 16,
-  },
-  row: {
-    flexDirection: "row",
-    marginBottom: 8,
-    alignItems: "center",
-  },
-  label: {
-    color: "white",
-    fontWeight: "bold",
-    marginRight: 4,
-  },
-  value: {
-    color: "white",
-    flex: 1,
-  },
-  linkButton: {
-    color: "white",
-    borderWidth: 1,
-    borderColor: "white",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-});
