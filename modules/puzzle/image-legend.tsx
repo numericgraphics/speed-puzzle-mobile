@@ -11,7 +11,7 @@ export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
     <Animated.View
       entering={FadeIn.duration(1500)}
       exiting={FadeOut.duration(300)}
-      style={[containers.left, { marginTop: theme.spacer[2].y }]}
+      style={[containers.fullWidth, { marginTop: theme.spacer[2].y }]}
     >
       <View style={[containers.row, { marginBottom: theme.spacer[1].y }]}>
         <Text
