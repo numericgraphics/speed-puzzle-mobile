@@ -1,18 +1,15 @@
-import PuzzleContainer from "@/modules/puzzle";
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native";
+
+import { useTheme } from "@/hooks/useTheme";
+import PuzzleContainer from "@/modules/puzzle";
 
 export default function Page() {
+  const { styles } = useTheme();
+  const { containers } = styles;
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={containers.main}>
       <PuzzleContainer />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000000",
-  },
-});
