@@ -18,7 +18,7 @@ import { StartPuzzle } from "./start-screen";
 export default function Puzzle() {
   // Store slices
   const { images, error } = useUnsplashStore();
-  const { loading, completed } = useGameStore();
+  const { loading, completed, challenges } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
   const {
@@ -32,9 +32,18 @@ export default function Puzzle() {
   const currentChallenge = getCurrentChallenge();
   const started = useStarted();
 
+  const onStartGame = () => {
+    console.log("STARTING GAME!");
+    startGame();
+  };
+  const onRestartGame = () => {
+    console.log("RESTARTING GAME!");
+    resetGame();
+    startGame();
+  };
+
   // On mount, fetch images
   useEffect(() => {
-    console.log("STARTED CHALLENGES! fetch images ", started);
     if (started) {
       fetchImages("forest", 10);
     }
@@ -42,7 +51,6 @@ export default function Puzzle() {
 
   // Once images are fetched, build the challenges
   useEffect(() => {
-    console.log("BUILD CHALLENGES! fetch images ", images);
     if (images.length > 0) {
       console.log("BUILD CHALLENGES! Images fetched");
       buildChallenges();
@@ -51,6 +59,7 @@ export default function Puzzle() {
 
   useEffect(() => {
     if (currentChallenge?.completed && needNextChallenge) {
+      console.log("NEXT CHALLENGE! ", currentChallenge);
       nextChallenge();
     }
   }, [currentChallenge, nextChallenge, needNextChallenge]);
@@ -59,7 +68,8 @@ export default function Puzzle() {
   useEffect(() => {
     if (completed) {
       console.log(
-        "GAME COMPLETE! You could show a final score here or navigate away."
+        "GAME COMPLETE! You could show a final score here or navigate away.",
+        challenges
       );
       // e.g., navigate('/results') or set some "show end screen" state
     }
@@ -74,24 +84,11 @@ export default function Puzzle() {
   }
 
   if (!started) {
-    return (
-      <StartPuzzle
-        onStart={() => {
-          startGame();
-        }}
-      />
-    );
+    return <StartPuzzle onStart={onStartGame} />;
   }
 
   if (completed) {
-    return (
-      <CompletedPuzzle
-        onRestart={() => {
-          resetGame();
-          startGame();
-        }}
-      />
-    );
+    return <CompletedPuzzle onRestart={onRestartGame} />;
   }
 
   return (
@@ -101,27 +98,3 @@ export default function Puzzle() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  rowItem: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-  },
-  title: {
-    color: "red",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-  text: {
-    color: "gray",
-    fontSize: 16,
-    fontWeight: "regular",
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-});

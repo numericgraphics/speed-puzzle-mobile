@@ -1,49 +1,42 @@
-// CompletedPuzzle.tsx
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { Text } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+
+import RectangleLogo from "@/components/logo/rectangles";
+import { useTheme } from "@/hooks/useTheme";
 
 interface CompletedPuzzleProps {
   onRestart: () => void;
 }
 
 export function CompletedPuzzle({ onRestart }: CompletedPuzzleProps) {
+  const { styles, theme } = useTheme();
+  const { containers, typography, buttons } = styles;
   return (
     <Animated.View
-      // Use the Reanimated View with fade-in and fade-out transitions
       entering={FadeIn.duration(300)} // Optional: customize duration
       exiting={FadeOut.duration(300)}
-      style={styles.rowItem}
+      style={containers.centeredFullScreen}
     >
-      <Text style={styles.title}>Congrats, you finished the game!</Text>
-      <Text style={styles.text}>
+      <RectangleLogo
+        width={50}
+        height={50}
+        style={{ marginBottom: theme.spacer[4].y }}
+      />
+      <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
+        Congrats, you finished the game !
+      </Text>
+      <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         You could display a final score or share options, etc.
       </Text>
-      <Button title="Start Again" onPress={onRestart} />
+      <Text
+        style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
+        onPress={() => {
+          onRestart();
+        }}
+      >
+        Start Game
+      </Text>
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  rowItem: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    backgroundColor: "black",
-  },
-  title: {
-    color: "red",
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-  text: {
-    color: "gray",
-    fontSize: 16,
-    textAlign: "center",
-    paddingBottom: 10,
-  },
-});
