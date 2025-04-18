@@ -1,30 +1,21 @@
 // src/components/StatusMessage.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+
+import { useTheme } from "@/hooks/useTheme";
 
 interface StatusMessageProps {
   message: string;
 }
 
 export const StatusMessage: React.FC<StatusMessageProps> = ({ message }) => {
+  const { styles, theme } = useTheme();
+  const { containers, typography } = styles;
   return (
-    <View style={styles.rowItem}>
-      <Text style={styles.text}>{message}</Text>
+    <View style={containers.centeredFullScreen}>
+      <Text style={[typography.body, { color: theme.color[300] }]}>
+        {message}
+      </Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  rowItem: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
-    backgroundColor: "black",
-  },
-  text: {
-    fontSize: 16,
-    color: "gray",
-  },
-});

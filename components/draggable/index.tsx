@@ -75,13 +75,13 @@ const Draggable: React.FC<DraggableProps> = ({
     .onStart(() => {
       // Mark the item as dragging and record its start position
       isDragging.value = true;
-      startY.value = offsetY.value;
+      startY.value = offsetY.get();
       // Scale up the item slightly to indicate active drag
       scale.value = withSpring(1.05);
     })
     .onUpdate((event) => {
       // Update the item's position as the finger moves
-      const newY = startY.value + event.translationY;
+      const newY = startY.get() + event.translationY;
       offsetY.value = newY;
       // Determine the new order index based on the item's current Y position
       const newIndex = Math.max(
@@ -91,7 +91,7 @@ const Draggable: React.FC<DraggableProps> = ({
       const currentIndex = positions.value[idKey];
       // If the item has moved to a different index, swap the items in the positions map
       if (newIndex !== currentIndex) {
-        positions.value = objectMove(positions.value, currentIndex, newIndex);
+        positions.value = objectMove(positions.get(), currentIndex, newIndex);
       }
     })
     .onFinalize((event) => {
@@ -109,10 +109,10 @@ const Draggable: React.FC<DraggableProps> = ({
   // Animated style applied to the draggable item
   const animatedStyle = useAnimatedStyle(() => ({
     position: "absolute",
-    top: offsetY.value,
+    top: offsetY.get(),
     left: 0,
     right: 0,
-    zIndex: isDragging.value ? 1 : 0,
+    zIndex: isDragging.get() ? 1 : 0,
     // transform: [{ scale: scale.value }],
   }));
 

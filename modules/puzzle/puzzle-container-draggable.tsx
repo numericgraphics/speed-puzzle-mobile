@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import {
   runOnJS,
@@ -15,6 +15,9 @@ import Slide from "../../components/slide/image-slide";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
+import { PuzzleLegend } from "./image-legend";
+import RectangleLogo from "@/components/logo/rectangles";
+import { useTheme } from "@/hooks/useTheme";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -41,9 +44,15 @@ export default function PuzzleContainer({
   image,
   pieces,
 }: PuzzleContainerProps) {
+  const { theme, styles, isDark } = useTheme();
+  const { containers } = styles;
   const { url } = image;
-  const { checkPuzzleOrderMobile, getCurrentChallenge, triggerNextChallenge } =
-    useGameStoreActions();
+  const {
+    checkPuzzleOrderMobile,
+    getCurrentChallenge,
+    triggerNextChallenge,
+    incrementChallengeMove,
+  } = useGameStoreActions();
   const currentChallenge = getCurrentChallenge();
   const positions = useSharedValue(
     Object.assign(
@@ -80,12 +89,28 @@ export default function PuzzleContainer({
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
+    runOnJS(incrementChallengeMove)();
     runOnJS(checkPuzzleOrderMobile)(event.value);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View style={[styles.wrapper, animatedStyle]}>
+    <SafeAreaView style={containers.centeredFullScreen}>
+      <RectangleLogo
+        width={30}
+        height={30}
+        style={[{ marginBottom: theme.spacer[3].y }]}
+        color={isDark ? theme.color.white : theme.color.black}
+      />
+      <Animated.View
+        style={[
+          containers.fullWidth,
+          {
+            height: IMAGE_HEIGHT,
+            padding: theme.spacer[3].x,
+          },
+          animatedStyle,
+        ]}
+      >
         {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
           return (
             <Draggable
@@ -108,24 +133,7 @@ export default function PuzzleContainer({
           );
         })}
       </Animated.View>
+      <PuzzleLegend image={image} />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    // width: "100%",
-    backgroundColor: "black",
-  },
-  wrapper: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
-    width: "100%",
-    height: IMAGE_HEIGHT,
-    padding: 16,
-    backgroundColor: "black",
-  },
-});
