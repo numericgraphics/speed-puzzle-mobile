@@ -1,5 +1,7 @@
-import { useUnsplashStore } from "./unsplash";
 import { create } from "zustand";
+
+import { useUnsplashStore } from "./unsplash";
+import { useTimerStore } from "./timer";
 import { devtools } from "zustand/middleware";
 import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
@@ -35,6 +37,7 @@ interface GameStoreState {
   started: boolean;
   completed: boolean;
   loading: boolean;
+  startTimer: boolean;
   actions: GameStoreActions;
 }
 
@@ -47,6 +50,7 @@ export const useGameStore = create<GameStoreState>()(
     started: false,
     completed: false,
     loading: false,
+    startTimer: false,
 
     actions: {
       buildChallenges: async () => {
@@ -84,12 +88,19 @@ export const useGameStore = create<GameStoreState>()(
         } catch (err) {
           console.error("Error building challenges:", err);
         } finally {
-          // Turn off loading
-          set({ loading: false });
+          // Turn off loading, start game
+          // Turn off loading, start game and start timer
+          //TODO: Fix timer actions triggering
+          // const { actions: timerActions } = useTimerStore.getState();
+          // timerActions.reset();
+          // timerActions.start();
+          set({ loading: false, startTimer: true });
         }
       },
 
       resetGame: () => {
+        const { actions: timerActions } = useTimerStore.getState();
+        timerActions.reset();
         set({
           challenges: [],
           currentChallengeIndex: 0,
@@ -102,10 +113,12 @@ export const useGameStore = create<GameStoreState>()(
 
       nextChallenge: () => {
         const { currentChallengeIndex, challenges } = get();
-
         // If we can move to the next challenge, do so
         if (currentChallengeIndex < challenges.length - 1) {
-          set({ currentChallengeIndex: currentChallengeIndex + 1 });
+          set({
+            currentChallengeIndex: currentChallengeIndex + 1,
+            startTimer: true,
+          });
         } else {
           // Otherwise, we're at the last challenge
           set({ completed: true });
@@ -139,15 +152,18 @@ export const useGameStore = create<GameStoreState>()(
 
         if (ordered) {
           const { challenges, currentChallengeIndex } = get();
+          const { actions: timerActions } = useTimerStore.getState();
 
           const updatedChallenges = [...challenges];
           updatedChallenges[currentChallengeIndex] = {
             ...updatedChallenges[currentChallengeIndex],
             completed: true,
+            timerValue: timerActions.stop(),
           };
 
           set({
             challenges: updatedChallenges,
+            startTimer: false,
           });
         }
       },
@@ -178,5 +194,6 @@ export const useNeedNextChallenge = () =>
   useGameStore((state) => state.needNextChallenge);
 
 export const useStarted = () => useGameStore((state) => state.started);
+export const useStartTimer = () => useGameStore((state) => state.startTimer);
 
 export const useGameStoreActions = () => useGameStore((state) => state.actions);

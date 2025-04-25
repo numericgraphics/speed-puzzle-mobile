@@ -9,15 +9,18 @@ import {
   useGameStoreActions,
   useNeedNextChallenge,
   useStarted,
+  useStartTimer,
 } from "@/stores/game";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import { StatusMessage } from "@/components/message-display";
 import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
+import { useElapsedTimer } from "@/hooks/useTimer";
+import { useTimerActions } from "@/stores/timer";
 
 export default function Puzzle() {
   // Store slices
-  const { images, error } = useUnsplashStore();
+  const { images, error, ready: imageReady } = useUnsplashStore();
   const { loading, completed, challenges } = useGameStore();
   // Store actions
   const { fetchImages } = useUnsplashStoreActions();
@@ -31,6 +34,10 @@ export default function Puzzle() {
   const needNextChallenge = useNeedNextChallenge();
   const currentChallenge = getCurrentChallenge();
   const started = useStarted();
+  const timerAction = useTimerActions();
+  const startTimer = useStartTimer();
+  // const { elapsed, startElapsedTimer, stopElapsedTimer, resetElapsedTimer } =
+  //   useElapsedTimer();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
@@ -49,13 +56,23 @@ export default function Puzzle() {
     }
   }, [started]);
 
+  useEffect(() => {
+    if (startTimer) {
+      console.log("START TIMER");
+      timerAction.start();
+    } else {
+      console.log("RESET TIMER");
+      timerAction.reset();
+    }
+  }, [startTimer]);
+
   // Once images are fetched, build the challenges
   useEffect(() => {
-    if (images.length > 0) {
+    if (imageReady) {
       console.log("BUILD CHALLENGES! Images fetched");
       buildChallenges();
     }
-  }, [loading, images, buildChallenges]);
+  }, [imageReady, buildChallenges]);
 
   useEffect(() => {
     if (currentChallenge?.completed && needNextChallenge) {
