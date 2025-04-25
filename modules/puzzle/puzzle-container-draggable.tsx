@@ -18,6 +18,7 @@ import { useGameStoreActions } from "@/stores/game";
 import { PuzzleLegend } from "./image-legend";
 import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
+import TimeDisplay from "@/components/timer-display";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -101,6 +102,18 @@ export default function PuzzleContainer({
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
+      <View
+        style={[
+          containers.fullWidth,
+          {
+            alignItems: "flex-end",
+            paddingHorizontal: theme.spacer[3].x,
+            marginBottom: theme.spacer[2].y,
+          },
+        ]}
+      >
+        <TimeDisplay />
+      </View>
       <Animated.View
         style={[
           containers.fullWidth,

@@ -10,6 +10,7 @@ interface UnsplashStoreActions {
 
 interface UnsplashStoreState {
   images: UnsplashImageData[];
+  ready: boolean;
   loading: boolean;
   error: string | null;
   actions: UnsplashStoreActions;
@@ -19,6 +20,7 @@ export const useUnsplashStore = create<UnsplashStoreState>()(
   devtools((set, get) => ({
     images: [],
     loading: false,
+    ready: false,
     error: null,
 
     // Put all logic in an `actions` object
@@ -34,6 +36,8 @@ export const useUnsplashStore = create<UnsplashStoreState>()(
 
           set({
             images: imagesURL.data,
+            ready: true,
+            loading: false,
           });
         } catch (err: any) {
           console.error("Error fetching images from Unsplash:", err);

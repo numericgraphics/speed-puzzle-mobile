@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { differenceInSeconds } from "date-fns";
+import { differenceInSeconds, differenceInMilliseconds } from "date-fns";
 
 const STORAGE_KEY = "@start_time";
 
@@ -19,7 +19,7 @@ export const useElapsedTimer = () => {
       if (isNaN(parsedStart.getTime())) return 0;
 
       const now = new Date();
-      return differenceInSeconds(now, parsedStart);
+      return differenceInMilliseconds(now, parsedStart);
     } catch (err) {
       console.warn("Failed to get elapsed time:", err);
       return 0;
@@ -45,7 +45,7 @@ export const useElapsedTimer = () => {
     return () => sub.remove();
   }, [handleAppStateChange]);
 
-  const startTimer = useCallback(async () => {
+  const startElapsedTimer = useCallback(async () => {
     const alreadyStarted = await AsyncStorage.getItem(STORAGE_KEY);
     if (!alreadyStarted) {
       const now = new Date().toISOString();
@@ -60,7 +60,7 @@ export const useElapsedTimer = () => {
     }
   }, [getElapsedTime]);
 
-  const stopTimer = useCallback(async () => {
+  const stopElapsedTimer = useCallback(async () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -70,7 +70,7 @@ export const useElapsedTimer = () => {
     await AsyncStorage.removeItem(STORAGE_KEY);
   }, [getElapsedTime]);
 
-  const resetTimer = useCallback(() => {
+  const resetElapsedTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -85,8 +85,8 @@ export const useElapsedTimer = () => {
 
   return {
     elapsed,
-    startTimer,
-    stopTimer,
-    resetTimer,
+    startElapsedTimer,
+    stopElapsedTimer,
+    resetElapsedTimer,
   };
 };
