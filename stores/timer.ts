@@ -7,7 +7,7 @@ import { devtools } from "zustand/middleware";
 
 interface TimerActions {
   start: () => void;
-  stop: () => number;
+  stop: () => void;
   reset: () => void;
 }
 
@@ -56,12 +56,12 @@ export const useTimerStore = create<TimerState>()(
         },
 
         stop() {
+          console.log("useTimerStore stop - intervalId", intervalId);
           if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
           }
           set({ running: false });
-          return get().timerValue;
         },
 
         reset() {

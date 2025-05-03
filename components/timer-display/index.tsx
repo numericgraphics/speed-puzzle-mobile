@@ -20,7 +20,7 @@ function TimeDisplay() {
   //   if (!isRunning) start();
   // }, [isRunning]);
 
-  console.log("timerValue", timerValue);
+  // console.log("timerValue", timerValue);
 
   // return null;
 

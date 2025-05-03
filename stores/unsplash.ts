@@ -6,11 +6,12 @@ import { UnsplashImageData } from "@/types";
 interface UnsplashStoreActions {
   fetchImages: (query: string, count?: number) => Promise<void>;
   getImage: (id: string) => UnsplashImageData | undefined;
+  resetImages: () => void;
 }
 
 interface UnsplashStoreState {
   images: UnsplashImageData[];
-  ready: boolean;
+  imageReady: boolean;
   loading: boolean;
   error: string | null;
   actions: UnsplashStoreActions;
@@ -20,28 +21,29 @@ export const useUnsplashStore = create<UnsplashStoreState>()(
   devtools((set, get) => ({
     images: [],
     loading: false,
-    ready: false,
+    imageReady: false,
     error: null,
 
     // Put all logic in an `actions` object
     actions: {
       // 1) fetchImages
       fetchImages: async (query: string, count = 1) => {
+        console.log("useUnsplashStore fetchImages ");
         set({ loading: true, error: null });
         try {
           // If calling the real Unsplash API, do it here
           // For now, replicate with your mock:
           const imagesURL = await mockUnsplashApiCall();
-          console.log("Fetched data:", imagesURL);
+          // console.log("useUnsplashStore fetchImages ", imagesURL);
 
           set({
             images: imagesURL.data,
-            ready: true,
+            imageReady: true,
             loading: false,
           });
         } catch (err: any) {
           console.error("Error fetching images from Unsplash:", err);
-          set({ error: err.message });
+          set({ error: err.message, imageReady: false });
         } finally {
           set({ loading: false });
         }
@@ -51,6 +53,15 @@ export const useUnsplashStore = create<UnsplashStoreState>()(
       getImage: (id: string) => {
         const { images } = get();
         return images.find((img) => img.id === id);
+      },
+
+      resetImages: () => {
+        set({
+          images: [],
+          imageReady: false,
+          loading: false,
+          error: null,
+        });
       },
     },
   }))

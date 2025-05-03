@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import {
   runOnJS,
   SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withDelay,
   withTiming,
@@ -49,7 +50,7 @@ export default function PuzzleContainer({
   const { containers } = styles;
   const { url } = image;
   const {
-    checkPuzzleOrderMobile,
+    checkChallengeValidity,
     getCurrentChallenge,
     triggerNextChallenge,
     incrementChallengeMove,
@@ -80,7 +81,6 @@ export default function PuzzleContainer({
         1000,
         withTiming(0, { duration: 500 }, (finished) => {
           if (finished) {
-            // maybe run onJS -> nextChallenge or something
             runOnJS(triggerNextChallenge)();
           }
         })
@@ -91,7 +91,7 @@ export default function PuzzleContainer({
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    runOnJS(checkPuzzleOrderMobile)(event.value);
+    runOnJS(checkChallengeValidity)(event.value);
   };
 
   return (
@@ -102,7 +102,7 @@ export default function PuzzleContainer({
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
-      <View
+      <Animated.View
         style={[
           containers.fullWidth,
           {
@@ -110,10 +110,11 @@ export default function PuzzleContainer({
             paddingHorizontal: theme.spacer[3].x,
             marginBottom: theme.spacer[2].y,
           },
+          animatedStyle,
         ]}
       >
         <TimeDisplay />
-      </View>
+      </Animated.View>
       <Animated.View
         style={[
           containers.fullWidth,
