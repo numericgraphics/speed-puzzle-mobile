@@ -86,7 +86,7 @@ export default function PuzzleContainer({
         })
       );
     }
-  }, [currentChallenge, pieces, positions]);
+  }, [currentChallenge]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
