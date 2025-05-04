@@ -1,5 +1,7 @@
-import { useUnsplashStore } from "./unsplash";
 import { create } from "zustand";
+
+import { useUnsplashStore } from "./unsplash";
+import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { devtools } from "zustand/middleware";
 import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
@@ -22,7 +24,8 @@ interface GameStoreActions {
   prevChallenge: () => void;
   getCurrentChallenge: () => GameChallengeType | null;
   triggerNextChallenge: () => void;
-  checkPuzzleOrderMobile: (positions: Record<string, number>) => void;
+  checkChallengeValidity: (positions: Record<string, number>) => void;
+  validChallenge: () => void;
   startGame: () => void;
   incrementChallengeMove: () => void;
 }
@@ -31,10 +34,10 @@ interface GameStoreState {
   challenges: GameChallengeType[];
   currentChallengeIndex: number;
   needNextChallenge: boolean;
-  isReady: boolean;
   started: boolean;
   completed: boolean;
   loading: boolean;
+  startTimer: boolean;
   actions: GameStoreActions;
 }
 
@@ -43,10 +46,10 @@ export const useGameStore = create<GameStoreState>()(
     challenges: [],
     currentChallengeIndex: 0,
     needNextChallenge: false,
-    isReady: false,
     started: false,
     completed: false,
     loading: false,
+    startTimer: false,
 
     actions: {
       buildChallenges: async () => {
@@ -79,33 +82,28 @@ export const useGameStore = create<GameStoreState>()(
           // Store them in the game state
           set({
             challenges: newChallenges,
-            isReady: true,
           });
         } catch (err) {
           console.error("Error building challenges:", err);
         } finally {
-          // Turn off loading
-          set({ loading: false });
+          // Turn off loading, start game
+          // Turn off loading, start game and start timer
+          //TODO: Fix timer actions triggering
+          // const { actions: timerActions } = useTimerStore.getState();
+          // timerActions.reset();
+          // timerActions.start();
+          set({ loading: false, startTimer: true });
         }
-      },
-
-      resetGame: () => {
-        set({
-          challenges: [],
-          currentChallengeIndex: 0,
-          isReady: false,
-          completed: false, // Reset to false on new game
-          started: false,
-          needNextChallenge: false,
-        });
       },
 
       nextChallenge: () => {
         const { currentChallengeIndex, challenges } = get();
-
         // If we can move to the next challenge, do so
         if (currentChallengeIndex < challenges.length - 1) {
-          set({ currentChallengeIndex: currentChallengeIndex + 1 });
+          set({
+            currentChallengeIndex: currentChallengeIndex + 1,
+            startTimer: true,
+          });
         } else {
           // Otherwise, we're at the last challenge
           set({ completed: true });
@@ -124,7 +122,17 @@ export const useGameStore = create<GameStoreState>()(
         const { challenges, currentChallengeIndex } = get();
         const { completed } = challenges[currentChallengeIndex];
         if (completed) {
-          set({ needNextChallenge: true });
+          const { timerValue } = useTimerStore.getState();
+          const updatedChallenges = [...challenges];
+          updatedChallenges[currentChallengeIndex] = {
+            ...updatedChallenges[currentChallengeIndex],
+            timerValue,
+          };
+          set({
+            challenges: updatedChallenges,
+            needNextChallenge: true,
+            startTimer: false,
+          });
         }
       },
 
@@ -133,13 +141,14 @@ export const useGameStore = create<GameStoreState>()(
         return challenges[currentChallengeIndex] || null;
       },
 
-      checkPuzzleOrderMobile: (positions: Record<string, number>) => {
+      checkChallengeValidity: (positions: Record<string, number>) => {
         const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
         console.log("Puzzle order check (from game store):", ordered);
 
         if (ordered) {
           const { challenges, currentChallengeIndex } = get();
-
+          const { actions: timerActions } = useTimerStore.getState();
+          timerActions.stop();
           const updatedChallenges = [...challenges];
           updatedChallenges[currentChallengeIndex] = {
             ...updatedChallenges[currentChallengeIndex],
@@ -152,9 +161,32 @@ export const useGameStore = create<GameStoreState>()(
         }
       },
 
+      validChallenge: () => {
+        const { challenges, currentChallengeIndex } = get();
+
+        const updatedChallenges = [...challenges];
+        updatedChallenges[currentChallengeIndex] = {
+          ...updatedChallenges[currentChallengeIndex],
+          completed: true,
+        };
+
+        set({
+          challenges: updatedChallenges,
+        });
+      },
+
       startGame: () => {
         // Turn on loading
-        set({ loading: true, started: true });
+        set({ loading: true, started: true, challenges: [] });
+      },
+
+      resetGame: () => {
+        set({
+          currentChallengeIndex: 0,
+          completed: false, // Reset to false on new game
+          started: false,
+          needNextChallenge: false,
+        });
       },
 
       incrementChallengeMove: () => {
@@ -177,6 +209,8 @@ export const useGameStore = create<GameStoreState>()(
 export const useNeedNextChallenge = () =>
   useGameStore((state) => state.needNextChallenge);
 
-export const useStarted = () => useGameStore((state) => state.started);
+export const useGameStoreStarted = () => useGameStore((state) => state.started);
+export const useGameStoreStartTimer = () =>
+  useGameStore((state) => state.startTimer);
 
 export const useGameStoreActions = () => useGameStore((state) => state.actions);

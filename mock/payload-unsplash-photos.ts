@@ -74,3 +74,20 @@ export const mockedUnsplashData: UnsplashImageData[] = [
     user: "Marita Kavelashvili",
   },
 ];
+
+export const mockedUnsplashDataLight: UnsplashImageData[] = [
+  {
+    description: "Entering another dimension...",
+    id: "sp-p7uuT0tw",
+    link: "https://unsplash.com/@sebastian_unrau",
+    url: "https://images.unsplash.com/photo-1448375240586-882707db888b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzIzNzZ8MHwxfHNlYXJjaHwxfHxmb3Jlc3R8ZW58MHx8fHwxNzQ0MDMxOTM4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+    user: "Sebastian Unrau",
+  },
+  {
+    description: "Fade ↟",
+    id: "QsWG0kjPQRY",
+    link: "https://unsplash.com/@filipz",
+    url: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzIzNzZ8MHwxfHNlYXJjaHwyfHxmb3Jlc3R8ZW58MHx8fHwxNzQ0MDMxOTM4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+    user: "Filip Zrnzević",
+  },
+];

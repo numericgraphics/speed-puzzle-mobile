@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import {
   runOnJS,
   SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withDelay,
   withTiming,
@@ -18,6 +19,7 @@ import { useGameStoreActions } from "@/stores/game";
 import { PuzzleLegend } from "./image-legend";
 import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
+import TimeDisplay from "@/components/timer-display";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -48,7 +50,7 @@ export default function PuzzleContainer({
   const { containers } = styles;
   const { url } = image;
   const {
-    checkPuzzleOrderMobile,
+    checkChallengeValidity,
     getCurrentChallenge,
     triggerNextChallenge,
     incrementChallengeMove,
@@ -79,18 +81,17 @@ export default function PuzzleContainer({
         1000,
         withTiming(0, { duration: 500 }, (finished) => {
           if (finished) {
-            // maybe run onJS -> nextChallenge or something
             runOnJS(triggerNextChallenge)();
           }
         })
       );
     }
-  }, [currentChallenge, pieces, positions]);
+  }, [currentChallenge]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    runOnJS(checkPuzzleOrderMobile)(event.value);
+    runOnJS(checkChallengeValidity)(event.value);
   };
 
   return (
@@ -101,6 +102,19 @@ export default function PuzzleContainer({
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
+      <Animated.View
+        style={[
+          containers.fullWidth,
+          {
+            alignItems: "flex-end",
+            paddingHorizontal: theme.spacer[3].x,
+            marginBottom: theme.spacer[2].y,
+          },
+          animatedStyle,
+        ]}
+      >
+        <TimeDisplay />
+      </Animated.View>
       <Animated.View
         style={[
           containers.fullWidth,

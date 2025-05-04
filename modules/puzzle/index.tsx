@@ -1,26 +1,28 @@
 // TODO : use RSC// "use server";
 
 import React, { useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
 
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
 import {
   useGameStore,
   useGameStoreActions,
   useNeedNextChallenge,
-  useStarted,
+  useGameStoreStarted,
+  useGameStoreStartTimer,
 } from "@/stores/game";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
 import { StatusMessage } from "@/components/message-display";
 import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
+import { useTimerActions, useTimerStore } from "@/stores/timer";
+import { NUMBER_OF_QUESTION } from "@/constants";
 
 export default function Puzzle() {
   // Store slices
-  const { images, error } = useUnsplashStore();
+  const { images, error, imageReady } = useUnsplashStore();
   const { loading, completed, challenges } = useGameStore();
   // Store actions
-  const { fetchImages } = useUnsplashStoreActions();
+  const { fetchImages, resetImages } = useUnsplashStoreActions();
   const {
     buildChallenges,
     getCurrentChallenge,
@@ -30,32 +32,46 @@ export default function Puzzle() {
   } = useGameStoreActions();
   const needNextChallenge = useNeedNextChallenge();
   const currentChallenge = getCurrentChallenge();
-  const started = useStarted();
+  const started = useGameStoreStarted();
+  const timerAction = useTimerActions();
+  const startTimer = useGameStoreStartTimer();
+  const { actions: timerActions } = useTimerStore.getState();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
     startGame();
   };
+  // Re-initialize the game state, with empty challenges
   const onRestartGame = () => {
     console.log("RESTARTING GAME!");
-    resetGame();
     startGame();
   };
 
   // On mount, fetch images
   useEffect(() => {
+    console.log("FETCH IMAGES!", started);
     if (started) {
-      fetchImages("forest", 10);
+      fetchImages("forest", NUMBER_OF_QUESTION);
     }
   }, [started]);
 
-  // Once images are fetched, build the challenges
   useEffect(() => {
-    if (images.length > 0) {
+    if (startTimer) {
+      console.log("START TIMER");
+      timerAction.start();
+    } else {
+      console.log("RESET TIMER");
+      timerAction.reset();
+    }
+  }, [startTimer]);
+
+  useEffect(() => {
+    console.log("BUILD CHALLENGES!", imageReady);
+    if (imageReady) {
       console.log("BUILD CHALLENGES! Images fetched");
       buildChallenges();
     }
-  }, [loading, images, buildChallenges]);
+  }, [imageReady, buildChallenges]);
 
   useEffect(() => {
     if (currentChallenge?.completed && needNextChallenge) {
@@ -71,7 +87,9 @@ export default function Puzzle() {
         "GAME COMPLETE! You could show a final score here or navigate away.",
         challenges
       );
-      // e.g., navigate('/results') or set some "show end screen" state
+      timerActions.reset();
+      resetGame();
+      resetImages();
     }
   }, [completed]);
 
