@@ -1,5 +1,8 @@
 import { UnsplashImageData } from "@/types";
-import { mockedUnsplashData } from "../payload-unsplash-photos";
+import {
+  mockedUnsplashData,
+  mockedUnsplashDataLight,
+} from "../payload-unsplash-photos";
 
 type MockResponse = {
   success: boolean;
@@ -13,7 +16,7 @@ export async function mockUnsplashApiCall(): Promise<MockResponse> {
       resolve({
         success: true,
         message: "Mock data fetched successfully",
-        data: mockedUnsplashData,
+        data: mockedUnsplashDataLight,
       });
     }, 1500); // Delay in milliseconds to simulate network latency
   });
