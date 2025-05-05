@@ -38,13 +38,9 @@ function TimeDisplay({ completed, timerValue }: TimeDisplayProps) {
   // 4) Trigger the timing when `completed` flips true
   useEffect(() => {
     if (completed) {
-      scale.value = withTiming(1.5, { duration: 500 }, (finished: any) => {
-        if (finished) {
-          scale.value = 0;
-        }
-      });
+      scale.value = withTiming(1.5, { duration: 500 });
     } else {
-      scale.value = withTiming(1, { duration: 50 });
+      scale.value = withTiming(1, { duration: 500 });
     }
   }, [completed]);
 
@@ -70,7 +66,7 @@ function TimeDisplay({ completed, timerValue }: TimeDisplayProps) {
 
   return (
     <Animated.View style={animatedStyle}>
-      <Text style={typography.label}>{formatted}</Text>{" "}
+      <Text style={typography.label}>{formatted}</Text>
     </Animated.View>
   );
 }
