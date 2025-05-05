@@ -20,6 +20,7 @@ import { PuzzleLegend } from "./image-legend";
 import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
 import TimeDisplay from "@/components/timer-display";
+import { useTimerValue } from "@/stores/timer";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -56,6 +57,7 @@ export default function PuzzleContainer({
     incrementChallengeMove,
   } = useGameStoreActions();
   const currentChallenge = getCurrentChallenge();
+  const timerValue = useTimerValue();
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -102,7 +104,7 @@ export default function PuzzleContainer({
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
-      <Animated.View
+      <View
         style={[
           containers.fullWidth,
           {
@@ -110,11 +112,13 @@ export default function PuzzleContainer({
             paddingHorizontal: theme.spacer[3].x,
             marginBottom: theme.spacer[2].y,
           },
-          animatedStyle,
         ]}
       >
-        <TimeDisplay />
-      </Animated.View>
+        <TimeDisplay
+          completed={currentChallenge?.completed}
+          timerValue={timerValue}
+        />
+      </View>
       <Animated.View
         style={[
           containers.fullWidth,
