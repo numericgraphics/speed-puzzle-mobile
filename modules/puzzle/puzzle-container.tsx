@@ -1,139 +1,157 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import {
-  View,
-  StyleSheet,
-  Pressable,
-  ListRenderItemInfo,
-  RefreshControl,
-  Platform,
-  SafeAreaView,
-  Dimensions,
-} from "react-native";
-import ReorderableList, {
-  ReorderableListReorderEvent,
-  reorderItems,
-} from "react-native-reorderable-list";
-import { Slide, SlideProps } from "../../components/slide";
-import { runOnJS } from "react-native-reanimated";
-import { getColor } from "@/helpers/colors";
-import { Image } from "expo-image";
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-const NUM_ITEMS = 4;
+import Draggable from "../../components/draggable";
+import Slide from "../../components/slide/image-slide";
+import { PuzzlePieceType, UnsplashImageData } from "@/types";
+import { PUZZLE_SLIDE_NUMBER } from "@/constants";
+import { useGameStoreActions } from "@/stores/game";
+import { PuzzleLegend } from "../../components/image-legend";
+import RectangleLogo from "@/components/logo/rectangles";
+import { useTheme } from "@/hooks/useTheme";
+import TimeDisplay from "@/components/timer-display";
+import { useTimerValue } from "@/stores/timer";
+
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
-const IMAGE_HEIGHT = SLIDE_HEIGHT * NUM_ITEMS; // Image height should cover all slides
+const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
 const imageUrl =
   "https://media.admagazine.fr/photos/646dcd1c261b65c3279fdfd2/16:9/w_2240,c_limit/GettyImages-1347979016%20(1).jpg";
 
-Image.prefetch(imageUrl);
+export interface SlideType {
+  id: string;
+  index: number;
+  url: string;
+  slideWidth: number;
+  slideHeight: number;
+  imageHeight: number;
+  backgroundColor?: string;
+}
 
-// const initialData: SlideProps[] = Array.from({ length: NUM_ITEMS }, (_, index) => ({
-//   id: `slide-${index}`,
-//   index,
-//   url: imageUrl,
-//   slideHeight: SLIDE_HEIGHT,
-//   imageHeight: IMAGE_HEIGHT,
-// }));
+export interface PuzzleContainerProps {
+  image: UnsplashImageData;
+  pieces: PuzzlePieceType[];
+}
 
-const initialData: SlideProps[] = [...Array(NUM_ITEMS)].map((d, index) => {
-  const backgroundColor = getColor(index, NUM_ITEMS);
-  return {
-    id: `slide-${index}`,
-    index,
-    url: imageUrl,
-    slideWidth: SCREEN_WIDTH,
-    slideHeight: SLIDE_HEIGHT,
-    imageHeight: IMAGE_HEIGHT,
-    backgroundColor,
-    cropStartY: SLIDE_HEIGHT / NUM_ITEMS,
-  };
-});
-
-let directData: SlideProps[] = [];
-
-export default function PuzzleContainer() {
-  const [data, setData] = useState(initialData);
-  const [refreshing, setRefreshing] = useState(false);
-  const [refreshEnabled, setRefreshEnabled] = useState(true);
-  directData = initialData;
-  useEffect(() => {}, []);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 500);
-  };
-
-  const handleDragStart = useCallback(() => {
-    "worklet";
-
-    // NOTE: If it's refreshing we don't want the refresh control to disappear
-    // and we can keep it enabled since it won't conflict with the drag.
-    if (Platform.OS === "android" && !refreshing) {
-      runOnJS(setRefreshEnabled)(false);
-    }
-  }, [refreshing]);
-
-  const handleDragEnd = useCallback(() => {
-    "worklet";
-
-    if (Platform.OS === "android") {
-      runOnJS(setRefreshEnabled)(true);
-    }
-  }, []);
-
-  const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
-    "worklet";
-    // directData = reorderItems(directData, from, to);
-    setData((value) => reorderItems(value, from, to));
-  };
-
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<SlideProps>) => <Slide {...item} />,
-    []
+export default function PuzzleContainer({
+  image,
+  pieces,
+}: PuzzleContainerProps) {
+  const { theme, styles, isDark } = useTheme();
+  const { containers } = styles;
+  const { url } = image;
+  const {
+    checkChallengeValidity,
+    getCurrentChallenge,
+    triggerNextChallenge,
+    incrementChallengeMove,
+  } = useGameStoreActions();
+  const currentChallenge = getCurrentChallenge();
+  const timerValue = useTimerValue();
+  const positions = useSharedValue(
+    Object.assign(
+      {},
+      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
+    )
   );
+  const opacity = useSharedValue(0); // fully opaque
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  useEffect(() => {
+    positions.value = Object.assign(
+      {},
+      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
+    );
+    opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
+  }, [pieces, positions]);
+
+  useEffect(() => {
+    if (currentChallenge?.completed) {
+      opacity.value = withDelay(
+        1000,
+        withTiming(0, { duration: 500 }, (finished) => {
+          if (finished) {
+            runOnJS(triggerNextChallenge)();
+          }
+        })
+      );
+    }
+  }, [currentChallenge]);
+
+  const onDragEnd = (event: SharedValue<Record<string, number>>) => {
+    "worklet";
+    runOnJS(incrementChallengeMove)();
+    runOnJS(checkChallengeValidity)(event.value);
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ReorderableList
-        data={data}
-        onReorder={handleReorder}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={onRefresh}
-            enabled={refreshEnabled}
-          />
-        }
-        panActivateAfterLongPress={Platform.OS === "android" ? 520 : undefined}
-        //   ItemSeparatorComponent={PlaylistItemSeparator}
+    <SafeAreaView style={containers.centeredFullScreen}>
+      <RectangleLogo
+        width={30}
+        height={30}
+        style={[{ marginBottom: theme.spacer[3].y }]}
+        color={isDark ? theme.color.white : theme.color.black}
       />
-      {/* <DraggableFlatList
-        data={data}
-        keyExtractor={(item) => item.key}
-        onDragEnd={({ data }) => setData(data)}
-        renderItem={renderItem}
-      /> */}
+      <View
+        style={[
+          containers.fullWidth,
+          {
+            alignItems: "flex-end",
+            paddingHorizontal: theme.spacer[3].x,
+            marginBottom: theme.spacer[2].y,
+          },
+        ]}
+      >
+        <TimeDisplay
+          completed={currentChallenge?.completed}
+          timerValue={timerValue}
+        />
+      </View>
+      <Animated.View
+        style={[
+          containers.fullWidth,
+          {
+            height: IMAGE_HEIGHT,
+            padding: theme.spacer[3].x,
+          },
+          animatedStyle,
+        ]}
+      >
+        {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => {
+          return (
+            <Draggable
+              key={index}
+              positions={positions}
+              id={index}
+              itemHeight={SLIDE_HEIGHT}
+              onDragEnd={onDragEnd}
+            >
+              <Slide
+                key={index}
+                id={index.toString()}
+                index={index}
+                url={url}
+                slideWidth={SCREEN_WIDTH}
+                slideHeight={SLIDE_HEIGHT}
+                imageHeight={IMAGE_HEIGHT}
+              />
+            </Draggable>
+          );
+        })}
+      </Animated.View>
+      <PuzzleLegend image={image} />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-  },
-  itemContainer: {
-    marginVertical: 2,
-  },
-  activeSlide: {
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
-  },
-});

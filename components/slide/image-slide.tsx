@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { SlideType } from "@/modules/puzzle/puzzle-container-draggable";
+import { SlideType } from "@/modules/puzzle/puzzle-container";
 
 const Slide = ({ id, index, url, slideHeight, imageHeight }: SlideType) => {
   return (
