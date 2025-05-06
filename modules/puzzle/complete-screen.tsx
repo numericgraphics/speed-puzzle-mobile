@@ -7,9 +7,10 @@ import { useTheme } from "@/hooks/useTheme";
 
 interface CompletedPuzzleProps {
   onRestart: () => void;
+  score: number;
 }
 
-export function CompletedPuzzle({ onRestart }: CompletedPuzzleProps) {
+export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
   const { styles, theme } = useTheme();
   const { containers, typography, buttons } = styles;
   return (
@@ -27,7 +28,20 @@ export function CompletedPuzzle({ onRestart }: CompletedPuzzleProps) {
         Congrats, you finished the game !
       </Text>
       <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
-        You could display a final score or share options, etc.
+        Your final score:
+      </Text>
+      <Text
+        style={[
+          typography.title,
+          {
+            fontSize: 48,
+            fontWeight: "bold",
+            color: theme.color.white,
+            paddingBottom: theme.spacer[3].y,
+          },
+        ]}
+      >
+        {score}
       </Text>
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
@@ -35,7 +49,7 @@ export function CompletedPuzzle({ onRestart }: CompletedPuzzleProps) {
           onRestart();
         }}
       >
-        Start Game
+        Play again !
       </Text>
     </Animated.View>
   );
