@@ -10,7 +10,7 @@ import {
   useGameStoreStarted,
   useGameStoreStartTimer,
 } from "@/stores/game";
-import PuzzleContainer from "@/modules/puzzle/puzzle-container-draggable";
+import PuzzleContainer from "@/modules/puzzle/puzzle-container";
 import { StatusMessage } from "@/components/message-display";
 import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
@@ -26,9 +26,10 @@ export default function Puzzle() {
   const {
     buildChallenges,
     getCurrentChallenge,
-    resetGame,
+    restartGame,
     nextChallenge,
     startGame,
+    getScore,
   } = useGameStoreActions();
   const needNextChallenge = useNeedNextChallenge();
   const currentChallenge = getCurrentChallenge();
@@ -44,16 +45,16 @@ export default function Puzzle() {
   // Re-initialize the game state, with empty challenges
   const onRestartGame = () => {
     console.log("RESTARTING GAME!");
-    startGame();
+    restartGame();
   };
 
   // On mount, fetch images
   useEffect(() => {
-    console.log("FETCH IMAGES!", started);
-    if (started) {
+    console.log("FETCH IMAGES!", images);
+    if (images.length === 0 && loading) {
       fetchImages("forest", NUMBER_OF_QUESTION);
     }
-  }, [started]);
+  }, [images, loading]);
 
   useEffect(() => {
     if (startTimer) {
@@ -85,10 +86,9 @@ export default function Puzzle() {
     if (completed) {
       console.log(
         "GAME COMPLETE! You could show a final score here or navigate away.",
-        challenges
+        getScore()
       );
       timerActions.reset();
-      resetGame();
       resetImages();
     }
   }, [completed]);
@@ -106,7 +106,7 @@ export default function Puzzle() {
   }
 
   if (completed) {
-    return <CompletedPuzzle onRestart={onRestartGame} />;
+    return <CompletedPuzzle onRestart={onRestartGame} score={getScore()} />;
   }
 
   return (
