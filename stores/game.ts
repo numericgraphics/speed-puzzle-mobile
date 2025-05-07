@@ -210,27 +210,82 @@ export const useGameStore = create<GameStoreState>()(
        * Calculate the total score across all completed challenges.
        */
       //TODO : Refactor this to use a more efficient algorithm.
+      // getScore: () => {
+      //   const { challenges } = get();
+      //   return challenges.reduce((totalScore, challenge) => {
+      //     if (!challenge.completed) {
+      //       return totalScore;
+      //     }
+      //     const { complexity, timerValue, moves } = challenge;
+      //     console.log("complexity", complexity);
+      //     console.log("timerValue", timerValue);
+      //     console.log("moves", moves);
+      //     const timePenalty = timerValue;
+      //     console.log("Time penalty", timePenalty);
+      //     const movePenalty = Math.max(0, moves - complexity);
+      //     console.log("movePenalty", movePenalty);
+      //     const baseScore = complexity * 10;
+      //     const challengeScore = Math.abs(
+      //       baseScore - timePenalty * 1 - movePenalty * 2
+      //     );
+      //     console.log("totalScore", challengeScore);
+      //     console.log("-------------------------------");
+      //     return Math.abs(totalScore + challengeScore);
+      //   }, 0);
+      // },
+
       getScore: () => {
         const { challenges } = get();
+        const MAX_COMPLEXITY = 3;
+
         return challenges.reduce((totalScore, challenge) => {
-          if (!challenge.completed) {
-            return totalScore;
-          }
+          if (!challenge.completed) return totalScore;
+
           const { complexity, timerValue, moves } = challenge;
           console.log("complexity", complexity);
           console.log("timerValue", timerValue);
           console.log("moves", moves);
-          const timePenalty = timerValue;
+          // Convert timer from ms to seconds for finer granularity:
+          const elapsedSec = timerValue / 1000;
+
+          // Tier threshold (middle if complexity ≤ half of max)
+          const midThreshold = Math.ceil(MAX_COMPLEXITY / 2);
+
+          // Set ideal benchmarks and base score per tier:
+          let idealTime: number;
+          const idealMoves = complexity;
+          let baseScore: number;
+
+          if (complexity === 1) {
+            // Easy
+            idealTime = 1;
+            baseScore = 100;
+          } else if (complexity <= midThreshold) {
+            // Middle
+            idealTime = MAX_COMPLEXITY;
+            baseScore = 150;
+          } else {
+            // Hard
+            idealTime = MAX_COMPLEXITY * 2;
+            baseScore = 200;
+          }
+
+          // Compute penalties
+          const timePenalty = Math.max(0, elapsedSec - idealTime);
           console.log("Time penalty", timePenalty);
-          const movePenalty = Math.max(0, moves - complexity);
+          const extraMoves = Math.max(0, moves - idealMoves);
+          console.log("extraMoves", extraMoves);
+          const movePenalty = extraMoves * 2;
           console.log("movePenalty", movePenalty);
-          const baseScore = complexity * 10;
-          const challengeScore = Math.abs(
-            baseScore - timePenalty * 1 - movePenalty * 2
+
+          // Final per‐challenge score, clamped ≥ 0
+          const challengeScore = Math.max(
+            0,
+            Math.round(baseScore - timePenalty - movePenalty)
           );
-          console.log("totalScore", challengeScore);
-          console.log("-------------------------------");
-          return Math.abs(totalScore + challengeScore);
+          console.log("challengeScore", challengeScore);
+          console.log("--------------------------------");
+          return totalScore + challengeScore;
         }, 0);
       },
     },
