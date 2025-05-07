@@ -206,34 +206,6 @@ export const useGameStore = create<GameStoreState>()(
         set({ challenges: updatedChallenges });
       },
 
-      /**
-       * Calculate the total score across all completed challenges.
-       */
-      //TODO : Refactor this to use a more efficient algorithm.
-      // getScore: () => {
-      //   const { challenges } = get();
-      //   return challenges.reduce((totalScore, challenge) => {
-      //     if (!challenge.completed) {
-      //       return totalScore;
-      //     }
-      //     const { complexity, timerValue, moves } = challenge;
-      //     console.log("complexity", complexity);
-      //     console.log("timerValue", timerValue);
-      //     console.log("moves", moves);
-      //     const timePenalty = timerValue;
-      //     console.log("Time penalty", timePenalty);
-      //     const movePenalty = Math.max(0, moves - complexity);
-      //     console.log("movePenalty", movePenalty);
-      //     const baseScore = complexity * 10;
-      //     const challengeScore = Math.abs(
-      //       baseScore - timePenalty * 1 - movePenalty * 2
-      //     );
-      //     console.log("totalScore", challengeScore);
-      //     console.log("-------------------------------");
-      //     return Math.abs(totalScore + challengeScore);
-      //   }, 0);
-      // },
-
       getScore: () => {
         const { challenges } = get();
         const MAX_COMPLEXITY = 3;
