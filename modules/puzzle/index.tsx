@@ -16,6 +16,7 @@ import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
 import { useTimerActions, useTimerStore } from "@/stores/timer";
 import { NUMBER_OF_QUESTION } from "@/constants";
+import { fetchUnsplashImage } from "@/helpers/unsplash-photo";
 
 export default function Puzzle() {
   // Store slices
@@ -50,9 +51,19 @@ export default function Puzzle() {
 
   // On mount, fetch images
   useEffect(() => {
+    const getImages = async () => {
+      try {
+        useUnsplashStore.setState({ loading: true });
+        const unsplashImages = await fetchUnsplashImage(NUMBER_OF_QUESTION);
+        fetchImages(unsplashImages);
+      } catch (err) {
+        console.error("Error fetching images:", err);
+      }
+    };
+
     console.log("FETCH IMAGES!", images);
     if (images.length === 0 && loading) {
-      fetchImages("forest", NUMBER_OF_QUESTION);
+      getImages();
     }
   }, [images, loading]);
 
