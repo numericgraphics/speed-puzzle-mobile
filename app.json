@@ -36,7 +36,7 @@
           "android": {
             "image": "./assets/images/speed-puzzle-splash-icon.png",
             "imageWidth": 100,
-            "resizeMode": "cover"
+            "resizeMode": "contain"
           }
         }
       ],
