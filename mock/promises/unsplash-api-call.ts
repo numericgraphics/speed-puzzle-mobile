@@ -4,7 +4,7 @@ import {
   mockedUnsplashDataLight,
 } from "../payload-unsplash-photos";
 
-type MockResponse = {
+export type MockResponse = {
   success: boolean;
   message: string;
   data: UnsplashImageData[];
