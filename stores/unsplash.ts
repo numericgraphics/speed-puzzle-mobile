@@ -1,10 +1,9 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { mockUnsplashApiCall } from "@/mock/promises/unsplash-api-call";
 import { UnsplashImageData } from "@/types";
 
 interface UnsplashStoreActions {
-  fetchImages: (query: string, count?: number) => Promise<void>;
+  fetchImages: (images: UnsplashImageData[]) => Promise<void>;
   getImage: (id: string) => UnsplashImageData | undefined;
   resetImages: () => void;
 }
@@ -27,17 +26,13 @@ export const useUnsplashStore = create<UnsplashStoreState>()(
     // Put all logic in an `actions` object
     actions: {
       // 1) fetchImages
-      fetchImages: async (query: string, count = 1) => {
+      fetchImages: (images: UnsplashImageData[]) => {
         console.log("useUnsplashStore fetchImages ");
-        set({ loading: true, error: null });
+        set({ error: null });
+        // set({ loading: true, error: null });
         try {
-          // If calling the real Unsplash API, do it here
-          // For now, replicate with your mock:
-          const imagesURL = await mockUnsplashApiCall();
-          // console.log("useUnsplashStore fetchImages ", imagesURL);
-
           set({
-            images: imagesURL.data,
+            images,
             imageReady: true,
             loading: false,
           });

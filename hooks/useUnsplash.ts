@@ -1,5 +1,10 @@
-import { mockUnsplashApiCall } from "@/mock/promises/unsplash-api-call";
-import { UnsplashImageData } from "@/types";
+import { USE_MOCK } from "@/constants";
+import { createImageDataArray } from "@/helpers/unsplash-photo";
+import {
+  MockResponse,
+  mockUnsplashApiCall,
+} from "@/mock/promises/unsplash-api-call";
+import { UnsplashImageData, UnsplashResponse } from "@/types";
 import React, { useState, useEffect } from "react";
 
 export function useUnsplash() {
@@ -10,16 +15,21 @@ export function useUnsplash() {
 
   const fetchImages = async (query: string, count = 1) => {
     try {
-      // const response = await fetch(
-      //   `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${UNSPLASH_ACCESS_KEY}`
-      // );
-      // const data = await response.json();
-      // const imagesURL = createImageDataArray(data);
+      let imagesURL: UnsplashImageData[] = [];
+      if (USE_MOCK) {
+        const imagesURLTemp = await mockUnsplashApiCall();
+        imagesURL = imagesURLTemp.data;
+      } else {
+        const response = await fetch(
+          `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${UNSPLASH_ACCESS_KEY}`
+        );
+        const data = (await response.json()) as UnsplashResponse;
+        imagesURL = createImageDataArray(data).images;
+      }
 
-      const imagesURL = await mockUnsplashApiCall();
       console.log("Fetched data:", imagesURL);
       if (imagesURL) {
-        setImages(imagesURL.data);
+        setImages(imagesURL);
       }
     } catch (error: any) {
       console.error("Error fetching images from Unsplash:", error);
