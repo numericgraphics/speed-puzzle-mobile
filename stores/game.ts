@@ -8,7 +8,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 
-interface GameChallengeType {
+export interface GameChallengeType {
   image: UnsplashImageData;
   completed: boolean;
   pieces: PuzzlePieceType[];
@@ -214,9 +214,14 @@ export const useGameStore = create<GameStoreState>()(
           if (!challenge.completed) return totalScore;
 
           const { complexity, timerValue, moves } = challenge;
-          console.log("complexity", complexity);
-          console.log("timerValue", timerValue);
-          console.log("moves", moves);
+          console.log(
+            "complexity:",
+            complexity,
+            "timerValue:",
+            timerValue,
+            "moves:",
+            moves
+          );
           // Convert timer from ms to seconds for finer granularity:
           const elapsedSec = timerValue / 1000;
 
@@ -244,11 +249,16 @@ export const useGameStore = create<GameStoreState>()(
 
           // Compute penalties
           const timePenalty = Math.max(0, elapsedSec - idealTime);
-          console.log("Time penalty", timePenalty);
           const extraMoves = Math.max(0, moves - idealMoves);
-          console.log("extraMoves", extraMoves);
           const movePenalty = extraMoves * 2;
-          console.log("movePenalty", movePenalty);
+          console.log(
+            "Penalties - Time:",
+            timePenalty,
+            "Extra Moves:",
+            extraMoves,
+            "Move Penalty:",
+            movePenalty
+          );
 
           // Final per‐challenge score, clamped ≥ 0
           const challengeScore = Math.max(
