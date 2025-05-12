@@ -11,6 +11,7 @@ import {
   useGameStoreStartTimer,
 } from "@/stores/game";
 import PuzzleContainer from "@/modules/puzzle/puzzle-container";
+import PuzzleContainerVertical from "@/modules/puzzle/puzzle-vertical-container";
 import { StatusMessage } from "@/components/message-display";
 import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
@@ -120,10 +121,20 @@ export default function Puzzle() {
     return <CompletedPuzzle onRestart={onRestartGame} score={getScore()} />;
   }
 
+  const isVertical = true; // TODO : use RSC
   return (
-    <PuzzleContainer
-      image={currentChallenge?.image}
-      pieces={currentChallenge?.pieces}
-    />
+    <>
+      {isVertical ? (
+        <PuzzleContainerVertical
+          image={currentChallenge?.image}
+          pieces={currentChallenge?.pieces}
+        />
+      ) : (
+        <PuzzleContainer
+          image={currentChallenge?.image}
+          pieces={currentChallenge?.pieces}
+        />
+      )}
+    </>
   );
 }
