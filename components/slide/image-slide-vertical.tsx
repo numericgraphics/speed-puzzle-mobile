@@ -28,7 +28,7 @@ const SlideVertical = ({
         ]}
         contentPosition={{ left: contentPosition }}
         contentFit="cover"
-        transition={300}
+        transition={0}
       />
     </View>
   );

@@ -9,18 +9,14 @@ import {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 import Draggable from "../../components/draggable";
 import Slide from "../../components/slide/image-slide";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
-import { PuzzleLegend } from "../../components/image-legend";
-import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
-import TimeDisplay from "@/components/timer-display";
-import { useTimerValue } from "@/stores/timer";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
@@ -133,8 +129,8 @@ export default function PuzzleContainer({
         return (
           <Draggable
             key={index}
-            positions={positions}
             id={index}
+            positions={positions}
             itemHeight={SLIDE_HEIGHT}
             onDragEnd={onDragEnd}
           >

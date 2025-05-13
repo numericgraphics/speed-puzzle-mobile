@@ -74,14 +74,14 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
         positions.value = objectMove(positions.value, currentIndex, newIndex);
       }
     })
-    .onFinalize(() => {
+    .onFinalize((event) => {
       isDragging.value = false;
       scale.value = withSpring(1);
       offsetX.value = withSpring((positions.value[idKey] ?? 0) * itemWidth);
       onDragEnd(positions);
     });
 
-  const style = useAnimatedStyle(() => ({
+  const animatedStyle = useAnimatedStyle(() => ({
     position: "absolute",
     left: offsetX.value,
     top: 0,
@@ -90,7 +90,7 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
 
   return (
     <GestureDetector gesture={panGesture}>
-      <Animated.View style={style}>{children}</Animated.View>
+      <Animated.View style={animatedStyle}>{children}</Animated.View>
     </GestureDetector>
   );
 };
