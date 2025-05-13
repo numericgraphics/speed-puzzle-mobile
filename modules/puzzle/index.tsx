@@ -15,9 +15,14 @@ import PuzzleContainerVertical from "@/modules/puzzle/puzzle-vertical-container"
 import { StatusMessage } from "@/components/message-display";
 import { CompletedPuzzle } from "./complete-screen";
 import { StartPuzzle } from "./start-screen";
-import { useTimerActions, useTimerStore } from "@/stores/timer";
+import { useTimerActions, useTimerStore, useTimerValue } from "@/stores/timer";
 import { NUMBER_OF_QUESTION } from "@/constants";
 import { fetchUnsplashImage } from "@/helpers/unsplash-photo";
+import { SafeAreaView, View } from "react-native";
+import RectangleLogo from "@/components/logo/rectangles";
+import TimeDisplay from "@/components/timer-display";
+import { PuzzleLegend } from "@/components/image-legend";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Puzzle() {
   // Store slices
@@ -39,6 +44,8 @@ export default function Puzzle() {
   const timerAction = useTimerActions();
   const startTimer = useGameStoreStartTimer();
   const { actions: timerActions } = useTimerStore.getState();
+  const { theme, styles, isDark } = useTheme();
+  const { containers } = styles;
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
@@ -125,8 +132,36 @@ export default function Puzzle() {
   }
 
   return (
-    <>
-      {currentChallenge?.isVertical ? (
+    <SafeAreaView style={containers.centeredFullScreen}>
+      <RectangleLogo
+        width={30}
+        height={30}
+        style={[{ marginBottom: theme.spacer[3].y }]}
+        color={isDark ? theme.color.white : theme.color.black}
+      />
+      {/* <View
+        style={[
+          containers.fullWidth,
+          {
+            alignItems: "flex-end",
+            paddingHorizontal: theme.spacer[3].x,
+            marginBottom: theme.spacer[2].y,
+          },
+        ]}
+      >
+        <TimeDisplay completed={currentChallenge?.completed} />
+      </View> */}
+      <PuzzleContainerVertical
+        image={currentChallenge?.image}
+        pieces={currentChallenge?.pieces}
+      />
+      <PuzzleLegend image={currentChallenge?.image} />
+    </SafeAreaView>
+  );
+}
+
+/*
+   {currentChallenge?.isVertical ? (
         <PuzzleContainerVertical
           image={currentChallenge?.image}
           pieces={currentChallenge?.pieces}
@@ -137,6 +172,5 @@ export default function Puzzle() {
           pieces={currentChallenge?.pieces}
         />
       )}
-    </>
-  );
-}
+
+*/

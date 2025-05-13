@@ -12,11 +12,7 @@ const SlideVertical = ({
 }: SlideType) => {
   const [contentPosition, setContentPosition] = React.useState(0);
   useEffect(() => {
-    console.log("SlideVertical url", url);
     setContentPosition(-(slideWidth * index));
-    () => {
-      console.log("SlideVertical unmounted");
-    };
   }, [url]);
 
   return (
@@ -26,6 +22,7 @@ const SlideVertical = ({
         style={[
           styles.image,
           {
+            width: "auto",
             height: imageHeight,
           },
         ]}
