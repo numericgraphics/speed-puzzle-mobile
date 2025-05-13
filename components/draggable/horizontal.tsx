@@ -1,4 +1,3 @@
-// existing imports...
 import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -9,7 +8,6 @@ import Animated, {
   SharedValue,
 } from "react-native-reanimated";
 
-// utility: swaps two indexes inside a positions map
 const objectMove = (
   object: Record<string, number>,
   from: number,
@@ -33,10 +31,6 @@ export interface DraggableProps {
   onDragEnd: (event: SharedValue<Record<string, number>>) => void;
 }
 
-/* -------------------------------------------------------------
-   DraggableHorizontal – same API as the vertical Draggable
-   but constrained to the X axis.
-------------------------------------------------------------- */
 export const DraggableHorizontal: React.FC<DraggableProps> = ({
   id,
   positions,
@@ -52,8 +46,6 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
   const offsetX = useSharedValue((positions.value[idKey] ?? 0) * itemWidth);
   const startX = useSharedValue(0);
   const itemCount = Object.keys(positions.value).length;
-
-  console.log("DraggableHorizontal offsetX", offsetX.value);
 
   useAnimatedReaction(
     () => positions.value[idKey],

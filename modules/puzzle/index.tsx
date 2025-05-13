@@ -57,7 +57,7 @@ export default function Puzzle() {
         useUnsplashStore.setState({ loading: true });
         const unsplashImages = await fetchUnsplashImage(
           NUMBER_OF_QUESTION,
-          true
+          false
         );
         fetchImages(unsplashImages);
       } catch (err) {
@@ -124,10 +124,9 @@ export default function Puzzle() {
     return <CompletedPuzzle onRestart={onRestartGame} score={getScore()} />;
   }
 
-  const isVertical = true; // TODO : use RSC
   return (
     <>
-      {isVertical ? (
+      {currentChallenge?.isVertical ? (
         <PuzzleContainerVertical
           image={currentChallenge?.image}
           pieces={currentChallenge?.pieces}

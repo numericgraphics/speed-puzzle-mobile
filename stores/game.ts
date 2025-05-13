@@ -7,15 +7,7 @@ import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
-
-export interface GameChallengeType {
-  image: UnsplashImageData;
-  completed: boolean;
-  pieces: PuzzlePieceType[];
-  complexity: number;
-  moves: number;
-  timerValue: number;
-}
+import { getRandomBoolean } from "@/utils/math";
 
 interface GameStoreActions {
   buildChallenges: () => Promise<void>;
@@ -29,6 +21,16 @@ interface GameStoreActions {
   startGame: () => void;
   incrementChallengeMove: () => void;
   getScore: () => number;
+}
+
+export interface GameChallengeType {
+  image: UnsplashImageData;
+  completed: boolean;
+  pieces: PuzzlePieceType[];
+  complexity: number;
+  moves: number;
+  timerValue: number;
+  isVertical: boolean;
 }
 
 interface GameStoreState {
@@ -74,6 +76,7 @@ export const useGameStore = create<GameStoreState>()(
               completed: false,
               pieces: puzzlePieces,
               complexity: PuzzlePieces.checkPuzzleComplexity(puzzlePieces),
+              isVertical: getRandomBoolean(),
             } as GameChallengeType;
           });
 
