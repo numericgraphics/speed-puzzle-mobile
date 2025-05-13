@@ -39,10 +39,8 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
   onDragEnd,
 }) => {
   const idKey = id.toString();
-
-  console.log("DraggableHorizontal", children);
-
   const isDragging = useSharedValue(false);
+  const scale = useSharedValue(1);
   const offsetX = useSharedValue((positions.value[idKey] ?? 0) * itemWidth);
   const startX = useSharedValue(0);
   const itemCount = Object.keys(positions.value).length;
@@ -61,9 +59,10 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
     .onStart(() => {
       isDragging.value = true;
       startX.value = offsetX.value;
+      scale.value = withSpring(1.05);
     })
-    .onUpdate(({ translationX }) => {
-      const newX = startX.value + translationX;
+    .onUpdate((event) => {
+      const newX = startX.value + event.translationX;
       offsetX.value = newX;
 
       const newIndex = Math.max(
@@ -77,6 +76,7 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
     })
     .onFinalize(() => {
       isDragging.value = false;
+      scale.value = withSpring(1);
       offsetX.value = withSpring((positions.value[idKey] ?? 0) * itemWidth);
       onDragEnd(positions);
     });

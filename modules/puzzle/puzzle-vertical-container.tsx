@@ -39,10 +39,6 @@ export default function PuzzleContainerVertical({
   const { containers } = styles;
   const { url } = image;
 
-  console.log("PuzzleContainerVertical", pieces);
-
-  //   return null;
-
   const {
     checkChallengeValidity,
     getCurrentChallenge,
@@ -51,7 +47,7 @@ export default function PuzzleContainerVertical({
   } = useGameStoreActions();
 
   const currentChallenge = getCurrentChallenge();
-  const timerValue = 0; //useTimerValue();
+  // const timerValue = 0; //useTimerValue();
 
   /* shared positions map (columnIndex -> logicalPosition) */
   const positions = useSharedValue(
@@ -89,67 +85,36 @@ export default function PuzzleContainerVertical({
   };
 
   return (
-    <SafeAreaView style={[containers.centeredFullScreen]}>
-      {/* logo */}
-      <RectangleLogo
-        width={30}
-        height={30}
-        style={{ marginBottom: theme.spacer[3].y }}
-        color={isDark ? theme.color.white : theme.color.black}
-      />
-
-      {/* timer */}
-      <View
-        style={[
-          containers.fullWidth,
-          {
-            alignItems: "flex-end",
-            paddingHorizontal: theme.spacer[3].x,
-            marginBottom: theme.spacer[2].y,
-          },
-        ]}
-      >
-        <TimeDisplay
-          completed={currentChallenge?.completed}
-          timerValue={timerValue}
-        />
-      </View>
-
-      {/* puzzle columns */}
-      <Animated.View
-        style={[
-          {
-            width: SCREEN_WIDTH,
-            height: IMAGE_HEIGHT,
-            paddingVertical: theme.spacer[3].y,
-            opacity: 1,
-          },
-          //   animatedStyle,
-        ]}
-      >
-        {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => (
-          <DraggableHorizontal
-            key={index}
-            id={index}
-            positions={positions}
-            itemWidth={SLICE_WIDTH}
-            imageHeight={SCREEN_HEIGHT}
-            onDragEnd={onDragEnd}
-          >
-            <SlideVertical
-              id={index.toString()}
-              index={index}
-              url={url}
-              slideWidth={SLICE_WIDTH}
-              slideHeight={IMAGE_HEIGHT}
-              imageHeight={IMAGE_HEIGHT}
-            />
-          </DraggableHorizontal>
-        ))}
-      </Animated.View>
-
-      {/* legend */}
-      <PuzzleLegend image={image} />
-    </SafeAreaView>
+    <Animated.View
+      style={[
+        {
+          width: SCREEN_WIDTH,
+          height: IMAGE_HEIGHT,
+          paddingVertical: theme.spacer[3].y,
+          opacity: 1,
+        },
+        // animatedStyle,
+      ]}
+    >
+      {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => (
+        <DraggableHorizontal
+          key={index}
+          id={index}
+          positions={positions}
+          itemWidth={SLICE_WIDTH}
+          imageHeight={SCREEN_HEIGHT}
+          onDragEnd={onDragEnd}
+        >
+          <SlideVertical
+            id={index.toString()}
+            index={index}
+            url={url}
+            slideWidth={SLICE_WIDTH}
+            slideHeight={IMAGE_HEIGHT}
+            imageHeight={IMAGE_HEIGHT}
+          />
+        </DraggableHorizontal>
+      ))}
+    </Animated.View>
   );
 }
