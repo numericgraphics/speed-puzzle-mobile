@@ -41,8 +41,7 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
   id,
   positions,
   children,
-  itemWidth = 120,
-  imageHeight,
+  itemWidth,
   onDragEnd,
 }) => {
   const idKey = id.toString();
@@ -95,7 +94,6 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
     left: offsetX.value,
     top: 0,
     zIndex: isDragging.value ? 1 : 0,
-    backgroundColor: "green",
   }));
 
   return (

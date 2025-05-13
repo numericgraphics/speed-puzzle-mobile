@@ -12,31 +12,22 @@ import Animated, {
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 
-import Slide from "@/components/slide/image-slide";
 import RectangleLogo from "@/components/logo/rectangles";
 import { PuzzleLegend } from "@/components/image-legend";
 import TimeDisplay from "@/components/timer-display";
 import { useTheme } from "@/hooks/useTheme";
-import { useTimerValue } from "@/stores/timer";
 import { useGameStoreActions } from "@/stores/game";
 
 import { DraggableHorizontal } from "@/components/draggable/horizontal";
+import SlideVertical from "@/components/slide/image-slide-vertical";
 
 /* layout constants */
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const SLICE_WIDTH = 120;
+const SLICE_WIDTH = SCREEN_WIDTH / PUZZLE_SLIDE_NUMBER; // Width of each slice
 const SLIDE_HEIGHT = 120; // Height of each slide
 const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER;
 
-/* -------------------------------------------------------------
-   Existing default export – horizontal rows (unchanged)
-------------------------------------------------------------- */
-// export default function PuzzleContainer({...}) { ... }
-
-/* -------------------------------------------------------------
-   New vertical container – draggable horizontally
-------------------------------------------------------------- */
 export default function PuzzleContainerVertical({
   image,
   pieces,
@@ -147,13 +138,13 @@ export default function PuzzleContainerVertical({
             imageHeight={SCREEN_HEIGHT}
             onDragEnd={onDragEnd}
           >
-            <Slide
+            <SlideVertical
               id={index.toString()}
               index={index}
               url={url}
               slideWidth={SLICE_WIDTH}
-              slideHeight={SCREEN_HEIGHT}
-              imageHeight={SCREEN_HEIGHT}
+              slideHeight={IMAGE_HEIGHT}
+              imageHeight={IMAGE_HEIGHT}
             />
           </DraggableHorizontal>
         ))}
