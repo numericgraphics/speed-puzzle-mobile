@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Dimensions, SafeAreaView, View } from "react-native";
+import { Dimensions } from "react-native";
 import Animated, {
   runOnJS,
   SharedValue,
@@ -12,9 +12,6 @@ import Animated, {
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 
-import RectangleLogo from "@/components/logo/rectangles";
-import { PuzzleLegend } from "@/components/image-legend";
-import TimeDisplay from "@/components/timer-display";
 import { useTheme } from "@/hooks/useTheme";
 import { useGameStoreActions } from "@/stores/game";
 
@@ -91,9 +88,8 @@ export default function PuzzleContainerVertical({
           width: SCREEN_WIDTH,
           height: IMAGE_HEIGHT,
           paddingVertical: theme.spacer[3].y,
-          opacity: 1,
         },
-        // animatedStyle,
+        animatedStyle,
       ]}
     >
       {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => (
