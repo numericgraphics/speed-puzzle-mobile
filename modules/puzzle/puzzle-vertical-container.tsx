@@ -89,9 +89,7 @@ export default function PuzzleContainerVertical({
   };
 
   return (
-    <SafeAreaView
-      style={[containers.centeredFullScreen, { backgroundColor: "yellow" }]}
-    >
+    <SafeAreaView style={[containers.centeredFullScreen]}>
       {/* logo */}
       <RectangleLogo
         width={30}

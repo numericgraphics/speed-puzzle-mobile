@@ -27,7 +27,7 @@ export const PUZZLE_SLIDE_NUMBER: number = 4;
 
 export const NUMBER_OF_QUESTION: number = 6;
 
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 
 export const COUNTER_MESSAGES = Object.freeze({
   START: "start",
