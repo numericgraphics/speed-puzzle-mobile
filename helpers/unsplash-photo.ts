@@ -3,10 +3,6 @@ import { mockUnsplashApiCall } from "@/mock/promises/unsplash-api-call";
 import { UnsplashResponse, UnsplashImageData } from "@/types";
 import { getRandomQuery } from "./queries";
 
-/**
- * Extracts the `regular` URLs from the response and places them
- * into a single object containing a `images` string array.
- */
 export function createImageDataArray(data: UnsplashResponse): {
   images: UnsplashImageData[];
 } {
@@ -15,7 +11,6 @@ export function createImageDataArray(data: UnsplashResponse): {
     url: item.urls.regular,
     description: item.description,
     user: item.user.name,
-    // Adjust if your actual path is different (e.g. `item.user.links.html`)
     link: item.user.links.html,
   }));
 
@@ -23,7 +18,8 @@ export function createImageDataArray(data: UnsplashResponse): {
 }
 
 export async function fetchUnsplashImage(
-  count = 1
+  count = 1,
+  isVertical = true
 ): Promise<UnsplashImageData[]> {
   const UNSPLASH_ACCESS_KEY = process.env.EXPO_PUBLIC_UNSPLASH_ACCESS_KEY;
   const query = getRandomQuery();
@@ -34,7 +30,9 @@ export async function fetchUnsplashImage(
     imagesURL = imagesURLTemp.data;
   } else {
     const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${UNSPLASH_ACCESS_KEY}`
+      `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&orientation=${
+        isVertical ? "portrait" : "landscape"
+      }&client_id=${UNSPLASH_ACCESS_KEY}`
     );
     const data = (await response.json()) as UnsplashResponse;
     imagesURL = createImageDataArray(data).images;

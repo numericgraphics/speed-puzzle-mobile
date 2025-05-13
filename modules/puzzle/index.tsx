@@ -55,7 +55,10 @@ export default function Puzzle() {
     const getImages = async () => {
       try {
         useUnsplashStore.setState({ loading: true });
-        const unsplashImages = await fetchUnsplashImage(NUMBER_OF_QUESTION);
+        const unsplashImages = await fetchUnsplashImage(
+          NUMBER_OF_QUESTION,
+          true
+        );
         fetchImages(unsplashImages);
       } catch (err) {
         console.error("Error fetching images:", err);
