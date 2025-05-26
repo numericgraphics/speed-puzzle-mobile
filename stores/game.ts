@@ -8,6 +8,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 import { getRandomBoolean } from "@/utils/math";
+import { useCurrentChallengeStore } from "./current-challenge";
 
 interface GameStoreActions {
   buildChallenges: () => Promise<void>;
@@ -113,6 +114,7 @@ export const useGameStore = create<GameStoreState>()(
           set({ completed: true });
         }
         set({ needNextChallenge: false });
+        useCurrentChallengeStore.getState().reset();
       },
 
       prevChallenge: () => {
@@ -150,18 +152,28 @@ export const useGameStore = create<GameStoreState>()(
         console.log("Puzzle order check (from game store):", ordered);
 
         if (ordered) {
+          // const timeoutId = setTimeout(() => {
           const { challenges, currentChallengeIndex } = get();
+          const { currentMove, completed: sliceCompleted } =
+            useCurrentChallengeStore.getState();
+          useCurrentChallengeStore.getState().markCompleted();
           const { actions: timerActions } = useTimerStore.getState();
           timerActions.stop();
           const updatedChallenges = [...challenges];
           updatedChallenges[currentChallengeIndex] = {
             ...updatedChallenges[currentChallengeIndex],
-            completed: true,
+            completed: sliceCompleted,
+            moves: currentMove,
           };
 
           set({
             challenges: updatedChallenges,
           });
+          // reset local move counter
+          useCurrentChallengeStore.getState().reset();
+          // console.log("timeoutId", timeoutId);
+          // clearTimeout(timeoutId);
+          // }, 800);
         }
       },
 
@@ -193,20 +205,11 @@ export const useGameStore = create<GameStoreState>()(
           challenges: [],
           needNextChallenge: false,
         });
+        useCurrentChallengeStore.getState().reset();
       },
 
       incrementChallengeMove: () => {
-        const { challenges, currentChallengeIndex } = get();
-
-        const updatedChallenges = [...challenges];
-        const currentChallenge = updatedChallenges[currentChallengeIndex];
-
-        updatedChallenges[currentChallengeIndex] = {
-          ...currentChallenge,
-          moves: (currentChallenge.moves || 0) + 1,
-        };
-
-        set({ challenges: updatedChallenges });
+        useCurrentChallengeStore.getState().increment();
       },
 
       getScore: () => {
