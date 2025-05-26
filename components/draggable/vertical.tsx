@@ -31,7 +31,7 @@ export interface DraggableProps {
   onDragEnd: (event: SharedValue<Record<string, number>>) => void;
 }
 
-export const DraggableHorizontal: React.FC<DraggableProps> = ({
+export const DraggableVertical: React.FC<DraggableProps> = ({
   id,
   positions,
   children,
@@ -76,9 +76,20 @@ export const DraggableHorizontal: React.FC<DraggableProps> = ({
     })
     .onFinalize((event) => {
       isDragging.value = false;
-      scale.value = withSpring(1);
-      offsetX.value = withSpring((positions.value[idKey] ?? 0) * itemWidth);
-      onDragEnd(positions);
+      scale.value = withSpring(1, {
+        overshootClamping: true,
+        stiffness: 50,
+      });
+      offsetX.value = withSpring(
+        (positions.value[idKey] ?? 0) * itemWidth,
+        {
+          overshootClamping: true,
+          stiffness: 50,
+        },
+        () => {
+          onDragEnd(positions);
+        }
+      );
     });
 
   const animatedStyle = useAnimatedStyle(() => ({

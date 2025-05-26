@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
   runOnJS,
+  runOnUI,
   SharedValue,
   useAnimatedStyle,
   useSharedValue,
@@ -15,7 +16,7 @@ import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useTheme } from "@/hooks/useTheme";
 import { useGameStoreActions } from "@/stores/game";
 
-import { DraggableHorizontal } from "@/components/draggable/horizontal";
+import { DraggableVertical } from "@/components/draggable/vertical";
 import SlideVertical from "@/components/slide/image-slide-vertical";
 
 /* layout constants */
@@ -93,7 +94,7 @@ export default function PuzzleContainerVertical({
       ]}
     >
       {[...Array(PUZZLE_SLIDE_NUMBER)].map((_, index) => (
-        <DraggableHorizontal
+        <DraggableVertical
           key={index}
           id={index}
           positions={positions}
@@ -109,7 +110,7 @@ export default function PuzzleContainerVertical({
             slideHeight={IMAGE_HEIGHT}
             imageHeight={IMAGE_HEIGHT}
           />
-        </DraggableHorizontal>
+        </DraggableVertical>
       ))}
     </Animated.View>
   );

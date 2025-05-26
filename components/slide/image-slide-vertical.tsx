@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { SlideType } from "@/modules/puzzle/puzzle-container";
@@ -10,10 +10,9 @@ const SlideVertical = ({
   slideWidth,
   imageHeight,
 }: SlideType) => {
-  const [contentPosition, setContentPosition] = React.useState(0);
-  useEffect(() => {
-    setContentPosition(-(slideWidth * index));
-  }, [url]);
+  const contentPosition = useRef(-(slideWidth * index));
+
+  console.log("SlideVertical slideWidth", slideWidth);
 
   return (
     <View style={[styles.container, { width: slideWidth }]}>
@@ -22,13 +21,12 @@ const SlideVertical = ({
         style={[
           styles.image,
           {
-            width: "auto",
             height: imageHeight,
           },
         ]}
-        contentPosition={{ left: contentPosition }}
         contentFit="cover"
-        transition={0}
+        contentPosition={{ left: slideWidth * 0.5 + contentPosition.current }}
+        transition={300}
       />
     </View>
   );
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   image: {
-    height: "100%",
+    width: "auto",
   },
 });
 
