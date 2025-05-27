@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
     width: "100%",
+    backgroundColor: "red",
   },
   image: {
     width: "100%",
