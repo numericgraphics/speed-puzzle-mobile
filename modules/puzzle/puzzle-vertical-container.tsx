@@ -18,6 +18,10 @@ import { useGameStoreActions } from "@/stores/game";
 
 import { DraggableVertical } from "@/components/draggable/vertical";
 import SlideVertical from "@/components/slide/image-slide-vertical";
+import {
+  useChallengeStore,
+  useChallengeStoreCompleted,
+} from "@/stores/challenges";
 
 /* layout constants */
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -44,7 +48,7 @@ export default function PuzzleContainerVertical({
     incrementChallengeMove,
   } = useGameStoreActions();
 
-  const currentChallenge = getCurrentChallenge();
+  const currentChallengeCompleted = useChallengeStoreCompleted();
   // const timerValue = 0; //useTimerValue();
 
   /* shared positions map (columnIndex -> logicalPosition) */
@@ -66,7 +70,7 @@ export default function PuzzleContainerVertical({
 
   /**/
   useEffect(() => {
-    if (currentChallenge?.completed) {
+    if (currentChallengeCompleted) {
       opacity.value = withDelay(
         1000,
         withTiming(0, { duration: 500 }, (done) => {
@@ -74,7 +78,7 @@ export default function PuzzleContainerVertical({
         })
       );
     }
-  }, [currentChallenge]);
+  }, [currentChallengeCompleted]);
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";

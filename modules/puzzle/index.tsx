@@ -23,6 +23,10 @@ import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
+import {
+  useChallengeStore,
+  useChallengeStoreCompleted,
+} from "@/stores/challenges";
 
 export default function Puzzle() {
   // Store slices
@@ -46,6 +50,7 @@ export default function Puzzle() {
   const { actions: timerActions } = useTimerStore.getState();
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
+  const currentChallengeCompleted = useChallengeStoreCompleted();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
@@ -97,11 +102,15 @@ export default function Puzzle() {
   }, [imageReady, buildChallenges]);
 
   useEffect(() => {
-    if (currentChallenge?.completed && needNextChallenge) {
+    console.log(
+      "NEXT CHALLENGE! currentChallengeCompleted",
+      currentChallengeCompleted
+    );
+    if (currentChallengeCompleted && needNextChallenge) {
       console.log("NEXT CHALLENGE! ", currentChallenge);
       nextChallenge();
     }
-  }, [currentChallenge, nextChallenge, needNextChallenge]);
+  }, [currentChallengeCompleted, nextChallenge, needNextChallenge]);
 
   // Listen for the end-of-game
   useEffect(() => {

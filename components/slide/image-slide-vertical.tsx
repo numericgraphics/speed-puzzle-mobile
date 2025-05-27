@@ -25,7 +25,7 @@ const SlideVertical = ({
           },
         ]}
         contentFit="cover"
-        contentPosition={{ left: slideWidth * 0.5 + contentPosition.current }}
+        contentPosition={{ left: contentPosition.current - slideWidth * 0.5 }}
         transition={300}
       />
     </View>
