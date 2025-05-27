@@ -9,14 +9,15 @@ import Animated, {
 import { useTheme } from "@/hooks/useTheme";
 
 import { useEffect } from "react";
+import { useTimerValue } from "@/stores/timer";
 
 interface TimeDisplayProps {
-  timerValue: number;
   completed: boolean;
 }
 
-function TimeDisplay({ completed, timerValue }: TimeDisplayProps) {
+function TimeDisplay({ completed }: TimeDisplayProps) {
   const { styles } = useTheme();
+  const timerValue = useTimerValue();
   const { typography } = styles;
   // 1) Shared scale value
   const scale = useSharedValue(0);
