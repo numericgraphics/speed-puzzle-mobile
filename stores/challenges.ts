@@ -14,10 +14,10 @@ export const useChallengeStore = create<CurrentChallengeSlice>()(
   devtools((set) => ({
     currentMove: 0,
     completed: false,
-    increment: () => set((state) => ({ currentMove: state.currentMove + 1 })),
+    increment: () =>
+      set((state) => ({ ...state, currentMove: state.currentMove + 1 })),
     markCompleted: () => {
-      console.log("useChallengeStore Challenge completed!");
-      set({ completed: true });
+      set((state) => ({ ...state, completed: true }));
     },
     reset: () => set({ currentMove: 0, completed: false }),
   }))
