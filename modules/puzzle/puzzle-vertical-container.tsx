@@ -20,8 +20,10 @@ import { DraggableVertical } from "@/components/draggable/vertical";
 import SlideVertical from "@/components/slide/image-slide-vertical";
 import {
   useChallengeStore,
+  //   useChallengeStore,
   useChallengeStoreCompleted,
 } from "@/stores/challenges";
+import PuzzlePieces from "@/helpers/puzzle";
 
 /* layout constants */
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -31,15 +33,17 @@ const SLIDE_HEIGHT = 120; // Height of each slide
 const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER;
 
 export default function PuzzleContainerVertical({
-  image,
+  url,
   pieces,
 }: {
-  image: UnsplashImageData;
+  url: string;
   pieces: PuzzlePieceType[];
 }) {
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  const { url } = image;
+  // const { url } = image;
+
+  console.log("PuzzleContainerVertical image redrawn");
 
   const {
     checkChallengeValidity,
@@ -48,12 +52,12 @@ export default function PuzzleContainerVertical({
     incrementChallengeMove,
   } = useGameStoreActions();
 
-  const currentChallengeCompleted = useChallengeStoreCompleted();
+  // const currentChallengeCompleted = useChallengeStoreCompleted();
   // const timerValue = 0; //useTimerValue();
 
   /* shared positions map (columnIndex -> logicalPosition) */
   const positions = useSharedValue(
-    Object.assign({}, ...pieces.map((item, idx) => ({ [idx]: item.index })))
+    Object.assign({}, ...pieces?.map((item, idx) => ({ [idx]: item.index })))
   );
 
   /* fade-in animation */
@@ -63,14 +67,29 @@ export default function PuzzleContainerVertical({
   useEffect(() => {
     positions.value = Object.assign(
       {},
-      ...pieces.map((item, idx) => ({ [idx]: item.index }))
+      ...pieces?.map((item, idx) => ({ [idx]: item.index }))
     );
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
 
   /**/
-  useEffect(() => {
-    if (currentChallengeCompleted) {
+  // useEffect(() => {
+  //   if (currentChallengeCompleted) {
+  //     opacity.value = withDelay(
+  //       1000,
+  //       withTiming(0, { duration: 500 }, (done) => {
+  //         if (done) runOnJS(triggerNextChallenge)();
+  //       })
+  //     );
+  //   }
+  // }, [currentChallengeCompleted]);
+
+  function onVerifyOrder(positions: Record<string, number>) {
+    console.log("Puzzle order check - Action");
+    const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
+    if (ordered) {
+      console.log("Puzzle order check - Action", ordered);
+      useChallengeStore.getState().markCompleted();
       opacity.value = withDelay(
         1000,
         withTiming(0, { duration: 500 }, (done) => {
@@ -78,12 +97,13 @@ export default function PuzzleContainerVertical({
         })
       );
     }
-  }, [currentChallengeCompleted]);
+  }
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    runOnJS(checkChallengeValidity)(event.value);
+    // runOnJS(checkChallengeValidity)(event.value);
+    runOnJS(onVerifyOrder)(event.value);
   };
 
   return (

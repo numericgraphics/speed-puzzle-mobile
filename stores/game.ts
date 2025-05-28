@@ -8,7 +8,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 import { getRandomBoolean } from "@/utils/math";
-import { useChallengeStore, useChallengeStoreCompleted } from "./challenges";
+import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";
 
 interface GameStoreActions {
@@ -103,6 +103,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       nextChallenge: () => {
+        console.log("GAME STORE - nextChallenge");
         const { currentChallengeIndex, challenges } = get();
         // If we can move to the next challenge, do so
         if (currentChallengeIndex < challenges.length - 1) {
@@ -126,6 +127,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       triggerNextChallenge: () => {
+        console.log("GAME STORE - triggerNextChallenge");
         const { challenges, currentChallengeIndex } = get();
         // const { completed } = challenges[currentChallengeIndex];
         // if (completed) {
@@ -151,34 +153,14 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       checkChallengeValidity: (positions: Record<string, number>) => {
-        const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
-        console.log("Puzzle order check (from game store):", ordered);
-
-        if (ordered) {
-          // const timeoutId = setTimeout(() => {
-          // const { challenges, currentChallengeIndex } = get();
-          // const { currentMove, completed: sliceCompleted } =
-          //   useChallengeStore.getState();
-          const { markCompleted } = useChallengeStore.getState();
-          markCompleted();
-          const { actions: timerActions } = useTimerStore.getState();
-          timerActions.stop();
-          // const updatedChallenges = [...challenges];
-          // updatedChallenges[currentChallengeIndex] = {
-          //   ...updatedChallenges[currentChallengeIndex],
-          //   // completed: sliceCompleted,
-          //   moves: currentMove,
-          // };
-
-          // set({
-          //   challenges: updatedChallenges,
-          // });
-          // reset local move counter
-
-          // console.log("timeoutId", timeoutId);
-          // clearTimeout(timeoutId);
-          // }, 800);
-        }
+        // const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
+        // console.log("Puzzle order check (from game store):", ordered);
+        // if (ordered) {
+        //   console.log("Puzzle order check - Action", ordered);
+        //   useChallengeStore.getState().markCompleted();
+        //   // const { actions: timerActions } = useTimerStore.getState();
+        //   // timerActions.stop();
+        // }
       },
 
       validChallenge: () => {
