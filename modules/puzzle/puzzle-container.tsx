@@ -17,12 +17,12 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { useGameStoreActions } from "@/stores/game";
 import { useTheme } from "@/hooks/useTheme";
+import PuzzlePieces from "@/helpers/puzzle";
+import { useChallengeStore } from "@/stores/challenges";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SLIDE_HEIGHT = 120; // Height of each slide
 const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
-const imageUrl =
-  "https://media.admagazine.fr/photos/646dcd1c261b65c3279fdfd2/16:9/w_2240,c_limit/GettyImages-1347979016%20(1).jpg";
 
 export interface SlideType {
   id: string;
@@ -35,29 +35,23 @@ export interface SlideType {
 }
 
 export interface PuzzleContainerProps {
-  image: UnsplashImageData;
+  url: string;
   pieces: PuzzlePieceType[];
 }
 
-export default function PuzzleContainer({
-  image,
-  pieces,
-}: PuzzleContainerProps) {
+export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  const { url } = image;
-  const {
-    checkChallengeValidity,
-    getCurrentChallenge,
-    triggerNextChallenge,
-    incrementChallengeMove,
-  } = useGameStoreActions();
-  const currentChallenge = getCurrentChallenge();
+  const { triggerNextChallenge, incrementChallengeMove } =
+    useGameStoreActions();
+  // const currentChallenge = getCurrentChallenge();
   // const timerValue = useTimerValue();
   const positions = useSharedValue(
     Object.assign(
       {},
-      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
+      ...pieces?.map((item: PuzzlePieceType, index) => ({
+        [index]: item.index,
+      }))
     )
   );
   const opacity = useSharedValue(0); // fully opaque
@@ -73,48 +67,26 @@ export default function PuzzleContainer({
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
 
-  useEffect(() => {
-    if (currentChallenge?.completed) {
+  function onVerifyOrder(positions: Record<string, number>) {
+    const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
+    if (ordered) {
+      useChallengeStore.getState().markCompleted();
       opacity.value = withDelay(
-        1000,
-        withTiming(0, { duration: 500 }, (finished) => {
-          if (finished) {
-            runOnJS(triggerNextChallenge)();
-          }
+        1200,
+        withTiming(0, { duration: 500 }, (done) => {
+          if (done) runOnJS(triggerNextChallenge)();
         })
       );
     }
-  }, [currentChallenge]);
+  }
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    runOnJS(checkChallengeValidity)(event.value);
+    runOnJS(onVerifyOrder)(event.value);
   };
 
   return (
-    // <SafeAreaView style={containers.centeredFullScreen}>
-    //   <RectangleLogo
-    //     width={30}
-    //     height={30}
-    //     style={[{ marginBottom: theme.spacer[3].y }]}
-    //     color={isDark ? theme.color.white : theme.color.black}
-    //   />
-    //   <View
-    //     style={[
-    //       containers.fullWidth,
-    //       {
-    //         alignItems: "flex-end",
-    //         paddingHorizontal: theme.spacer[3].x,
-    //         marginBottom: theme.spacer[2].y,
-    //       },
-    //     ]}
-    //   >
-    //     <TimeDisplay
-    //       completed={currentChallenge?.completed}
-    //       timerValue={timerValue}
-    //     />
-    //   </View>
     <Animated.View
       style={[
         containers.fullWidth,

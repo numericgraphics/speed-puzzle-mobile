@@ -41,9 +41,9 @@ export default function Puzzle() {
     getScore,
   } = useGameStoreActions();
   const needNextChallenge = useNeedNextChallenge();
-  const currentChallenge = getCurrentChallenge();
   const [image, setImage] = React.useState(null);
   const [pieces, setPieces] = React.useState(null);
+  const [isVertical, setVerticalOrientation] = React.useState(false);
   const started = useGameStoreStarted();
   const timerAction = useTimerActions();
   const startTimer = useGameStoreStartTimer();
@@ -107,13 +107,14 @@ export default function Puzzle() {
       const currentChallenge = challenges[currentChallengeIndex];
       setImage(currentChallenge?.image);
       setPieces(currentChallenge?.pieces);
+      setVerticalOrientation(currentChallenge?.isVertical);
     }
   }, [challenges, currentChallengeIndex]);
 
   useEffect(() => {
     console.log("NEXT CHALLENGE! currentChallengeCompleted");
     if (needNextChallenge) {
-      console.log("NEXT CHALLENGE! ", currentChallenge);
+      console.log("NEXT CHALLENGE! ");
       nextChallenge();
     }
   }, [nextChallenge, needNextChallenge]);
@@ -166,7 +167,14 @@ export default function Puzzle() {
         <TimeDisplay completed={currentChallenge?.completed} />
       </View> */}
       {/* <StrictMode> */}
-      <PuzzleContainerVertical url={image?.url} pieces={pieces} />
+      {/* <PuzzleContainerVertical url={image?.url} pieces={pieces} /> */}
+
+      {isVertical ? (
+        <PuzzleContainerVertical url={image?.url} pieces={pieces} />
+      ) : (
+        <PuzzleContainer url={image?.url} pieces={pieces} />
+      )}
+
       {/* </StrictMode> */}
       <PuzzleLegend image={image} />
     </SafeAreaView>

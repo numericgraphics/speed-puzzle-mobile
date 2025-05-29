@@ -1,3 +1,4 @@
+import { animatedReactionConfig } from "@/config/animation";
 import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -64,7 +65,10 @@ const Draggable: React.FC<DraggableProps> = ({
     (currentPosition, previousPosition) => {
       if (currentPosition !== previousPosition && !isDragging.value) {
         // Smoothly animate to new position if not currently being dragged
-        offsetY.value = withSpring(currentPosition * itemHeight);
+        offsetY.value = withSpring(
+          currentPosition * itemHeight,
+          animatedReactionConfig
+        );
       }
     },
     [isDragging]
@@ -95,15 +99,12 @@ const Draggable: React.FC<DraggableProps> = ({
       }
     })
     .onFinalize((event) => {
-      // Drag finished (finger released or gesture cancelled)
-      // Mark the item as no longer dragging
       isDragging.value = false;
-      // Animate the item back to normal scale
       scale.value = withSpring(1);
-      // Snap the item to its final position in the list
       const finalPositionY = (positions.value[idKey] ?? 0) * itemHeight;
-      offsetY.value = withSpring(finalPositionY);
-      onDragEnd(positions);
+      offsetY.value = withSpring(finalPositionY, animatedReactionConfig, () => {
+        onDragEnd(positions);
+      });
     });
 
   // Animated style applied to the draggable item

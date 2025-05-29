@@ -111,6 +111,9 @@ export const useGameStore = create<GameStoreState>()(
             currentChallengeIndex: currentChallengeIndex + 1,
             startTimer: true,
           });
+          useChallengeStore
+            .getState()
+            .setOrientation(challenges[currentChallengeIndex + 1].isVertical);
         } else {
           // Otherwise, we're at the last challenge
           set({ completed: true });
