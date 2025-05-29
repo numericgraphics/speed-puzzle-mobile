@@ -1,14 +1,14 @@
 import { create } from "zustand";
-
-import { useUnsplashStore } from "./unsplash";
-import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { devtools } from "zustand/middleware";
+
 import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 import { getRandomBoolean } from "@/utils/math";
-import { useChallengeStore, useChallengeStoreCompleted } from "./challenges";
+import { useUnsplashStore } from "./unsplash";
+import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
+import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";
 
 interface GameStoreActions {
@@ -18,8 +18,6 @@ interface GameStoreActions {
   prevChallenge: () => void;
   getCurrentChallenge: () => GameChallengeType | null;
   triggerNextChallenge: () => void;
-  checkChallengeValidity: (positions: Record<string, number>) => void;
-  validChallenge: () => void;
   startGame: () => void;
   incrementChallengeMove: () => void;
   getScore: () => number;
@@ -103,6 +101,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       nextChallenge: () => {
+        console.log("GAME STORE - nextChallenge");
         const { currentChallengeIndex, challenges } = get();
         // If we can move to the next challenge, do so
         if (currentChallengeIndex < challenges.length - 1) {
@@ -110,6 +109,9 @@ export const useGameStore = create<GameStoreState>()(
             currentChallengeIndex: currentChallengeIndex + 1,
             startTimer: true,
           });
+          useChallengeStore
+            .getState()
+            .setOrientation(challenges[currentChallengeIndex + 1].isVertical);
         } else {
           // Otherwise, we're at the last challenge
           set({ completed: true });
@@ -126,6 +128,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       triggerNextChallenge: () => {
+        console.log("GAME STORE - triggerNextChallenge");
         const { challenges, currentChallengeIndex } = get();
         // const { completed } = challenges[currentChallengeIndex];
         // if (completed) {
@@ -148,50 +151,6 @@ export const useGameStore = create<GameStoreState>()(
       getCurrentChallenge: () => {
         const { challenges, currentChallengeIndex } = get();
         return challenges[currentChallengeIndex] || null;
-      },
-
-      checkChallengeValidity: (positions: Record<string, number>) => {
-        const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
-        console.log("Puzzle order check (from game store):", ordered);
-
-        if (ordered) {
-          // const timeoutId = setTimeout(() => {
-          // const { challenges, currentChallengeIndex } = get();
-          // const { currentMove, completed: sliceCompleted } =
-          //   useChallengeStore.getState();
-          const { markCompleted } = useChallengeStore.getState();
-          markCompleted();
-          const { actions: timerActions } = useTimerStore.getState();
-          timerActions.stop();
-          // const updatedChallenges = [...challenges];
-          // updatedChallenges[currentChallengeIndex] = {
-          //   ...updatedChallenges[currentChallengeIndex],
-          //   // completed: sliceCompleted,
-          //   moves: currentMove,
-          // };
-
-          // set({
-          //   challenges: updatedChallenges,
-          // });
-          // reset local move counter
-
-          // console.log("timeoutId", timeoutId);
-          // clearTimeout(timeoutId);
-          // }, 800);
-        }
-      },
-
-      validChallenge: () => {
-        // const { challenges, currentChallengeIndex } = get();
-        // const updatedChallenges = [...challenges];
-        // updatedChallenges[currentChallengeIndex] = {
-        //   ...updatedChallenges[currentChallengeIndex],
-        //   completed: true,
-        // };
-        // set({
-        //   challenges: updatedChallenges,
-        //   loading: false,
-        // });
       },
 
       startGame: () => {
