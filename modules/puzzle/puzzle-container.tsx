@@ -44,7 +44,6 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
   const { containers } = styles;
   const { triggerNextChallenge, incrementChallengeMove } =
     useGameStoreActions();
-  // const currentChallenge = getCurrentChallenge();
   // const timerValue = useTimerValue();
   const positions = useSharedValue(
     Object.assign(
@@ -121,5 +120,4 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
     </Animated.View>
   );
 }
-/* <PuzzleLegend image={image} />
-    </SafeAreaView> */
+PuzzleContainer.displayName = "PuzzleContainer";
