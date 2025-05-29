@@ -23,7 +23,6 @@ import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
-import { useChallengeStoreCompleted } from "@/stores/challenges";
 
 export default function Puzzle() {
   // Store slices
@@ -154,20 +153,7 @@ export default function Puzzle() {
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
-      {/* <View
-        style={[
-          containers.fullWidth,
-          {
-            alignItems: "flex-end",
-            paddingHorizontal: theme.spacer[3].x,
-            marginBottom: theme.spacer[2].y,
-          },
-        ]}
-      >
-        <TimeDisplay completed={currentChallenge?.completed} />
-      </View> */}
       {/* <StrictMode> */}
-      {/* <PuzzleContainerVertical url={image?.url} pieces={pieces} /> */}
 
       {isVertical ? (
         <PuzzleContainerVertical url={image?.url} pieces={pieces} />
@@ -180,18 +166,4 @@ export default function Puzzle() {
     </SafeAreaView>
   );
 }
-
-/*
-   {currentChallenge?.isVertical ? (
-        <PuzzleContainerVertical
-          image={currentChallenge?.image}
-          pieces={currentChallenge?.pieces}
-        />
-      ) : (
-        <PuzzleContainer
-          image={currentChallenge?.image}
-          pieces={currentChallenge?.pieces}
-        />
-      )}
-
-*/
+Puzzle.displayName = "Puzzle";

@@ -1,13 +1,13 @@
 import { create } from "zustand";
-
-import { useUnsplashStore } from "./unsplash";
-import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { devtools } from "zustand/middleware";
+
 import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 import { getRandomBoolean } from "@/utils/math";
+import { useUnsplashStore } from "./unsplash";
+import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";
 
@@ -18,8 +18,6 @@ interface GameStoreActions {
   prevChallenge: () => void;
   getCurrentChallenge: () => GameChallengeType | null;
   triggerNextChallenge: () => void;
-  checkChallengeValidity: (positions: Record<string, number>) => void;
-  validChallenge: () => void;
   startGame: () => void;
   incrementChallengeMove: () => void;
   getScore: () => number;
@@ -153,30 +151,6 @@ export const useGameStore = create<GameStoreState>()(
       getCurrentChallenge: () => {
         const { challenges, currentChallengeIndex } = get();
         return challenges[currentChallengeIndex] || null;
-      },
-
-      checkChallengeValidity: (positions: Record<string, number>) => {
-        // const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
-        // console.log("Puzzle order check (from game store):", ordered);
-        // if (ordered) {
-        //   console.log("Puzzle order check - Action", ordered);
-        //   useChallengeStore.getState().markCompleted();
-        //   // const { actions: timerActions } = useTimerStore.getState();
-        //   // timerActions.stop();
-        // }
-      },
-
-      validChallenge: () => {
-        // const { challenges, currentChallengeIndex } = get();
-        // const updatedChallenges = [...challenges];
-        // updatedChallenges[currentChallengeIndex] = {
-        //   ...updatedChallenges[currentChallengeIndex],
-        //   completed: true,
-        // };
-        // set({
-        //   challenges: updatedChallenges,
-        //   loading: false,
-        // });
       },
 
       startGame: () => {
