@@ -6,7 +6,10 @@ import Animated, {
   useAnimatedReaction,
   withSpring,
   SharedValue,
+  ReduceMotion,
 } from "react-native-reanimated";
+
+import { animatedReactionConfig } from "@/config/animation";
 
 const objectMove = (
   object: Record<string, number>,
@@ -49,7 +52,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
     () => positions.value[idKey],
     (now, prev) => {
       if (now !== prev && !isDragging.value) {
-        offsetX.value = withSpring(now * itemWidth);
+        offsetX.value = withSpring(now * itemWidth, animatedReactionConfig);
       }
     },
     [isDragging]
@@ -76,16 +79,10 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
     })
     .onFinalize((event) => {
       isDragging.value = false;
-      scale.value = withSpring(1, {
-        overshootClamping: true,
-        stiffness: 50,
-      });
+      scale.value = withSpring(1);
       offsetX.value = withSpring(
         (positions.value[idKey] ?? 0) * itemWidth,
-        {
-          overshootClamping: true,
-          stiffness: 50,
-        },
+        animatedReactionConfig,
         () => {
           onDragEnd(positions);
         }

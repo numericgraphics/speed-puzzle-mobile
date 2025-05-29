@@ -1,6 +1,6 @@
 // TODO : use RSC// "use server";
 
-import React, { useEffect } from "react";
+import React, { StrictMode, useEffect } from "react";
 
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
 import {
@@ -18,20 +18,17 @@ import { StartPuzzle } from "./start-screen";
 import { useTimerActions, useTimerStore, useTimerValue } from "@/stores/timer";
 import { NUMBER_OF_QUESTION } from "@/constants";
 import { fetchUnsplashImage } from "@/helpers/unsplash-photo";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, View, Text } from "react-native";
 import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
-import {
-  useChallengeStore,
-  useChallengeStoreCompleted,
-} from "@/stores/challenges";
 
 export default function Puzzle() {
   // Store slices
   const { images, error, imageReady } = useUnsplashStore();
-  const { loading, completed, challenges } = useGameStore();
+  const { loading, completed, challenges, currentChallengeIndex } =
+    useGameStore();
   // Store actions
   const { fetchImages, resetImages } = useUnsplashStoreActions();
   const {
@@ -43,14 +40,16 @@ export default function Puzzle() {
     getScore,
   } = useGameStoreActions();
   const needNextChallenge = useNeedNextChallenge();
-  const currentChallenge = getCurrentChallenge();
+  const [image, setImage] = React.useState(null);
+  const [pieces, setPieces] = React.useState(null);
+  const [isVertical, setVerticalOrientation] = React.useState(false);
   const started = useGameStoreStarted();
   const timerAction = useTimerActions();
   const startTimer = useGameStoreStartTimer();
   const { actions: timerActions } = useTimerStore.getState();
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  const currentChallengeCompleted = useChallengeStoreCompleted();
+  // const currentChallengeCompleted = useChallengeStoreCompleted();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
@@ -102,38 +101,44 @@ export default function Puzzle() {
   }, [imageReady, buildChallenges]);
 
   useEffect(() => {
-    console.log(
-      "NEXT CHALLENGE! currentChallengeCompleted",
-      currentChallengeCompleted
-    );
-    if (currentChallengeCompleted && needNextChallenge) {
-      console.log("NEXT CHALLENGE! ", currentChallenge);
+    console.log("CURRENT CHALLENGE");
+    if (challenges) {
+      const currentChallenge = challenges[currentChallengeIndex];
+      setImage(currentChallenge?.image);
+      setPieces(currentChallenge?.pieces);
+      setVerticalOrientation(currentChallenge?.isVertical);
+    }
+  }, [challenges, currentChallengeIndex]);
+
+  useEffect(() => {
+    console.log("NEXT CHALLENGE! currentChallengeCompleted");
+    if (needNextChallenge) {
+      console.log("NEXT CHALLENGE! ");
       nextChallenge();
     }
-  }, [currentChallengeCompleted, nextChallenge, needNextChallenge]);
+  }, [nextChallenge, needNextChallenge]);
 
   // Listen for the end-of-game
   useEffect(() => {
     if (completed) {
       console.log(
-        "GAME COMPLETE! You could show a final score here or navigate away.",
-        getScore()
+        "GAME COMPLETE! You could show a final score here or navigate away."
       );
       timerActions.reset();
       resetImages();
     }
   }, [completed]);
 
-  if (loading) {
+  if (!started) {
+    return <StartPuzzle onStart={onStartGame} />;
+  }
+
+  if (loading || !image || !pieces) {
     return <StatusMessage message="Loading..." />;
   }
 
   if (error) {
     return <StatusMessage message={`Error: ${error}`} />;
-  }
-
-  if (!started) {
-    return <StartPuzzle onStart={onStartGame} />;
   }
 
   if (completed) {
@@ -148,38 +153,17 @@ export default function Puzzle() {
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
-      {/* <View
-        style={[
-          containers.fullWidth,
-          {
-            alignItems: "flex-end",
-            paddingHorizontal: theme.spacer[3].x,
-            marginBottom: theme.spacer[2].y,
-          },
-        ]}
-      >
-        <TimeDisplay completed={currentChallenge?.completed} />
-      </View> */}
-      <PuzzleContainerVertical
-        image={currentChallenge?.image}
-        pieces={currentChallenge?.pieces}
-      />
-      <PuzzleLegend image={currentChallenge?.image} />
+      {/* <StrictMode> */}
+
+      {isVertical ? (
+        <PuzzleContainerVertical url={image?.url} pieces={pieces} />
+      ) : (
+        <PuzzleContainer url={image?.url} pieces={pieces} />
+      )}
+
+      {/* </StrictMode> */}
+      <PuzzleLegend image={image} />
     </SafeAreaView>
   );
 }
-
-/*
-   {currentChallenge?.isVertical ? (
-        <PuzzleContainerVertical
-          image={currentChallenge?.image}
-          pieces={currentChallenge?.pieces}
-        />
-      ) : (
-        <PuzzleContainer
-          image={currentChallenge?.image}
-          pieces={currentChallenge?.pieces}
-        />
-      )}
-
-*/
+Puzzle.displayName = "Puzzle";

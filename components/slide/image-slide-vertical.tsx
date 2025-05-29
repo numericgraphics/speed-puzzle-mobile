@@ -10,9 +10,9 @@ const SlideVertical = ({
   slideWidth,
   imageHeight,
 }: SlideType) => {
-  const contentPosition = useRef(-(slideWidth * index));
+  const contentPosition = useRef(-(slideWidth * index + 100));
 
-  console.log("SlideVertical slideWidth", slideWidth);
+  console.log("SlideVertical url", url);
 
   return (
     <View style={[styles.container, { width: slideWidth }]}>
@@ -25,7 +25,7 @@ const SlideVertical = ({
           },
         ]}
         contentFit="cover"
-        contentPosition={{ left: contentPosition.current - slideWidth * 0.5 }}
+        contentPosition={{ left: contentPosition.current, top: 0 }}
         transition={300}
       />
     </View>

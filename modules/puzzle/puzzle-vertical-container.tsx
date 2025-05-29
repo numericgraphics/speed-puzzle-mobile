@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { PuzzlePieceType, UnsplashImageData } from "@/types";
+import { PuzzlePieceType } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 
 import { useTheme } from "@/hooks/useTheme";
@@ -18,10 +18,8 @@ import { useGameStoreActions } from "@/stores/game";
 
 import { DraggableVertical } from "@/components/draggable/vertical";
 import SlideVertical from "@/components/slide/image-slide-vertical";
-import {
-  useChallengeStore,
-  useChallengeStoreCompleted,
-} from "@/stores/challenges";
+import { useChallengeStore } from "@/stores/challenges";
+import PuzzlePieces from "@/helpers/puzzle";
 
 /* layout constants */
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -31,29 +29,20 @@ const SLIDE_HEIGHT = 120; // Height of each slide
 const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER;
 
 export default function PuzzleContainerVertical({
-  image,
+  url,
   pieces,
 }: {
-  image: UnsplashImageData;
+  url: string;
   pieces: PuzzlePieceType[];
 }) {
   const { theme, styles, isDark } = useTheme();
-  const { containers } = styles;
-  const { url } = image;
 
-  const {
-    checkChallengeValidity,
-    getCurrentChallenge,
-    triggerNextChallenge,
-    incrementChallengeMove,
-  } = useGameStoreActions();
-
-  const currentChallengeCompleted = useChallengeStoreCompleted();
-  // const timerValue = 0; //useTimerValue();
+  const { triggerNextChallenge, incrementChallengeMove } =
+    useGameStoreActions();
 
   /* shared positions map (columnIndex -> logicalPosition) */
   const positions = useSharedValue(
-    Object.assign({}, ...pieces.map((item, idx) => ({ [idx]: item.index })))
+    Object.assign({}, ...pieces?.map((item, idx) => ({ [idx]: item.index })))
   );
 
   /* fade-in animation */
@@ -63,14 +52,15 @@ export default function PuzzleContainerVertical({
   useEffect(() => {
     positions.value = Object.assign(
       {},
-      ...pieces.map((item, idx) => ({ [idx]: item.index }))
+      ...pieces?.map((item, idx) => ({ [idx]: item.index }))
     );
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
 
-  /**/
-  useEffect(() => {
-    if (currentChallengeCompleted) {
+  function onVerifyOrder(positions: Record<string, number>) {
+    const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
+    if (ordered) {
+      useChallengeStore.getState().markCompleted();
       opacity.value = withDelay(
         1000,
         withTiming(0, { duration: 500 }, (done) => {
@@ -78,12 +68,12 @@ export default function PuzzleContainerVertical({
         })
       );
     }
-  }, [currentChallengeCompleted]);
+  }
 
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    runOnJS(checkChallengeValidity)(event.value);
+    runOnJS(onVerifyOrder)(event.value);
   };
 
   return (

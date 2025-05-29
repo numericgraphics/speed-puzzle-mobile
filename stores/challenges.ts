@@ -3,10 +3,12 @@ import { devtools } from "zustand/middleware";
 
 // ------ currentChallenge slice ------
 interface CurrentChallengeSlice {
+  isVertical: boolean;
   currentMove: number;
   completed: boolean;
   increment: () => void;
   markCompleted: () => void;
+  setOrientation: (isVertical: boolean) => void;
   reset: () => void;
 }
 
@@ -14,12 +16,15 @@ export const useChallengeStore = create<CurrentChallengeSlice>()(
   devtools((set) => ({
     currentMove: 0,
     completed: false,
-    increment: () => set((state) => ({ currentMove: state.currentMove + 1 })),
+    isVertical: false,
+    increment: () =>
+      set((state) => ({ ...state, currentMove: state.currentMove + 1 })),
     markCompleted: () => {
-      console.log("useChallengeStore Challenge completed!");
-      set({ completed: true });
+      set((state) => ({ ...state, completed: true }));
     },
     reset: () => set({ currentMove: 0, completed: false }),
+    setOrientation: (isVertical: boolean) =>
+      set((state) => ({ ...state, isVertical })),
   }))
 );
 
