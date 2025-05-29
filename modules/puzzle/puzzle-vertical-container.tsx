@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { PuzzlePieceType, UnsplashImageData } from "@/types";
+import { PuzzlePieceType } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 
 import { useTheme } from "@/hooks/useTheme";
@@ -18,11 +18,7 @@ import { useGameStoreActions } from "@/stores/game";
 
 import { DraggableVertical } from "@/components/draggable/vertical";
 import SlideVertical from "@/components/slide/image-slide-vertical";
-import {
-  useChallengeStore,
-  //   useChallengeStore,
-  useChallengeStoreCompleted,
-} from "@/stores/challenges";
+import { useChallengeStore } from "@/stores/challenges";
 import PuzzlePieces from "@/helpers/puzzle";
 
 /* layout constants */
@@ -40,20 +36,9 @@ export default function PuzzleContainerVertical({
   pieces: PuzzlePieceType[];
 }) {
   const { theme, styles, isDark } = useTheme();
-  const { containers } = styles;
-  // const { url } = image;
 
-  console.log("PuzzleContainerVertical image redrawn");
-
-  const {
-    checkChallengeValidity,
-    getCurrentChallenge,
-    triggerNextChallenge,
-    incrementChallengeMove,
-  } = useGameStoreActions();
-
-  // const currentChallengeCompleted = useChallengeStoreCompleted();
-  // const timerValue = 0; //useTimerValue();
+  const { triggerNextChallenge, incrementChallengeMove } =
+    useGameStoreActions();
 
   /* shared positions map (columnIndex -> logicalPosition) */
   const positions = useSharedValue(
@@ -72,23 +57,9 @@ export default function PuzzleContainerVertical({
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
 
-  /**/
-  // useEffect(() => {
-  //   if (currentChallengeCompleted) {
-  //     opacity.value = withDelay(
-  //       1000,
-  //       withTiming(0, { duration: 500 }, (done) => {
-  //         if (done) runOnJS(triggerNextChallenge)();
-  //       })
-  //     );
-  //   }
-  // }, [currentChallengeCompleted]);
-
   function onVerifyOrder(positions: Record<string, number>) {
-    console.log("Puzzle order check - Action");
     const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
     if (ordered) {
-      console.log("Puzzle order check - Action", ordered);
       useChallengeStore.getState().markCompleted();
       opacity.value = withDelay(
         1000,
@@ -102,7 +73,6 @@ export default function PuzzleContainerVertical({
   const onDragEnd = (event: SharedValue<Record<string, number>>) => {
     "worklet";
     runOnJS(incrementChallengeMove)();
-    // runOnJS(checkChallengeValidity)(event.value);
     runOnJS(onVerifyOrder)(event.value);
   };
 

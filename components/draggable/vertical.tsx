@@ -9,6 +9,8 @@ import Animated, {
   ReduceMotion,
 } from "react-native-reanimated";
 
+import { animatedReactionConfig } from "@/config/animation";
+
 const objectMove = (
   object: Record<string, number>,
   from: number,
@@ -21,16 +23,6 @@ const objectMove = (
     if (object[key] === to) newObj[key] = from;
   }
   return newObj;
-};
-
-const draggableConfig = {
-  mass: 1,
-  damping: 100,
-  stiffness: 450,
-  overshootClamping: true,
-  restDisplacementThreshold: 0.01,
-  restSpeedThreshold: 2,
-  reduceMotion: ReduceMotion.System,
 };
 
 export interface DraggableProps {
@@ -60,7 +52,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
     () => positions.value[idKey],
     (now, prev) => {
       if (now !== prev && !isDragging.value) {
-        offsetX.value = withSpring(now * itemWidth, draggableConfig);
+        offsetX.value = withSpring(now * itemWidth, animatedReactionConfig);
       }
     },
     [isDragging]
@@ -90,8 +82,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
       scale.value = withSpring(1);
       offsetX.value = withSpring(
         (positions.value[idKey] ?? 0) * itemWidth,
-        draggableConfig,
-
+        animatedReactionConfig,
         () => {
           onDragEnd(positions);
         }
