@@ -45,7 +45,8 @@
         {
           "initialOrientation": "PORTRAIT"
         }
-      ]
+      ],
+      ["@prisma/react-native"]
     ],
     "experiments": {
       "typedRoutes": true
