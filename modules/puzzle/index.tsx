@@ -24,6 +24,18 @@ import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
 
+/* 
+------ PRISMA CLIENT ------
+ */
+import { PrismaClient } from "@prisma/client/react-native";
+import { reactiveHooksExtension } from "@prisma/react-native";
+
+const baseClient = new PrismaClient();
+
+export const extendedClient = baseClient.$extends(reactiveHooksExtension());
+
+/* ----- */
+
 export default function Puzzle() {
   // Store slices
   const { images, error, imageReady } = useUnsplashStore();
@@ -51,6 +63,15 @@ export default function Puzzle() {
   const { containers } = styles;
   // const currentChallengeCompleted = useChallengeStoreCompleted();
 
+  /* 
+------ PRISMA CLIENT ------
+ */
+  //TODO: Connect to your Prisma database
+  // This is just an example of how to use Prisma Client in a React Native app
+  // You can use the extendedClient to perform database operations
+  const users = extendedClient.user.useFindMany();
+  console.log("USERS", users);
+  /* ----- */
   const onStartGame = () => {
     console.log("STARTING GAME!");
     startGame();
