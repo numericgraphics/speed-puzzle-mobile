@@ -45,6 +45,12 @@
         {
           "initialOrientation": "PORTRAIT"
         }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "useLibSQL": true
+        }
       ]
     ],
     "experiments": {
