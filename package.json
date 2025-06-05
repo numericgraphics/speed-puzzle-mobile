@@ -21,10 +21,12 @@
     "@expo-google-fonts/luckiest-guy": "^0.3.0",
     "@expo-google-fonts/nunito": "^0.3.0",
     "@expo/vector-icons": "^14.0.2",
+    "@libsql/client": "^0.15.8",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@shopify/react-native-skia": "1.5.0",
+    "babel-plugin-inline-import": "^3.0.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.44.1",
     "expo": "~52.0.46",
@@ -55,8 +57,7 @@
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "zustand": "^5.0.3",
-    "expo-sqlite": "~15.1.4"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

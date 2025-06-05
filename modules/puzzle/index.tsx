@@ -23,6 +23,7 @@ import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
+import { createUser } from "@/db/queries/inserts";
 
 export default function Puzzle() {
   // Store slices
@@ -60,6 +61,24 @@ export default function Puzzle() {
     console.log("RESTARTING GAME!");
     restartGame();
   };
+
+  useEffect(() => {
+    console.log("INIT PUZZLE COMPONENT");
+    try {
+      async function testDB() {
+        // This is just a placeholder for any DB initialization logic
+        console.log("Database initialized successfully.");
+        await createUser({
+          userName: "testUser",
+          password: "testPassword",
+        });
+        console.log("Database user created.");
+      }
+      testDB();
+    } catch (error) {
+      console.error("Error initializing Puzzle component:", error);
+    }
+  }, []);
 
   // On mount, fetch images
   useEffect(() => {
