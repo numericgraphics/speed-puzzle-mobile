@@ -16,8 +16,8 @@ export default function Page() {
    * DRIZZLE IMPLEMENTATION
    *
    */
-  const expo = SQLite.openDatabaseSync("db.db");
-  const db = drizzle(expo);
+  // const expo = SQLite.openDatabaseSync("db.db");
+  // const db = drizzle(expo);
   /**
    *
    *

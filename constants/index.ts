@@ -36,3 +36,5 @@ export const COUNTER_MESSAGES = Object.freeze({
 });
 
 export const PUZZLE_COOKIE = "puzzleCookie";
+
+export const DB_NAME = "my-db"; // Turso db name
