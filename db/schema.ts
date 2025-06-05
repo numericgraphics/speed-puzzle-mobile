@@ -76,3 +76,8 @@ export const scoresRelations = relations(scores, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;
+export type InsertScore = typeof scores.$inferInsert;
+export type SelectScore = typeof scores.$inferSelect;
