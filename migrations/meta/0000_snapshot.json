@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f1b263f6-efe8-432e-994f-0f7953f2c632",
+  "id": "b8754f5a-4dcf-4785-948c-1be996c0f89f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "scores": {
@@ -24,7 +24,7 @@
         },
         "value": {
           "name": "value",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

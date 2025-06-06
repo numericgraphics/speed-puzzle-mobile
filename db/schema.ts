@@ -39,7 +39,7 @@ export const scores = sqliteTable(
       sql`(strftime('%s','now') * 1000)`
     ),
 
-    value: text("value").notNull(),
+    value: integer("value").notNull(),
 
     userId: integer("user_id").references(() => users.id),
   },

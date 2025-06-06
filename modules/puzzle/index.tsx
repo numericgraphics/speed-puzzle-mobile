@@ -95,7 +95,7 @@ export default function Puzzle() {
           return;
         }
 
-        await createScore({ value: "12346", userId: user?.id });
+        await createScore({ value: 12346, userId: user?.id });
         console.error("Score added for user", user?.userName);
       }
 
