@@ -24,7 +24,7 @@ import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
 import { createScore, createUser } from "@/db/queries/inserts";
-import { getUserByName } from "@/db/queries/select";
+import { getAllScores, getAllUsers, getUserByName } from "@/db/queries/select";
 
 export default function Puzzle() {
   // Store slices
@@ -66,59 +66,42 @@ export default function Puzzle() {
   useEffect(() => {
     console.log("INIT PUZZLE COMPONENT");
     try {
+      async function getAllData() {
+        const users = await getAllUsers();
+        const scores = await getAllScores();
+        console.log("All users:", users);
+        console.log("All scores:", scores);
+      }
+
       async function addUserInDB() {
-        // This is just a placeholder for any DB initialization logic
         console.log("Database initialized successfully.");
-        // console.log("Database db", db);
         await createUser({
           userName: "testUser-00",
           password: "testPassword",
         });
 
         console.log("user created");
-
-        // const testUser02 = await db.query.users.findFirst({
-        //   where: eq(users.userName, "testUser-02"), // or eq(users.id, someUuid)
-        //   with: {
-        //     scores: true, // << one-to-many defined in schema.ts
-        //   },
-        // });
-
-        // if (!testUser02) {
-        //   console.error("User not found");
-        //   return;
-        // }
-
-        // console.log("testUser02", testUser02);
-        // await createScore(testUser02.id, "12345");
       }
 
-      async function getUserFromDB() {
-        // This is just a placeholder for any DB initialization logic
-        console.log("Database initialized successfully.");
-        // console.log("Database db", db);
-        await getUserByName("test-db-00");
+      async function getAddScoreToDB() {
+        console.log("getAddScoreToDB");
+        const result = await getUserByName("test-db-00"); // Assuming getUserByName returns an array
+        const user = result[0] || null;
 
-        console.log("user created");
+        console.log("user created", user);
 
-        // const testUser02 = await db.query.users.findFirst({
-        //   where: eq(users.userName, "testUser-02"), // or eq(users.id, someUuid)
-        //   with: {
-        //     scores: true, // << one-to-many defined in schema.ts
-        //   },
-        // });
+        if (!user) {
+          console.error("User not found");
+          return;
+        }
 
-        // if (!testUser02) {
-        //   console.error("User not found");
-        //   return;
-        // }
-
-        // console.log("testUser02", testUser02);
-        // await createScore(testUser02.id, "12345");
+        await createScore({ value: "12346", userId: user?.id });
+        console.error("Score added for user", user?.userName);
       }
 
+      getAllData();
       // addUserInDB();
-      getUserFromDB();
+      // getAddScoreToDB();
     } catch (error) {
       console.error("Error initializing Puzzle component:", error);
     }
