@@ -1,7 +1,7 @@
 CREATE TABLE `scores` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` integer DEFAULT (strftime('%s','now') * 1000),
-	`value` text NOT NULL,
+	`value` integer NOT NULL,
 	`user_id` integer,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );

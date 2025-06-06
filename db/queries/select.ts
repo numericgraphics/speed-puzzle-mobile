@@ -16,3 +16,17 @@ export async function getAllScores() {
   const scores = await db.query.scores.findMany();
   return scores;
 }
+
+export async function getScoresByUserId(userId: number) {
+  const scores = await db.query.scores.findMany({
+    where: (scores, { eq }) => eq(scores.userId, userId),
+  });
+  return scores;
+}
+export async function getTop10Scores() {
+  const scores = await db.query.scores.findMany({
+    orderBy: (scores, { desc }) => desc(scores.value),
+    limit: 10,
+  });
+  return scores;
+}
