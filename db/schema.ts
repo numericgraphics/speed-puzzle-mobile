@@ -6,28 +6,10 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 
-/* ---------- User table ----------
-
-export const users = sqliteTable("users", {
-    id: int(),
-}, (t) => ({
-    idx: index('custom_name').on(t.id)
-}));
-New API:
-
-export const users = sqliteTable("users", {
-    id: int(),
-}, (t) => [
-    index('custom_name').on(t.id)
-]);
-
-
-*/
-// src/db/schema.ts
-
+// This file defines the schema for the SQLite database using Drizzle ORM.
 /* ---------- User table ---------- */
 export const users = sqliteTable(
-  "user",
+  "users",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
 
@@ -49,7 +31,7 @@ export const users = sqliteTable(
 
 /* ---------- Score table ---------- */
 export const scores = sqliteTable(
-  "score",
+  "scores",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
 
