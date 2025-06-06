@@ -1,11 +1,11 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2e17f135-6c22-4fdb-b12c-5260aa655dd1",
+  "id": "f1b263f6-efe8-432e-994f-0f7953f2c632",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "score": {
-      "name": "score",
+    "scores": {
+      "name": "scores",
       "columns": {
         "id": {
           "name": "id",
@@ -39,10 +39,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "score_user_id_user_id_fk": {
-          "name": "score_user_id_user_id_fk",
-          "tableFrom": "score",
-          "tableTo": "user",
+        "scores_user_id_users_id_fk": {
+          "name": "scores_user_id_users_id_fk",
+          "tableFrom": "scores",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -57,8 +57,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "users": {
+      "name": "users",
       "columns": {
         "id": {
           "name": "id",

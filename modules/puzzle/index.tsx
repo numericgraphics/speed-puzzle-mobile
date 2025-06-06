@@ -23,8 +23,8 @@ import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
-import { createUser } from "@/db/queries/inserts";
-import { db } from "@/db";
+import { createScore, createUser } from "@/db/queries/inserts";
+import { getUserByName } from "@/db/queries/select";
 
 export default function Puzzle() {
   // Store slices
@@ -66,17 +66,59 @@ export default function Puzzle() {
   useEffect(() => {
     console.log("INIT PUZZLE COMPONENT");
     try {
-      async function testDB() {
+      async function addUserInDB() {
         // This is just a placeholder for any DB initialization logic
         console.log("Database initialized successfully.");
         // console.log("Database db", db);
         await createUser({
-          userName: "testUser",
+          userName: "testUser-00",
           password: "testPassword",
         });
-        console.log("Database user created.");
+
+        console.log("user created");
+
+        // const testUser02 = await db.query.users.findFirst({
+        //   where: eq(users.userName, "testUser-02"), // or eq(users.id, someUuid)
+        //   with: {
+        //     scores: true, // << one-to-many defined in schema.ts
+        //   },
+        // });
+
+        // if (!testUser02) {
+        //   console.error("User not found");
+        //   return;
+        // }
+
+        // console.log("testUser02", testUser02);
+        // await createScore(testUser02.id, "12345");
       }
-      testDB();
+
+      async function getUserFromDB() {
+        // This is just a placeholder for any DB initialization logic
+        console.log("Database initialized successfully.");
+        // console.log("Database db", db);
+        await getUserByName("test-db-00");
+
+        console.log("user created");
+
+        // const testUser02 = await db.query.users.findFirst({
+        //   where: eq(users.userName, "testUser-02"), // or eq(users.id, someUuid)
+        //   with: {
+        //     scores: true, // << one-to-many defined in schema.ts
+        //   },
+        // });
+
+        // if (!testUser02) {
+        //   console.error("User not found");
+        //   return;
+        // }
+
+        // console.log("testUser02", testUser02);
+        // await createScore(testUser02.id, "12345");
+      }
+
+      // addUserInDB();
+      getUserFromDB();
     } catch (error) {
       console.error("Error initializing Puzzle component:", error);
     }
