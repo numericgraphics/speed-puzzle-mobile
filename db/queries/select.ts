@@ -2,7 +2,11 @@ import { db } from "../index";
 
 export async function getUserByName(name: string) {
   const user = await db.query.users.findMany({
-    where: (users, { eq }) => eq(users.userName, name),
+    where: (users, { eq }) => {
+      console.error("getUserByName", name);
+      console.error("getUserByName users.userName", users.userName);
+      return eq(users.userName, name);
+    },
   });
   return user;
 }

@@ -24,7 +24,13 @@ import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
 import { createScore, createUser } from "@/db/queries/inserts";
-import { getAllScores, getAllUsers, getUserByName } from "@/db/queries/select";
+import {
+  getAllScores,
+  getAllUsers,
+  getScoresByUserId,
+  getUserByName,
+} from "@/db/queries/select";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function Puzzle() {
   // Store slices
@@ -51,6 +57,7 @@ export default function Puzzle() {
   const { actions: timerActions } = useTimerStore.getState();
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
+  const db = useSQLiteContext();
   // const currentChallengeCompleted = useChallengeStoreCompleted();
 
   const onStartGame = () => {
@@ -67,14 +74,18 @@ export default function Puzzle() {
     console.log("INIT PUZZLE COMPONENT");
     try {
       async function getAllData() {
-        const users = await getAllUsers();
-        const scores = await getAllScores();
+        // const users = await getAllUsers();
+        // const scores = await getAllScores();
+        db.getAllAsync;
+        const users = await db.getAllAsync<any>(
+          "SELECT * FROM users ORDER BY modifiedDate DESC"
+        );
         console.log("All users:", users);
-        console.log("All scores:", scores);
+        // console.log("All scores:", scores);
       }
 
       async function addUserInDB() {
-        console.log("Database initialized successfully.");
+        console.log("addUserInDB");
         await createUser({
           userName: "testUser-00",
           password: "testPassword",
@@ -85,7 +96,7 @@ export default function Puzzle() {
 
       async function getAddScoreToDB() {
         console.log("getAddScoreToDB");
-        const result = await getUserByName("test-db-00"); // Assuming getUserByName returns an array
+        const result = await getUserByName("testUser-00"); // Assuming getUserByName returns an array
         const user = result[0] || null;
 
         console.log("user created", user);
@@ -99,9 +110,31 @@ export default function Puzzle() {
         console.error("Score added for user", user?.userName);
       }
 
-      getAllData();
-      // addUserInDB();
+      async function addDataToDB() {
+        console.log("addDataToDB");
+        await addUserInDB();
+        await getAddScoreToDB();
+      }
+
+      async function getuserScorebyUserName() {
+        console.log("getuserScorebyUserName");
+        const result = await getUserByName("testUser-00"); // Assuming getUserByName returns an array
+        const user = result[0] || null;
+
+        console.log("user created", user);
+
+        if (!user) {
+          console.error("User not found");
+          return;
+        }
+        const score = await getScoresByUserId(user.id);
+        console.log("Score for user", user.userName, score[0].value);
+      }
+
+      // getuserScorebyUserName();
       // getAddScoreToDB();
+      // addDataToDB();
+      // getAllData();
     } catch (error) {
       console.error("Error initializing Puzzle component:", error);
     }

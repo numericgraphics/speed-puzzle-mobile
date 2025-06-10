@@ -9,7 +9,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "seed": "npx ts-node db/seeder.ts"
   },
   "jest": {
     "preset": "jest-expo"
@@ -21,7 +22,7 @@
     "@expo-google-fonts/luckiest-guy": "^0.3.0",
     "@expo-google-fonts/nunito": "^0.3.0",
     "@expo/vector-icons": "^14.0.2",
-    "@libsql/client": "^0.15.8",
+    "@libsql/client": "^0.15.9",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -35,6 +36,7 @@
     "expo-constants": "~17.0.8",
     "expo-dev-client": "~5.0.19",
     "expo-device": "~7.0.3",
+    "expo-drizzle-studio-plugin": "^0.1.2",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
     "expo-image": "~2.0.7",
@@ -42,7 +44,7 @@
     "expo-router": "~4.0.20",
     "expo-screen-orientation": "~8.0.4",
     "expo-splash-screen": "~0.29.24",
-    "expo-sqlite": "~15.1.4",
+    "expo-sqlite": "~15.2.12",
     "expo-status-bar": "~2.0.1",
     "expo-symbols": "~0.2.2",
     "expo-system-ui": "~4.0.9",
