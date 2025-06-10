@@ -70,7 +70,12 @@ export default function RootLayout() {
       onInit={async (db: SQLiteDatabase) => {
         try {
           // Always sync libSQL first to prevent conflicts between local and remote databases
-          db.syncLibSQL();
+          console.log("Syncing libSQL...", db);
+          await db.syncLibSQL();
+          console.log("libSQL synced successfully", db);
+
+          const users = await db.getAllAsync<any>("SELECT * FROM users");
+          console.log("All users:", users);
         } catch (e) {
           console.log("Error onInit syncing libSQL:", e);
         }
