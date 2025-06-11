@@ -3,8 +3,6 @@ import { db } from "../index";
 export async function getUserByName(name: string) {
   const user = await db.query.users.findMany({
     where: (users, { eq }) => {
-      console.error("getUserByName", name);
-      console.error("getUserByName users.userName", users.userName);
       return eq(users.userName, name);
     },
   });
@@ -27,10 +25,10 @@ export async function getScoresByUserId(userId: number) {
   });
   return scores;
 }
-export async function getTop10Scores() {
+export async function getTopScores() {
   const scores = await db.query.scores.findMany({
     orderBy: (scores, { desc }) => desc(scores.value),
-    limit: 10,
+    limit: 5,
   });
   return scores;
 }
