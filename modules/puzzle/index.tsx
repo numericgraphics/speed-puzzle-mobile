@@ -1,8 +1,9 @@
 // TODO : use RSC// "use server";
 
-import React, { StrictMode, useEffect } from "react";
-
+import React, { useEffect } from "react";
+import { SafeAreaView, View, Text } from "react-native";
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
+
 import {
   useGameStore,
   useGameStoreActions,
@@ -13,24 +14,16 @@ import {
 import PuzzleContainer from "@/modules/puzzle/puzzle-container";
 import PuzzleContainerVertical from "@/modules/puzzle/puzzle-vertical-container";
 import { StatusMessage } from "@/components/message-display";
-import { CompletedPuzzle } from "./complete-screen";
-import { StartPuzzle } from "./start-screen";
 import { useTimerActions, useTimerStore, useTimerValue } from "@/stores/timer";
 import { NUMBER_OF_QUESTION } from "@/constants";
 import { fetchUnsplashImage } from "@/helpers/unsplash-photo";
-import { SafeAreaView, View, Text } from "react-native";
 import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
-import { createScore, createUser } from "@/db/queries/inserts";
-import {
-  getAllScores,
-  getAllUsers,
-  getScoresByUserId,
-  getUserByName,
-} from "@/db/queries/select";
-import { useSQLiteContext } from "expo-sqlite";
+
+import { CompletedPuzzle } from "./complete-screen";
+import { StartPuzzle } from "./start-screen";
 
 export default function Puzzle() {
   // Store slices
@@ -57,8 +50,6 @@ export default function Puzzle() {
   const { actions: timerActions } = useTimerStore.getState();
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  const db = useSQLiteContext();
-  // const currentChallengeCompleted = useChallengeStoreCompleted();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");
@@ -69,76 +60,6 @@ export default function Puzzle() {
     console.log("RESTARTING GAME!");
     restartGame();
   };
-
-  useEffect(() => {
-    console.log("INIT PUZZLE COMPONENT");
-    try {
-      async function getAllData() {
-        // const users = await getAllUsers();
-        // const scores = await getAllScores();
-        db.getAllAsync;
-        const users = await db.getAllAsync<any>(
-          "SELECT * FROM users ORDER BY modifiedDate DESC"
-        );
-        console.log("All users:", users);
-        // console.log("All scores:", scores);
-      }
-
-      async function addUserInDB() {
-        console.log("addUserInDB");
-        await createUser({
-          userName: "testUser-00",
-          password: "testPassword",
-        });
-
-        console.log("user created");
-      }
-
-      async function getAddScoreToDB() {
-        console.log("getAddScoreToDB");
-        const result = await getUserByName("testUser-00"); // Assuming getUserByName returns an array
-        const user = result[0] || null;
-
-        console.log("user created", user);
-
-        if (!user) {
-          console.error("User not found");
-          return;
-        }
-
-        await createScore({ value: 12346, userId: user?.id });
-        console.error("Score added for user", user?.userName);
-      }
-
-      async function addDataToDB() {
-        console.log("addDataToDB");
-        await addUserInDB();
-        await getAddScoreToDB();
-      }
-
-      async function getuserScorebyUserName() {
-        console.log("getuserScorebyUserName");
-        const result = await getUserByName("testUser-00"); // Assuming getUserByName returns an array
-        const user = result[0] || null;
-
-        console.log("user created", user);
-
-        if (!user) {
-          console.error("User not found");
-          return;
-        }
-        const score = await getScoresByUserId(user.id);
-        console.log("Score for user", user.userName, score[0].value);
-      }
-
-      // getuserScorebyUserName();
-      // getAddScoreToDB();
-      // addDataToDB();
-      // getAllData();
-    } catch (error) {
-      console.error("Error initializing Puzzle component:", error);
-    }
-  }, []);
 
   // On mount, fetch images
   useEffect(() => {
