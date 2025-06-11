@@ -1,8 +1,9 @@
 // TODO : use RSC// "use server";
 
-import React, { StrictMode, useEffect } from "react";
-
+import React, { useEffect } from "react";
+import { SafeAreaView, View, Text } from "react-native";
 import { useUnsplashStore, useUnsplashStoreActions } from "@/stores/unsplash";
+
 import {
   useGameStore,
   useGameStoreActions,
@@ -13,16 +14,16 @@ import {
 import PuzzleContainer from "@/modules/puzzle/puzzle-container";
 import PuzzleContainerVertical from "@/modules/puzzle/puzzle-vertical-container";
 import { StatusMessage } from "@/components/message-display";
-import { CompletedPuzzle } from "./complete-screen";
-import { StartPuzzle } from "./start-screen";
 import { useTimerActions, useTimerStore, useTimerValue } from "@/stores/timer";
 import { NUMBER_OF_QUESTION } from "@/constants";
 import { fetchUnsplashImage } from "@/helpers/unsplash-photo";
-import { SafeAreaView, View, Text } from "react-native";
 import RectangleLogo from "@/components/logo/rectangles";
 import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
 import { useTheme } from "@/hooks/useTheme";
+
+import { CompletedPuzzle } from "./complete-screen";
+import { StartPuzzle } from "./start-screen";
 
 export default function Puzzle() {
   // Store slices
@@ -49,7 +50,6 @@ export default function Puzzle() {
   const { actions: timerActions } = useTimerStore.getState();
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  // const currentChallengeCompleted = useChallengeStoreCompleted();
 
   const onStartGame = () => {
     console.log("STARTING GAME!");

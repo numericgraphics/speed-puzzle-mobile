@@ -1,10 +1,16 @@
+import { useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import "react-native-reanimated";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
+import { SQLiteProvider } from "expo-sqlite";
+
 import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
 import {
   Fredoka_300Light,
@@ -16,11 +22,9 @@ import {
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
 
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  configureReanimatedLogger,
-  ReanimatedLogLevel,
-} from "react-native-reanimated";
+import { DB_NAME } from "@/constants";
+import { DatabaseProvider } from "@/providers/data-base";
+import { UserProvider } from "@/providers/user";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -57,13 +61,27 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView>
-      <ThemeProvider value={DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <SQLiteProvider
+      databaseName={DB_NAME}
+      options={{
+        libSQLOptions: {
+          url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
+          authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
+        },
+      }}
+    >
+      <DatabaseProvider>
+        <UserProvider>
+          <GestureHandlerRootView>
+            <ThemeProvider value={DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </GestureHandlerRootView>
+        </UserProvider>
+      </DatabaseProvider>
+    </SQLiteProvider>
   );
 }
