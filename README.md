@@ -7,6 +7,9 @@ This Project use the Continuous Native Generation [`CNG`](https://docs.expo.dev/
 
 ### Global
 
+- Expo : 53.0.11
+- React-native : 0.79.0
+- React : 19.0.0
 - [Reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/)
 - [Gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation)
 - [Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction)

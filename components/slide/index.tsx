@@ -1,12 +1,5 @@
 import React, { memo } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
-import { Image } from "expo-image";
-import {
-  Canvas,
-  Image as SkiaImage,
-  useImage,
-  Rect,
-} from "@shopify/react-native-skia";
 import { useReorderableDrag } from "react-native-reorderable-list";
 import MemoizedImage from "./memorize-image";
 
