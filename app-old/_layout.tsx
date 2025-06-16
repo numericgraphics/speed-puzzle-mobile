@@ -1,9 +1,7 @@
-"use client";
-
 import { useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -77,10 +75,7 @@ export default function RootLayout() {
           <GestureHandlerRootView>
             <ThemeProvider value={DefaultTheme}>
               <Stack>
-                <Stack.Screen
-                  name="index"
-                  options={{ headerShown: false, animation: "fade" }}
-                />
+                <Stack.Screen name="index" options={{ headerShown: false }} />
               </Stack>
               <StatusBar style="auto" />
             </ThemeProvider>
