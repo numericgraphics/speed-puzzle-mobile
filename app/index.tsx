@@ -1,31 +1,33 @@
-import React from "react";
-import { SafeAreaView } from "react-native";
+"use client";
 
-import * as SQLite from "expo-sqlite";
-import { drizzle } from "drizzle-orm/expo-sqlite";
+import { StatusMessage } from "@/components/message-display";
+import { PlaySection } from "@/modules/puzzle/play-section";
+import PuzzleClient from "@/modules/puzzle/puzzle-client";
+import { StartPuzzle } from "@/modules/puzzle/start-screen";
+import { buildChallenges } from "@/actions/puzzle-actions";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { Suspense, use } from "react";
+import { View, Text, StyleSheet } from "react-native";
 
-import { useTheme } from "@/hooks/useTheme";
-import PuzzleContainer from "@/modules/puzzle";
+// function Page({ searchParams }: PageProps) {
+function Page({ searchParams }) {
+  const playing = useLocalSearchParams().play === "true";
+  console.log("Puzzle Page Search Params:", playing);
+  console.log("Puzzle Page Search Params:", searchParams);
+  const onStart = () => {
+    console.log("Start button pressed");
+    router.push("/?play=true");
+  };
 
-export default function Page() {
-  const { styles } = useTheme();
-  const { containers } = styles;
+  if (playing) {
+    return (
+      <Suspense fallback={<StatusMessage message="Loading..." />}>
+        <PlaySection />
+      </Suspense>
+    );
+  }
 
-  /** Main Puzzle Container
-   *
-   * DRIZZLE IMPLEMENTATION
-   *
-   */
-  // const expo = SQLite.openDatabaseSync("db.db");
-  // const db = drizzle(expo);
-  /**
-   *
-   *
-   */
-
-  return (
-    <SafeAreaView style={containers.main}>
-      <PuzzleContainer />
-    </SafeAreaView>
-  );
+  return <StartPuzzle onStart={onStart} />;
 }
+
+export default Page;
