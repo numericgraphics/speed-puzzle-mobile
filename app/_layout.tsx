@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
