@@ -8,10 +8,18 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useGameStore } from "@/stores/game";
 
 export function PlaySection() {
-  const { data: challenges } = useSuspenseQuery({
+  const {
+    data: challenges,
+    isFetching,
+    error,
+  } = useSuspenseQuery({
     queryKey: ["challenges"],
     queryFn: buildChallenges,
   });
+
+  if (error && !isFetching) {
+    throw error;
+  }
 
   //   const hydrated = useRef(false);
 
@@ -27,6 +35,7 @@ export function PlaySection() {
   //     }
   //   }, [challenges]);
 
+  console.log("PlaySection challenges:", challenges.length);
   return <PuzzleClient challenges={challenges} />;
 
   //   return (
