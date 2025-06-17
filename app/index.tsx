@@ -1,16 +1,14 @@
-"use client";
-
 import { StatusMessage } from "@/components/message-display";
 import { PlaySection } from "@/modules/puzzle/play-section";
 import PuzzleClient from "@/modules/puzzle/puzzle-client";
 import { StartPuzzle } from "@/modules/puzzle/start-screen";
-import { buildChallenges } from "@/actions/puzzle-actions";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { Suspense, use } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// function Page({ searchParams }: PageProps) {
-function Page({ searchParams }) {
+const queryClient = new QueryClient();
+
+function Index({ searchParams }) {
   const playing = useLocalSearchParams().play === "true";
   console.log("Puzzle Page Search Params:", playing);
   console.log("Puzzle Page Search Params:", searchParams);
@@ -21,13 +19,15 @@ function Page({ searchParams }) {
 
   if (playing) {
     return (
-      <Suspense fallback={<StatusMessage message="Loading..." />}>
-        <PlaySection />
-      </Suspense>
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback={<StatusMessage message="Loading..." />}>
+          <PlaySection />
+        </Suspense>
+      </QueryClientProvider>
     );
   }
 
   return <StartPuzzle onStart={onStart} />;
 }
 
-export default Page;
+export default Index;
