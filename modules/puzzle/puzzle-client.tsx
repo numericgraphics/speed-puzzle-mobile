@@ -29,12 +29,11 @@ import { StartPuzzle } from "./start-screen";
 
 function PuzzleClient({ challenges }) {
   const { loading, completed, currentChallengeIndex } = useGameStore();
-  console.log("PuzzleClient challenges:", challenges);
   const { theme, styles, isDark } = useTheme();
   const { containers, typography } = styles;
   const needNextChallenge = useNeedNextChallenge();
-  const [image, setImage] = React.useState(null);
-  const [pieces, setPieces] = React.useState(null);
+  const [image, setImage] = React.useState(challenges?.[0]?.image || null);
+  const [pieces, setPieces] = React.useState(challenges?.[0]?.pieces || null);
   const [isVertical, setVerticalOrientation] = React.useState(false);
   const started = useGameStoreStarted();
   const timerAction = useTimerActions();
@@ -42,14 +41,14 @@ function PuzzleClient({ challenges }) {
   const { actions: timerActions } = useTimerStore.getState();
 
   useEffect(() => {
-    console.log("CHALLENGES", challenges);
-    console.log("CURRENT CHALLENGE", currentChallengeIndex);
-    if (challenges) {
-      const currentChallenge = challenges[currentChallengeIndex];
-      setImage(currentChallenge?.image);
-      setPieces(currentChallenge?.pieces);
-      setVerticalOrientation(currentChallenge?.isVertical);
-    }
+    console.log("PuzzleClient CHALLENGES", challenges?.length);
+    console.log("PuzzleClient CURRENT CHALLENGE", currentChallengeIndex);
+    // if (challenges) {
+    //   const currentChallenge = challenges[currentChallengeIndex];
+    //   setImage(currentChallenge?.image);
+    //   setPieces(currentChallenge?.pieces);
+    //   setVerticalOrientation(currentChallenge?.isVertical);
+    // }
   }, [challenges, currentChallengeIndex]);
 
   //   return (

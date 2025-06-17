@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, Text } from "react-native";
 import {
   runOnJS,
   SharedValue,
@@ -40,11 +40,19 @@ export interface PuzzleContainerProps {
 }
 
 export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
+  console.log("PuzzleContainer pieces:", pieces);
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
   const { triggerNextChallenge, incrementChallengeMove } =
     useGameStoreActions();
+
+  console.log("PuzzleContainer pieces:", pieces);
+  // return <Text style={{ color: "black" }}>TEST PUZZLE CONTAINER</Text>;
+
   // const timerValue = useTimerValue();
+  if (!pieces || pieces.length === 0) {
+    throw new Error("No pieces provided to PuzzleContainer");
+  }
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -58,6 +66,7 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
     opacity: opacity.value,
   }));
 
+  // return <Text style={{ color: "black" }}>TEST PUZZLE CONTAINER</Text>;
   useEffect(() => {
     positions.value = Object.assign(
       {},
@@ -84,6 +93,8 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
     runOnJS(incrementChallengeMove)();
     runOnJS(onVerifyOrder)(event.value);
   };
+
+  // return <Text style={{ color: "black" }}>TEST PUZZLE CONTAINER</Text>;
 
   return (
     <Animated.View
