@@ -1,6 +1,6 @@
 // usePuzzleViewModel.ts
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useGameStore,
   useGameStoreActions,
@@ -12,7 +12,7 @@ import { useTimerActions, useTimerStore } from "@/stores/timer";
 
 export function usePuzzle(challenges) {
   const { currentChallengeIndex, completed } = useGameStore();
-  const { nextChallenge } = useGameStoreActions();
+  const { nextChallenge, setChallenges } = useGameStoreActions();
   const { resetImages } = useUnsplashStoreActions();
   const needNextChallenge = useNeedNextChallenge();
   const startTimer = useGameStoreStartTimer();
@@ -22,6 +22,16 @@ export function usePuzzle(challenges) {
   const [image, setImage] = useState(challenges?.[0]?.image || null);
   const [pieces, setPieces] = useState(challenges?.[0]?.pieces || null);
   const [isVertical, setVerticalOrientation] = useState(false);
+
+  // Add hydration logic here
+  const hydrated = useRef(false);
+
+  useEffect(() => {
+    if (!hydrated.current && challenges?.length) {
+      setChallenges(challenges);
+      hydrated.current = true;
+    }
+  }, [challenges, setChallenges]);
 
   useEffect(() => {
     if (needNextChallenge) {
