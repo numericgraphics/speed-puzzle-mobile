@@ -12,6 +12,7 @@ import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";
 
 interface GameStoreActions {
+  setChallenges: (challenges: GameChallengeType[]) => void;
   restartGame: () => void;
   nextChallenge: () => void;
   prevChallenge: () => void;
