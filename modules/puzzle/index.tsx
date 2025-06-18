@@ -1,5 +1,5 @@
 // TODO : use RSC// "use server";
-
+/*
 import React, { useEffect } from "react";
 import { SafeAreaView, View, Text } from "react-native";
 
@@ -152,7 +152,6 @@ export default function Puzzle() {
         style={[{ marginBottom: theme.spacer[3].y }]}
         color={isDark ? theme.color.white : theme.color.black}
       />
-      {/* <StrictMode> */}
 
       {isVertical ? (
         <PuzzleContainerVertical url={image?.url} pieces={pieces} />
@@ -160,9 +159,11 @@ export default function Puzzle() {
         <PuzzleContainer url={image?.url} pieces={pieces} />
       )}
 
-      {/* </StrictMode> */}
       <PuzzleLegend image={image} />
     </SafeAreaView>
   );
 }
 Puzzle.displayName = "Puzzle";
+
+
+*/

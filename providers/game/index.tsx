@@ -1,4 +1,4 @@
-import { PUZZLE_SLIDE_NUMBER } from "@/constants";
+/*import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import PuzzlePieces from "@/helpers/puzzle";
 import { useUnsplash } from "@/hooks/useUnsplash";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
@@ -133,3 +133,6 @@ export const useGame = (): GameContextType => {
   }
   return context;
 };
+
+
+*/
