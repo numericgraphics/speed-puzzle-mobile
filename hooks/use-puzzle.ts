@@ -9,6 +9,7 @@ import {
 } from "@/stores/game";
 import { useUnsplashStoreActions } from "@/stores/unsplash";
 import { useTimerActions, useTimerStore } from "@/stores/timer";
+import { router } from "expo-router";
 
 export function usePuzzle(challenges) {
   const { currentChallengeIndex, completed } = useGameStore();
@@ -48,9 +49,11 @@ export function usePuzzle(challenges) {
   }, [startTimer, timerAction]);
 
   useEffect(() => {
+    console.log("usePuzzle - completed:", completed);
     if (completed) {
       timerActions.reset();
       resetImages();
+      router.replace("/?finished=true");
     }
   }, [completed, resetImages, timerActions]);
 
