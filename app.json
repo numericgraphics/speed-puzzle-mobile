@@ -13,6 +13,7 @@
       "bundleIdentifier": "com.thepark001.speedpuzzle"
     },
     "android": {
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/speed-puzzle-splash-icon.png",
         "backgroundColor": "#000000"
