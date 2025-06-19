@@ -6,11 +6,11 @@ import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
 
-interface StartScreenPuzzleProps {
+interface StartSessionProps {
   onStart: () => void;
 }
 
-export function StartPuzzle({ onStart }: StartScreenPuzzleProps) {
+export function StartSession({ onStart }: StartSessionProps) {
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
 

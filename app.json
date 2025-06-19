@@ -13,6 +13,7 @@
       "bundleIdentifier": "com.thepark001.speedpuzzle"
     },
     "android": {
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/speed-puzzle-splash-icon.png",
         "backgroundColor": "#000000"
@@ -21,7 +22,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -56,12 +57,10 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "reactServerFunctions": true
     },
     "extra": {
-      "router": {
-        "origin": false
-      },
       "eas": {
         "projectId": "9753bbe3-a3f5-467a-933e-5b2713a538d0"
       }
