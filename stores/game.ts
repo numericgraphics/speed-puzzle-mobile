@@ -20,7 +20,6 @@ interface GameStoreActions {
   triggerNextChallenge: () => void;
   startGame: () => void;
   incrementChallengeMove: () => void;
-  getScore: () => number;
 }
 
 export interface GameChallengeType {
@@ -129,74 +128,6 @@ export const useGameStore = create<GameStoreState>()(
 
       incrementChallengeMove: () => {
         useChallengeStore.getState().increment();
-      },
-
-      getScore: () => {
-        // return 0;
-        const results = useResultStore.getState().getResults();
-        // const currentChallengeCompleted = useChallengeStoreCompleted();
-        const MAX_COMPLEXITY = 3;
-
-        if (results.length === 0) return 0;
-
-        return results.reduce((totalScore, challenge) => {
-          // if (!currentChallengeCompleted) return totalScore;
-
-          const { complexity, timerValue, moves } = challenge;
-          console.log(
-            "complexity:",
-            complexity,
-            "timerValue:",
-            timerValue,
-            "moves:",
-            moves
-          );
-          // Convert timer from ms to seconds for finer granularity:
-          const elapsedSec = timerValue / 1000;
-          // Tier threshold (middle if complexity ≤ half of max)
-          const midThreshold = Math.ceil(MAX_COMPLEXITY / 2);
-
-          // Set ideal benchmarks and base score per tier:
-          let idealTime: number;
-          const idealMoves = complexity;
-          let baseScore: number;
-
-          if (complexity === 1) {
-            // Easy
-            idealTime = 1;
-            baseScore = 100;
-          } else if (complexity <= midThreshold) {
-            // Middle
-            idealTime = MAX_COMPLEXITY;
-            baseScore = 150;
-          } else {
-            // Hard
-            idealTime = MAX_COMPLEXITY * 2;
-            baseScore = 200;
-          }
-
-          // Compute penalties
-          const timePenalty = Math.max(0, elapsedSec - idealTime);
-          const extraMoves = Math.max(0, moves - idealMoves);
-          const movePenalty = extraMoves * 2;
-          console.log(
-            "Penalties - Time:",
-            timePenalty,
-            "Extra Moves:",
-            extraMoves,
-            "Move Penalty:",
-            movePenalty
-          );
-
-          // Final per‐challenge score, clamped ≥ 0
-          const challengeScore = Math.max(
-            0,
-            Math.round(baseScore - timePenalty - movePenalty)
-          );
-          console.log("challengeScore", challengeScore);
-          console.log("--------------------------------");
-          return totalScore + challengeScore;
-        }, 0);
       },
     },
   }))
