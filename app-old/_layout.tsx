@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -25,7 +25,6 @@ import {
 import { DB_NAME } from "@/constants";
 import { DatabaseProvider } from "@/providers/data-base";
 import { UserProvider } from "@/providers/user";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -39,8 +38,6 @@ SplashScreen.setOptions({
   duration: 1000,
   fade: true,
 });
-
-const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -77,14 +74,9 @@ export default function RootLayout() {
         <UserProvider>
           <GestureHandlerRootView>
             <ThemeProvider value={DefaultTheme}>
-              <QueryClientProvider client={queryClient}>
-                <Stack>
-                  <Stack.Screen
-                    name="index"
-                    options={{ headerShown: false, animation: "fade" }}
-                  />
-                </Stack>
-              </QueryClientProvider>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+              </Stack>
               <StatusBar style="auto" />
             </ThemeProvider>
           </GestureHandlerRootView>

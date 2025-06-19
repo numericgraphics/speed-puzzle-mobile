@@ -36,7 +36,6 @@ export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
           {
             fontSize: 48,
             fontWeight: "bold",
-            color: theme.color.white,
             paddingBottom: theme.spacer[3].y,
           },
         ]}

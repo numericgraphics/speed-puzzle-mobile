@@ -12,7 +12,7 @@ import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";
 
 interface GameStoreActions {
-  buildChallenges: () => Promise<void>;
+  setChallenges: (challenges: GameChallengeType[]) => void;
   restartGame: () => void;
   nextChallenge: () => void;
   prevChallenge: () => void;
@@ -20,7 +20,6 @@ interface GameStoreActions {
   triggerNextChallenge: () => void;
   startGame: () => void;
   incrementChallengeMove: () => void;
-  getScore: () => number;
 }
 
 export interface GameChallengeType {
@@ -55,49 +54,8 @@ export const useGameStore = create<GameStoreState>()(
     startTimer: false,
 
     actions: {
-      buildChallenges: async () => {
-        // Grab images from the Unsplash store
-        const { images } = useUnsplashStore.getState();
-        if (!images || images.length === 0) {
-          // Nothing to build
-          set({ loading: false });
-          return;
-        }
-
-        try {
-          // For each image, fetch puzzle pieces, build a challenge
-          const puzzlePromises = images.map(async (image) => {
-            const puzzlePieces = await PuzzlePieces.getPuzzlePieces(
-              PUZZLE_SLIDE_NUMBER
-            );
-            console.log("buildChallenges puzzlePieces", puzzlePieces);
-            return {
-              image,
-              // completed: false,
-              pieces: puzzlePieces,
-              complexity: PuzzlePieces.checkPuzzleComplexity(puzzlePieces),
-              isVertical: getRandomBoolean(),
-            } as GameChallengeType;
-          });
-
-          // Resolve all puzzlePromises in parallel
-          const newChallenges = await Promise.all(puzzlePromises);
-          console.log("BUILDING challenges newChallenges", newChallenges);
-          // Store them in the game state
-          set({
-            challenges: newChallenges,
-          });
-        } catch (err) {
-          console.error("Error building challenges:", err);
-        } finally {
-          // Turn off loading, start game
-          // Turn off loading, start game and start timer
-          //TODO: Fix timer actions triggering
-          // const { actions: timerActions } = useTimerStore.getState();
-          // timerActions.reset();
-          // timerActions.start();
-          set({ loading: false, startTimer: true });
-        }
+      setChallenges: (challenges: GameChallengeType[]) => {
+        set({ challenges });
       },
 
       nextChallenge: () => {
@@ -130,8 +88,7 @@ export const useGameStore = create<GameStoreState>()(
       triggerNextChallenge: () => {
         console.log("GAME STORE - triggerNextChallenge");
         const { challenges, currentChallengeIndex } = get();
-        // const { completed } = challenges[currentChallengeIndex];
-        // if (completed) {
+
         const { timerValue } = useTimerStore.getState();
         const { currentMove } = useChallengeStore.getState();
         const updatedChallenges = [...challenges];
@@ -145,7 +102,6 @@ export const useGameStore = create<GameStoreState>()(
           needNextChallenge: true,
           startTimer: false,
         });
-        // }
       },
 
       getCurrentChallenge: () => {
@@ -172,74 +128,6 @@ export const useGameStore = create<GameStoreState>()(
 
       incrementChallengeMove: () => {
         useChallengeStore.getState().increment();
-      },
-
-      getScore: () => {
-        // return 0;
-        const results = useResultStore.getState().getResults();
-        // const currentChallengeCompleted = useChallengeStoreCompleted();
-        const MAX_COMPLEXITY = 3;
-
-        if (results.length === 0) return 0;
-
-        return results.reduce((totalScore, challenge) => {
-          // if (!currentChallengeCompleted) return totalScore;
-
-          const { complexity, timerValue, moves } = challenge;
-          console.log(
-            "complexity:",
-            complexity,
-            "timerValue:",
-            timerValue,
-            "moves:",
-            moves
-          );
-          // Convert timer from ms to seconds for finer granularity:
-          const elapsedSec = timerValue / 1000;
-          // Tier threshold (middle if complexity ≤ half of max)
-          const midThreshold = Math.ceil(MAX_COMPLEXITY / 2);
-
-          // Set ideal benchmarks and base score per tier:
-          let idealTime: number;
-          const idealMoves = complexity;
-          let baseScore: number;
-
-          if (complexity === 1) {
-            // Easy
-            idealTime = 1;
-            baseScore = 100;
-          } else if (complexity <= midThreshold) {
-            // Middle
-            idealTime = MAX_COMPLEXITY;
-            baseScore = 150;
-          } else {
-            // Hard
-            idealTime = MAX_COMPLEXITY * 2;
-            baseScore = 200;
-          }
-
-          // Compute penalties
-          const timePenalty = Math.max(0, elapsedSec - idealTime);
-          const extraMoves = Math.max(0, moves - idealMoves);
-          const movePenalty = extraMoves * 2;
-          console.log(
-            "Penalties - Time:",
-            timePenalty,
-            "Extra Moves:",
-            extraMoves,
-            "Move Penalty:",
-            movePenalty
-          );
-
-          // Final per‐challenge score, clamped ≥ 0
-          const challengeScore = Math.max(
-            0,
-            Math.round(baseScore - timePenalty - movePenalty)
-          );
-          console.log("challengeScore", challengeScore);
-          console.log("--------------------------------");
-          return totalScore + challengeScore;
-        }, 0);
       },
     },
   }))

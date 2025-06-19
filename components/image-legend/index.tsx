@@ -19,13 +19,13 @@ export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
         >
           Photo by :
         </Text>
-        <Text style={typography.label}>{image.user}</Text>
+        <Text style={typography.label}>{image?.user}</Text>
       </View>
       <View style={containers.row}>
         <Text
           style={buttons.linkButton}
           onPress={() => {
-            Linking.openURL(image.link);
+            Linking.openURL(image?.link);
           }}
         >
           Link
