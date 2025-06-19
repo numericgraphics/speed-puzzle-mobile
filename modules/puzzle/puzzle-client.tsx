@@ -15,7 +15,7 @@ function PuzzleClient({ challenges }) {
   const { image, pieces } = usePuzzle(challenges);
 
   return (
-    <SafeAreaView style={containers.centeredFullScreen}>
+    <>
       <RectangleLogo
         width={30}
         height={30}
@@ -26,7 +26,7 @@ function PuzzleClient({ challenges }) {
       <PuzzleContainer url={image?.url} pieces={pieces} />
 
       <PuzzleLegend image={image} />
-    </SafeAreaView>
+    </>
   );
 }
 

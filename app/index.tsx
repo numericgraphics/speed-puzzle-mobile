@@ -28,7 +28,7 @@ function Index({ searchParams }) {
   };
 
   return (
-    <SafeAreaView style={containers.main}>
+    <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
       {playing ? (
         <Suspense fallback={<StatusMessage message="Loading..." />}>
           <PlaySection />
