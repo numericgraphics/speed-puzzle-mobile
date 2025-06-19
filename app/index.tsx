@@ -1,14 +1,19 @@
 import { StatusMessage } from "@/components/message-display";
+import { useTheme } from "@/hooks/useTheme";
 import { PlaySection } from "@/modules/puzzle/play-section";
-import PuzzleClient from "@/modules/puzzle/puzzle-client";
 import { ResultSection } from "@/modules/puzzle/result-section";
-import { StartPuzzle } from "@/modules/puzzle/start-screen";
+import { StartSession } from "@/modules/puzzle/start-section";
+import { useGameStoreActions } from "@/stores/game";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { Suspense } from "react";
+import { SafeAreaView } from "react-native";
 
 function Index({ searchParams }) {
   const playing = useLocalSearchParams().play === "true";
   const finished = useLocalSearchParams().finished === "true";
+  const { restartGame } = useGameStoreActions();
+  const { styles } = useTheme();
+  const { containers } = styles;
   console.log("Puzzle Page Search Params:", playing);
   console.log("Puzzle Page Search Params:", searchParams);
 
@@ -18,27 +23,25 @@ function Index({ searchParams }) {
   };
 
   const onRestart = () => {
-    console.log("Restart button pressed");
+    restartGame();
     router.push("/?play=true");
   };
 
-  if (playing) {
-    return (
-      <Suspense fallback={<StatusMessage message="Loading..." />}>
-        <PlaySection />
-      </Suspense>
-    );
-  }
-
-  if (finished) {
-    return (
-      <Suspense fallback={<StatusMessage message="Get result..." />}>
-        <ResultSection />
-      </Suspense>
-    );
-  }
-
-  return <StartPuzzle onStart={onStart} />;
+  return (
+    <SafeAreaView style={containers.main}>
+      {playing ? (
+        <Suspense fallback={<StatusMessage message="Loading..." />}>
+          <PlaySection />
+        </Suspense>
+      ) : finished ? (
+        <Suspense fallback={<StatusMessage message="Get result..." />}>
+          <ResultSection onRestart={onRestart} />
+        </Suspense>
+      ) : (
+        <StartSession onStart={onStart} />
+      )}
+    </SafeAreaView>
+  );
 }
 
 export default Index;

@@ -25,7 +25,7 @@ export enum WORDS_RESULT {
 
 export const PUZZLE_SLIDE_NUMBER: number = 4;
 
-export const NUMBER_OF_QUESTION: number = 3;
+export const NUMBER_OF_QUESTION: number = 2;
 
 export const USE_MOCK = false;
 
