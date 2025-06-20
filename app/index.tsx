@@ -1,3 +1,4 @@
+import ComposedRectangles from "@/components/logo/composed-rectangle";
 import { StatusMessage } from "@/components/message-display";
 import { useTheme } from "@/hooks/useTheme";
 import { PlaySection } from "@/modules/puzzle/play-section";
@@ -12,7 +13,7 @@ function Index({ searchParams }) {
   const playing = useLocalSearchParams().play === "true";
   const finished = useLocalSearchParams().finished === "true";
   const { restartGame } = useGameStoreActions();
-  const { styles } = useTheme();
+  const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
   console.log("Puzzle Page Search Params:", playing);
   console.log("Puzzle Page Search Params:", searchParams);
@@ -29,6 +30,13 @@ function Index({ searchParams }) {
 
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
+      {/* <ComposedRectangles
+        width={30}
+        height={30}
+        style={{ marginBottom: theme.spacer[5].y }}
+        color={"red"}
+        // color={isDark ? theme.color.white : theme.color.black}
+      /> */}
       {playing ? (
         <Suspense fallback={<StatusMessage message="Loading..." />}>
           <PlaySection />
