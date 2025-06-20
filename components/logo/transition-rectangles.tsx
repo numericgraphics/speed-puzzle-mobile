@@ -26,7 +26,7 @@ const AnimatedFilledRectangleLogo = forwardRef<AnimatedLogoHandle, Props>(
     const rotation = useSharedValue(0);
     const scale = useSharedValue(0);
     const opacity = useSharedValue(1);
-    const animationDuration = 1200;
+    const animationDuration = 2000;
 
     const animatedStyle = useAnimatedStyle(() => ({
       opacity: opacity.value,
@@ -38,16 +38,16 @@ const AnimatedFilledRectangleLogo = forwardRef<AnimatedLogoHandle, Props>(
 
     useImperativeHandle(ref, () => ({
       start: () => {
-        rotation.value = withTiming(540, {
+        rotation.value = withTiming(180, {
           duration: animationDuration,
-          easing: Easing.out(Easing.quad),
+          easing: Easing.linear,
         });
 
         scale.value = withTiming(
           20,
           {
             duration: animationDuration,
-            easing: Easing.out(Easing.quad),
+            easing: Easing.linear,
           },
           () => {
             callback();

@@ -20,12 +20,12 @@ export function StartSession({ onStart }: StartSessionProps) {
       exiting={FadeOut.duration(300)}
       style={containers.centeredFullScreen}
     >
-      {/* <RectangleLogo
+      <RectangleLogo
         width={50}
         height={50}
         style={{ marginBottom: theme.spacer[4].y }}
         color={isDark ? theme.color.white : theme.color.black}
-      /> */}
+      />
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
         Welcome to the Puzzle Game !
       </Text>
