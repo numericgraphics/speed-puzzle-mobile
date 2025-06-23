@@ -21,8 +21,8 @@ export const AnimatedMiddleRectangle = ({
   useEffect(() => {
     Animated.timing(anim, {
       toValue: 1,
-      duration: 700,
-      easing: Easing.inOut(Easing.quad),
+      duration: 1200,
+      easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
   }, []);

@@ -21,7 +21,7 @@ export const AnimatedBottomRectangle = ({
   useEffect(() => {
     Animated.timing(anim, {
       toValue: 1,
-      duration: 800,
+      duration: 1000,
       easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
