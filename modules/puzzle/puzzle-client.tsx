@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 
 import PuzzleContainer from "@/modules/puzzle/puzzle-container";
@@ -31,18 +31,13 @@ function PuzzleClient({ challenges }) {
   useEffect(() => {
     console.log("usePuzzle - completed:", completed);
     if (completed) {
-      animationRef.current?.handleEndX(onAnimationEnd);
+      animationRef.current?.handleEndYLong(onAnimationEnd);
     }
   }, [completed]);
 
   return (
     <>
       <View style={{ bottom: theme.spacer[3].y }}>
-        {/* <AnimatedRectangleLogo
-              width={50}
-              height={50}
-              color={isDark ? theme.color.white : theme.color.black}
-            /> */}
         <AnimatedRectanglesLayer
           ref={animationRef}
           width={30}
@@ -50,12 +45,6 @@ function PuzzleClient({ challenges }) {
           color={isDark ? theme.color.white : theme.color.black}
         />
       </View>
-      {/* <RectangleLogo
-        width={30}
-        height={30}
-        style={{ marginBottom: theme.spacer[3].y }}
-        color={isDark ? theme.color.white : theme.color.black}
-      /> */}
 
       <PuzzleContainer url={image?.url} pieces={pieces} />
 
