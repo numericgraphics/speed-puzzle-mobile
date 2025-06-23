@@ -36,7 +36,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   // Fetch all users
   const getUsers = async (): Promise<any[]> => {
     const users = await getAllUsers();
-    console.log("fetchAllUsers : ", users);
+    // console.log("fetchAllUsers : ", users);
     return users;
   };
 
