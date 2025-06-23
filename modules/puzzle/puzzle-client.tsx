@@ -16,16 +16,24 @@ import {
 function PuzzleClient({ challenges }) {
   const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
-  const { image, pieces } = usePuzzle(challenges);
+  const { image, pieces, completed, onAnimationEnd } = usePuzzle(challenges);
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       animationRef.current?.handleStartX();
     }, 500);
-    return () => clearTimeout(timeout);
-    // animationRef.current.handleEndX();
+    return () => {
+      clearTimeout(timeout);
+    };
   }, []);
+
+  useEffect(() => {
+    console.log("usePuzzle - completed:", completed);
+    if (completed) {
+      animationRef.current?.handleEndX(onAnimationEnd);
+    }
+  }, [completed]);
 
   return (
     <>

@@ -3,9 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
-import { AnimatedRectangleLogo } from "@/components/logo/animated/container";
 import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
@@ -25,7 +23,6 @@ export function StartSession({ onStart }: StartSessionProps) {
       animationRef.current?.handleStartY();
     }, 1200);
     return () => clearTimeout(timeout);
-    // animationRef.current.handleEndX();
   }, []);
 
   return (
@@ -35,11 +32,6 @@ export function StartSession({ onStart }: StartSessionProps) {
       style={containers.centeredFullScreen}
     >
       <View style={{ bottom: theme.spacer[5].y }}>
-        {/* <AnimatedRectangleLogo
-          width={50}
-          height={50}
-          color={isDark ? theme.color.white : theme.color.black}
-        /> */}
         <AnimatedRectanglesLayer
           ref={animationRef}
           width={50}
@@ -47,12 +39,6 @@ export function StartSession({ onStart }: StartSessionProps) {
           color={isDark ? theme.color.white : theme.color.black}
         />
       </View>
-      {/* <RectangleLogo
-        width={50}
-        height={50}
-        style={{ marginBottom: theme.spacer[4].y }}
-        color={isDark ? theme.color.white : theme.color.black}
-      /> */}
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
         Welcome to the Puzzle Game !
       </Text>
@@ -62,8 +48,6 @@ export function StartSession({ onStart }: StartSessionProps) {
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
         onPress={() => {
-          // test !
-          // onStart();
           animationRef.current?.handleEndX(() => onStart());
         }}
       >
