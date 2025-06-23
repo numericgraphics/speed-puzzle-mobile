@@ -12,7 +12,7 @@ function Index({ searchParams }) {
   const playing = useLocalSearchParams().play === "true";
   const finished = useLocalSearchParams().finished === "true";
   const { restartGame } = useGameStoreActions();
-  const { styles } = useTheme();
+  const { theme, styles, isDark } = useTheme();
   const { containers } = styles;
   console.log("Puzzle Page Search Params:", playing);
   console.log("Puzzle Page Search Params:", searchParams);

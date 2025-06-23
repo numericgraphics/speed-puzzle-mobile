@@ -1,6 +1,6 @@
 // usePuzzleViewModel.ts
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useGameStore,
   useGameStoreActions,
@@ -49,15 +49,6 @@ export function usePuzzle(challenges) {
   }, [startTimer, timerAction]);
 
   useEffect(() => {
-    console.log("usePuzzle - completed:", completed);
-    if (completed) {
-      timerActions.reset();
-      resetImages();
-      router.replace("/?finished=true");
-    }
-  }, [completed, resetImages, timerActions]);
-
-  useEffect(() => {
     if (challenges && challenges[currentChallengeIndex]) {
       const currentChallenge = challenges[currentChallengeIndex];
       setImage(currentChallenge.image);
@@ -66,9 +57,17 @@ export function usePuzzle(challenges) {
     }
   }, [challenges, currentChallengeIndex]);
 
+  const onAnimationEnd = useCallback(() => {
+    timerActions.reset();
+    resetImages();
+    router.replace("/?finished=true");
+  }, [resetImages, timerActions]);
+
   return {
     image,
     pieces,
     isVertical,
+    onAnimationEnd,
+    completed,
   };
 }

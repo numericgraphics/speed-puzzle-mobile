@@ -1,9 +1,12 @@
-import React from "react";
-import { Text } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-import RectangleLogo from "@/components/logo/rectangles";
 import { useTheme } from "@/hooks/useTheme";
+import {
+  AnimatedRectanglesLayer,
+  AnimatedRectanglesLayerHandle,
+} from "@/components/logo/advanced-animated";
 
 interface CompletedPuzzleProps {
   onRestart: () => void;
@@ -11,19 +14,31 @@ interface CompletedPuzzleProps {
 }
 
 export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
-  const { styles, theme } = useTheme();
+  const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
+  const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      animationRef.current?.handleStartY();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <Animated.View
-      entering={FadeIn.duration(300)} // Optional: customize duration
+      entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(300)}
       style={containers.centeredFullScreen}
     >
-      <RectangleLogo
-        width={50}
-        height={50}
-        style={{ marginBottom: theme.spacer[4].y }}
-      />
+      <View style={{ bottom: theme.spacer[5].y }}>
+        <AnimatedRectanglesLayer
+          ref={animationRef}
+          width={50}
+          height={50}
+          color={isDark ? theme.color.white : theme.color.black}
+        />
+      </View>
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
         Congrats, you finished the game !
       </Text>
@@ -45,7 +60,7 @@ export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
         onPress={() => {
-          onRestart();
+          animationRef.current?.handleEndX(() => onRestart());
         }}
       >
         Play again !
