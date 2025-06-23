@@ -48,15 +48,6 @@ export function usePuzzle(challenges) {
     }
   }, [startTimer, timerAction]);
 
-  // useEffect(() => {
-  //   console.log("usePuzzle - completed:", completed);
-  //   if (completed) {
-  //     timerActions.reset();
-  //     resetImages();
-  //     router.replace("/?finished=true");
-  //   }
-  // }, [completed, resetImages, timerActions]);
-
   useEffect(() => {
     if (challenges && challenges[currentChallengeIndex]) {
       const currentChallenge = challenges[currentChallengeIndex];
