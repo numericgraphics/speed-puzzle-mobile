@@ -1,4 +1,3 @@
-// components/logo/animated/AnimatedRectanglesLayer.tsx
 import React, {
   forwardRef,
   useEffect,
@@ -17,6 +16,7 @@ export interface AnimatedRectanglesLayerHandle {
   handleEndX(callback?: () => void): void;
   handleStartY(callback?: () => void): void;
   handleEndY(callback?: () => void): void;
+  handleEndYLong(callback?: () => void): void;
 }
 
 interface Props {
@@ -29,7 +29,6 @@ export const AnimatedRectanglesLayer = forwardRef<
   AnimatedRectanglesLayerHandle,
   Props
 >(({ width, height, color = "white" }, ref) => {
-  // refs to each underlying rectangle
   const topRef = useRef<AnimatedRectangleHandle>(null);
   const middleRef = useRef<AnimatedRectangleHandle>(null);
   const bottomRef = useRef<AnimatedRectangleHandle>(null);
@@ -54,7 +53,6 @@ export const AnimatedRectanglesLayer = forwardRef<
     }
   };
 
-  // expose two methods
   useImperativeHandle(ref, () => ({
     handleStartX: (callback?: () => void) => {
       topRef.current?.startX();
@@ -80,9 +78,14 @@ export const AnimatedRectanglesLayer = forwardRef<
       bottomRef.current?.endY();
       callback && runCallback(callback);
     },
+    handleEndYLong: (callback?: () => void) => {
+      topRef.current?.endLongY();
+      middleRef.current?.endLongY();
+      bottomRef.current?.endLongY();
+      callback && runCallback(callback);
+    },
   }));
 
-  // render all three
   return (
     <View style={[styles.container, { width, height }]}>
       {rectanglesConfig.map((shape) => {
@@ -110,3 +113,5 @@ export const AnimatedRectanglesLayer = forwardRef<
 const styles = StyleSheet.create({
   container: { alignItems: "center", justifyContent: "center" },
 });
+
+AnimatedRectanglesLayer.displayName = "AnimatedRectanglesLayer";

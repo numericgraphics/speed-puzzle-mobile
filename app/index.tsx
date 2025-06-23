@@ -1,4 +1,3 @@
-import ComposedRectangles from "@/components/logo/composed-rectangle";
 import { StatusMessage } from "@/components/message-display";
 import { useTheme } from "@/hooks/useTheme";
 import { PlaySection } from "@/modules/puzzle/play-section";
@@ -30,13 +29,6 @@ function Index({ searchParams }) {
 
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
-      {/* <ComposedRectangles
-        width={30}
-        height={30}
-        style={{ marginBottom: theme.spacer[5].y }}
-        color={"red"}
-        // color={isDark ? theme.color.white : theme.color.black}
-      /> */}
       {playing ? (
         <Suspense fallback={<StatusMessage message="Loading..." />}>
           <PlaySection />

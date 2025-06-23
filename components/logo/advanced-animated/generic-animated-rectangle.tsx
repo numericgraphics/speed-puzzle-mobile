@@ -12,6 +12,7 @@ import {
   animationYConfig,
   animationXEndedConfig,
   animationYEndedConfig,
+  animationYLongEndedConfig,
   AnimationConfig,
 } from "./animations-config";
 
@@ -20,6 +21,7 @@ export interface AnimatedRectangleHandle {
   endX(): void;
   startY(): void;
   endY(): void;
+  endLongY(): void;
 }
 
 interface Props {
@@ -81,6 +83,9 @@ export const GenericAnimatedRectangle = forwardRef<
       endY() {
         setCurrentConfig(animationYEndedConfig[shape.id]);
       },
+      endLongY() {
+        setCurrentConfig(animationYLongEndedConfig[shape.id]);
+      },
     }),
     [shape.id]
   );
@@ -95,7 +100,7 @@ export const GenericAnimatedRectangle = forwardRef<
   });
   const rotateX = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [currentConfig.rotateFrom, "0deg"],
+    outputRange: [currentConfig.rotateFrom, currentConfig.rotateTo],
   });
   const translateY = anim.interpolate({
     inputRange: [0, 1],
@@ -103,7 +108,12 @@ export const GenericAnimatedRectangle = forwardRef<
   });
   const rotateY = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: [currentConfig.rotateFrom, "0deg"],
+    outputRange: [currentConfig.rotateFrom, currentConfig.rotateTo],
+  });
+
+  const scale = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [currentConfig.scaleFrom, currentConfig.scaleTo],
   });
 
   return (
@@ -114,7 +124,13 @@ export const GenericAnimatedRectangle = forwardRef<
           width,
           height,
           opacity,
-          transform: [{ translateX }, { rotateX }, { translateY }, { rotateY }],
+          transform: [
+            { translateX },
+            { rotateX },
+            { translateY },
+            { rotateY },
+            { scale },
+          ],
           backgroundColor: "transparent",
         },
         style,
