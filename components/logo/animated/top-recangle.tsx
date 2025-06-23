@@ -21,8 +21,8 @@ export const AnimatedTopRectangle = ({
   useEffect(() => {
     Animated.timing(anim, {
       toValue: 1,
-      duration: 600,
-      easing: Easing.elastic(1.2),
+      duration: 1500,
+      easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
   }, []);
