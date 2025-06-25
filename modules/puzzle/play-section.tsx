@@ -1,20 +1,24 @@
-"use client";
+import { useQuery } from "@tanstack/react-query";
 
 import { buildChallenges } from "@/actions/puzzle-actions";
 import PuzzleClient from "./puzzle-client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { StatusMessage } from "@/components/message-display";
 
 export function PlaySection() {
   const {
     data: challenges,
-    isFetching,
+    isLoading,
+    isError,
     error,
-  } = useSuspenseQuery({
+  } = useQuery({
     queryKey: ["challenges"],
     queryFn: buildChallenges,
   });
 
-  if (error && !isFetching) {
+  if (isLoading) {
+    return <StatusMessage message="Loading..." />;
+  }
+  if (isError) {
     throw error;
   }
 

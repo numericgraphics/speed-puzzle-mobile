@@ -57,8 +57,7 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactServerFunctions": true
+      "typedRoutes": true
     },
     "extra": {
       "eas": {
