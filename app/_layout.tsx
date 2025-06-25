@@ -72,6 +72,7 @@ export default function RootLayout() {
           authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
         },
       }}
+      useSuspense
     >
       <DatabaseProvider>
         <UserProvider>
