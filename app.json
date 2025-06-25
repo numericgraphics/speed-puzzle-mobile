@@ -21,8 +21,8 @@
       "package": "com.thepark001.speedpuzzle"
     },
     "web": {
-      "bundler": "metro",
       "output": "single",
+      "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
