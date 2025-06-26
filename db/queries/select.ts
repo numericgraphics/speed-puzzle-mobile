@@ -1,4 +1,7 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "../index";
+import { users } from "../schema";
 
 export async function getUserByName(name: string) {
   const user = await db.query.users.findMany({
@@ -26,9 +29,16 @@ export async function getScoresByUserId(userId: number) {
   return scores;
 }
 export async function getTopScores() {
-  const scores = await db.query.scores.findMany({
+  // Retrieve the highest‐value scores joined to their user
+  const topScores = await db.query.scores.findMany({
+    with: { user: true },
     orderBy: (scores, { desc }) => desc(scores.value),
     limit: 5,
   });
-  return scores;
+
+  // Map into an array of { name, score } objects
+  return topScores.map(({ value, user }) => ({
+    name: user.userName,
+    score: value,
+  }));
 }
