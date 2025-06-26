@@ -1,6 +1,7 @@
 // actions/result-actions.ts
 import { useResultStore } from "@/stores/results";
 import { GameChallengeType } from "@/stores/game";
+import { getTopScores } from "@/db/queries/select";
 
 /**
  * Compute the aggregated score for the current game.
@@ -50,4 +51,21 @@ export async function getResultScore(): Promise<number> {
 
     return totalScore + challengeScore;
   }, 0);
+}
+
+/**
+ * Fetches the top scores from the database.
+ */
+export async function getHightScores() {
+  const topScores = await getTopScores();
+  return topScores;
+}
+
+/**
+ * Retrieves both the calculated result and the current top scores.
+ */
+export async function getResultSessionData() {
+  const result = await getResultScore();
+  const topScores = await getHightScores();
+  return { result, topScores };
 }

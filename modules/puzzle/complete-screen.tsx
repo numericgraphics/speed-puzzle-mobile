@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Text, View } from "react-native";
+import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { useTheme } from "@/hooks/useTheme";
@@ -8,12 +8,33 @@ import {
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
 
+export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
+  const { styles } = useTheme();
+  const { containers, typography } = styles;
+  return (
+    <View
+      style={[
+        containers.row,
+        { width: "100%", justifyContent: "space-between" },
+      ]}
+    >
+      <Text style={[typography.body]}>{name}</Text>
+      <Text style={[typography.label]}>{score}</Text>
+    </View>
+  );
+};
+
 interface CompletedPuzzleProps {
   onRestart: () => void;
   score: number;
+  scores: any[];
 }
 
-export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
+export function CompletedPuzzle({
+  onRestart,
+  score,
+  scores,
+}: CompletedPuzzleProps) {
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
@@ -39,6 +60,7 @@ export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
           color={isDark ? theme.color.white : theme.color.black}
         />
       </View>
+
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
         Congrats, you finished the game !
       </Text>
@@ -58,7 +80,25 @@ export function CompletedPuzzle({ onRestart, score }: CompletedPuzzleProps) {
         {score}
       </Text>
       <Text
-        style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
+        style={[typography.labelBold, { paddingBottom: theme.spacer[2].y }]}
+      >
+        Higher Scores
+      </Text>
+      <FlatList
+        data={scores}
+        renderItem={({ item }) => (
+          <ScoreRow name={item.name} score={item.score} />
+        )}
+        keyExtractor={(item) => item.id}
+        style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
+      />
+      <TouchableOpacity disabled={true} onPress={() => console.log("register")}>
+        <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
+          Register
+        </Text>
+      </TouchableOpacity>
+      <Text
+        style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
         onPress={() => {
           animationRef.current?.handleEndX(() => onRestart());
         }}

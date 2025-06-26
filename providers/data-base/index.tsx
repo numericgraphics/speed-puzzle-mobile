@@ -48,8 +48,10 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("Database instance is null. Cannot synchronize.");
       return;
     }
-    synchronizeDatabase();
-  }, [db]);
+    if (!dbReady) {
+      synchronizeDatabase();
+    }
+  }, [db, dbReady]);
 
   // Provide a manual re-sync function
   const resyncDB = async (): Promise<void> => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getResultScore } from "@/actions/result-actions";
+import { getResultScore, getResultSessionData } from "@/actions/result-actions";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
 
@@ -15,8 +15,8 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     isError,
     error,
   } = useQuery({
-    queryKey: ["final-score"],
-    queryFn: getResultScore,
+    queryKey: ["result-section-data"],
+    queryFn: getResultSessionData,
   });
 
   if (isLoading) {
@@ -26,7 +26,13 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     throw error;
   }
 
-  return <CompletedPuzzle onRestart={onRestart} score={score ?? 0} />;
+  return (
+    <CompletedPuzzle
+      onRestart={onRestart}
+      score={score.result ?? 0}
+      scores={score.topScores}
+    />
+  );
 }
 
 ResultSection.displayName = "ResultSection";
