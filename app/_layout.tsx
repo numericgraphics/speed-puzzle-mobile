@@ -5,11 +5,12 @@ import { Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import { SQLiteProvider } from "expo-sqlite";
+import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 
 import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
 import {
@@ -26,6 +27,7 @@ import { DB_NAME } from "@/constants";
 import { DatabaseProvider } from "@/providers/data-base";
 import { UserProvider } from "@/providers/user";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { initDb } from "@/db/helpers/init";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -64,18 +66,27 @@ export default function RootLayout() {
   }
 
   return (
-    <SQLiteProvider
-      databaseName={DB_NAME}
-      options={{
-        libSQLOptions: {
-          url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-          authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-        },
-      }}
-    >
-      <DatabaseProvider>
-        <UserProvider>
-          <GestureHandlerRootView>
+    <GestureHandlerRootView>
+      <SQLiteProvider
+        databaseName={DB_NAME}
+        options={{
+          libSQLOptions: {
+            url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
+            authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
+          },
+        }}
+        // onInit={async (db: SQLiteDatabase) => {
+        //   try {
+        //     // Always sync libSQL first to prevent conflicts between local and remote databases
+        //     db.syncLibSQL();
+        //     console.log("DB syncLibSQL done");
+        //   } catch (e) {
+        //     console.log("Error onInit syncing libSQL:", e);
+        //   }
+        // }}
+      >
+        <DatabaseProvider>
+          <UserProvider>
             <ThemeProvider value={DefaultTheme}>
               <QueryClientProvider client={queryClient}>
                 <Stack>
@@ -87,9 +98,9 @@ export default function RootLayout() {
               </QueryClientProvider>
               <StatusBar style="auto" />
             </ThemeProvider>
-          </GestureHandlerRootView>
-        </UserProvider>
-      </DatabaseProvider>
-    </SQLiteProvider>
+          </UserProvider>
+        </DatabaseProvider>
+      </SQLiteProvider>
+    </GestureHandlerRootView>
   );
 }

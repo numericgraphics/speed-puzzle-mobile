@@ -27,12 +27,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { dbReady } = useDatabase();
 
-  useEffect(() => {
-    console.log("dbReady --> getAllData ", dbReady);
-    if (dbReady) {
-      getAllData();
-    }
-  }, [dbReady]);
+  // useEffect(() => {
+  //   console.log("dbReady --> getAllData ", dbReady);
+  //   if (dbReady) {
+  //     getAllData();
+  //   }
+  // }, [dbReady]);
   // Fetch all users
   const getUsers = async (): Promise<any[]> => {
     const users = await getAllUsers();
