@@ -30,7 +30,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     <CompletedPuzzle
       onRestart={onRestart}
       score={score.result ?? 0}
-      scores={score.topScores}
+      scores={score.topScores.reverse() || []}
     />
   );
 }
