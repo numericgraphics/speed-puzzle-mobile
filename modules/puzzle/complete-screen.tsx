@@ -64,8 +64,10 @@ export function CompletedPuzzle({
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
         Congrats, you finished the game !
       </Text>
-      <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
-        Your final score:
+      <Text
+        style={[typography.labelBold, { paddingBottom: theme.spacer[2].y }]}
+      >
+        Your final score
       </Text>
       <Text
         style={[
@@ -86,10 +88,10 @@ export function CompletedPuzzle({
       </Text>
       <FlatList
         data={scores}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <ScoreRow name={item.name} score={item.score} />
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item.name + index}
         style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
       />
       <TouchableOpacity disabled={true} onPress={() => console.log("register")}>
