@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Slot, Stack } from "expo-router";
@@ -9,7 +9,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import { SQLiteProvider } from "expo-sqlite";
+import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 
 import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
 import {
@@ -26,6 +26,7 @@ import { DB_NAME } from "@/constants";
 import { DatabaseProvider } from "@/providers/data-base";
 import { UserProvider } from "@/providers/user";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StatusMessage } from "@/components/message-display";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -64,16 +65,26 @@ export default function RootLayout() {
   }
 
   return (
-    <SQLiteProvider
-      databaseName={DB_NAME}
-      options={{
-        libSQLOptions: {
-          url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-          authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-        },
-      }}
-    >
-      <DatabaseProvider>
+    <Suspense fallback={<StatusMessage message="Connect DB..." />}>
+      <SQLiteProvider
+        databaseName={DB_NAME}
+        useSuspense
+        options={{
+          libSQLOptions: {
+            url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
+            authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
+          },
+        }}
+        onInit={async (db: SQLiteDatabase) => {
+          try {
+            // Always sync libSQL first to prevent conflicts between local and remote databases
+            db.syncLibSQL();
+            console.log("Database sync completed successfully.");
+          } catch (e) {
+            console.log("Error onInit syncing libSQL:", e);
+          }
+        }}
+      >
         <UserProvider>
           <GestureHandlerRootView>
             <ThemeProvider value={DefaultTheme}>
@@ -89,7 +100,7 @@ export default function RootLayout() {
             </ThemeProvider>
           </GestureHandlerRootView>
         </UserProvider>
-      </DatabaseProvider>
-    </SQLiteProvider>
+      </SQLiteProvider>
+    </Suspense>
   );
 }

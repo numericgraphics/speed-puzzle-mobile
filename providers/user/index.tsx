@@ -1,15 +1,18 @@
 // providers/UserProvider.tsx
 import React, { createContext, useContext, ReactNode, useEffect } from "react";
 
-import {
-  getAllUsers,
-  getUserByName,
-  getAllScores,
-  getScoresByUserId,
-  getTopScores as fetchTopScores,
-} from "@/db/queries/select";
-import { createUser as dbCreateUser, createScore } from "@/db/queries/inserts";
+// import {
+//   getAllUsers,
+//   getUserByName,
+//   getAllScores,
+//   getScoresByUserId,
+//   getTopScores as fetchTopScores,
+// } from "@/db/queries/select";
+// import { createUser as dbCreateUser, createScore } from "@/db/queries/inserts";
 import { useDatabase } from "@/providers/data-base";
+import { useInsertQueries } from "@/hooks/useInsertQueries";
+import { useSelectQueries } from "@/hooks/useSelectQueries";
+import { useSQLiteContext } from "expo-sqlite";
 
 type UserContextValue = {
   getUsers: () => Promise<any[]>;
@@ -25,14 +28,21 @@ const UserContext = createContext<UserContextValue | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { dbReady } = useDatabase();
-
+  const { createUser: dbCreateUser, createScore } = useInsertQueries();
+  const {
+    getAllUsers,
+    getUserByName,
+    getAllScores,
+    getScoresByUserId,
+    getTopScores: fetchTopScores,
+  } = useSelectQueries();
+  const db = useSQLiteContext();
   useEffect(() => {
-    console.log("dbReady --> getAllData ", dbReady);
-    if (dbReady) {
+    console.log("dbReady --> getAllData ");
+    if (db) {
       getAllData();
     }
-  }, [dbReady]);
+  }, [db]);
   // Fetch all users
   const getUsers = async (): Promise<any[]> => {
     const users = await getAllUsers();

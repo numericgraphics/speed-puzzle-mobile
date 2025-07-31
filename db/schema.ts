@@ -1,65 +1,27 @@
-import {
-  sqliteTable,
-  integer,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
-import { relations, sql } from "drizzle-orm";
+// db/schema.ts
+// Plain TypeScript types — keep these in sync with the SQL below.
 
-// This file defines the schema for the SQLite database using Drizzle ORM.
-/* ---------- User table ---------- */
-export const users = sqliteTable(
-  "users",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+export type User = {
+  id: number;
+  createdAt: number; // ms since epoch
+  updatedAt: number; // ms since epoch
+  userName: string;
+  password: string;
+};
 
-    createdAt: integer("created_at", { mode: "timestamp_ms" }).default(
-      // ms-since-epoch
-      sql`(strftime('%s','now') * 1000)`
-    ),
+export type InsertUser = {
+  userName: string;
+  password: string;
+};
 
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).default(
-      sql`(strftime('%s','now') * 1000)`
-    ),
+export type Score = {
+  id: number;
+  createdAt: number; // ms since epoch
+  value: number;
+  userId: number | null;
+};
 
-    userName: text("user_name").notNull(),
-    password: text("password").notNull(),
-  },
-  /* NEW API: return an array, not an object  */
-  (t) => [uniqueIndex("user_user_name_idx").on(t.userName)]
-);
-
-/* ---------- Score table ---------- */
-export const scores = sqliteTable(
-  "scores",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" }).default(
-      sql`(strftime('%s','now') * 1000)`
-    ),
-
-    value: integer("value").notNull(),
-
-    userId: integer("user_id").references(() => users.id),
-  },
-  /* empty array keeps the compiler happy with v0.38+ */
-  () => []
-);
-
-/* ---------- Relation helpers ---------- */
-export const usersRelations = relations(users, ({ many }) => ({
-  scores: many(scores),
-}));
-
-export const scoresRelations = relations(scores, ({ one }) => ({
-  user: one(users, {
-    fields: [scores.userId],
-    references: [users.id],
-  }),
-}));
-
-export type InsertUser = typeof users.$inferInsert;
-export type SelectUser = typeof users.$inferSelect;
-export type InsertScore = typeof scores.$inferInsert;
-export type SelectScore = typeof scores.$inferSelect;
+export type InsertScore = {
+  value: number;
+  userId?: number | null;
+};

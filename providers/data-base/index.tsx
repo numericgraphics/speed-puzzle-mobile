@@ -1,14 +1,21 @@
 // providers/DatabaseProvider.tsx
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite"; // assume expo-sqlite is installed
-import * as Network from "expo-network"; // (optional, for offline check)
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import * as SQLite from "expo-sqlite";
+import * as Network from "expo-network";
+import { DB_NAME } from "@/constants";
 
 type DatabaseContextValue = {
   dbReady: boolean;
-  resyncDB: () => Promise<void>; // function to re-trigger sync
+  resyncDB: () => Promise<void>;
 };
 
-// Create the context with a default undefined value
 const DatabaseContext = createContext<DatabaseContextValue | undefined>(
   undefined
 );
@@ -17,54 +24,87 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [dbReady, setDbReady] = useState(false);
-  const db = useSQLiteContext(); // open or get the database instance
+  const db = useSQLiteContext();
 
-  // Define the sync function (could also be defined outside)
-  const synchronizeDatabase = async () => {
+  const shouldResetReplica = (err: unknown) => {
+    const msg = String((err as any)?.message ?? err ?? "");
+    return (
+      msg.includes("higher frame_no") ||
+      msg.toLowerCase().includes("generation") ||
+      msg.includes("InvalidPushFrameConflict") ||
+      msg.includes("InvalidGeneration")
+    );
+  };
+
+  const resetLocalReplica = useCallback(async () => {
     try {
-      // (Optional) Check network status for offline-friendly handling
+      // Close DB before deleting (if the platform supports it)
+      await (db as any)?.closeAsync?.();
+    } catch {
+      // no-op
+    }
+    try {
+      await SQLite.deleteDatabaseAsync(DB_NAME);
+      console.log("Deleted local replica:", DB_NAME);
+    } catch (e) {
+      console.error("Failed to delete local replica:", e);
+    }
+  }, [db]);
+
+  const synchronizeDatabase = useCallback(async () => {
+    try {
       const { isConnected } = await Network.getNetworkStateAsync();
       if (!isConnected) {
         console.log("No network connection. Skipping sync.");
-        // If offline, you might choose to set dbReady true to allow offline use of local DB:
-        // setDbReady(true);
-        return; // Skip calling syncLibSQL if offline
+        return;
       }
-      // Perform the sync with remote libSQL server (returns a Promise<void>)
+
+      // Try normal sync first
       await db.syncLibSQL();
       console.log("Database sync completed successfully.");
       setDbReady(true);
     } catch (error) {
       console.error("Error during database sync:", error);
-      // Keep dbReady false on failure, since sync didn't complete
-      setDbReady(false);
-    }
-  };
 
-  // Run sync on initial mount
-  useEffect(() => {
-    console.log("synchronizeDatabase called on mount");
-    if (!db) {
-      console.error("Database instance is null. Cannot synchronize.");
-      return;
+      if (shouldResetReplica(error)) {
+        // Re-bootstrap the local replica from the server snapshot
+        await resetLocalReplica();
+        setDbReady(false);
+        setTimeout(() => {
+          synchronizeDatabase().catch((e) =>
+            console.error("Retry sync failed:", e)
+          );
+        }, 0);
+      } else {
+        setDbReady(false);
+      }
     }
+  }, [db, resetLocalReplica]);
+
+  useEffect(() => {
     if (!dbReady) {
+      console.log("synchronizeDatabase called on mount");
       synchronizeDatabase();
     }
-  }, [db, dbReady]);
+  }, [dbReady, synchronizeDatabase]);
 
-  // Provide a manual re-sync function
-  const resyncDB = async (): Promise<void> => {
-    setDbReady(false); // reset flag (database not ready during re-sync)
+  const resyncDB = useCallback(async () => {
+    setDbReady(false);
     try {
       await db.syncLibSQL();
       console.log("Manual database re-sync successful.");
       setDbReady(true);
     } catch (error) {
       console.error("Database re-sync failed:", error);
-      setDbReady(false);
+      if (shouldResetReplica(error)) {
+        await resetLocalReplica();
+        setDbReady(false);
+        await synchronizeDatabase();
+      } else {
+        setDbReady(false);
+      }
     }
-  };
+  }, [db, resetLocalReplica, synchronizeDatabase]);
 
   return (
     <DatabaseContext.Provider value={{ dbReady, resyncDB }}>
@@ -73,11 +113,9 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// Custom hook for consuming the context
 export const useDatabase = (): DatabaseContextValue => {
-  const context = useContext(DatabaseContext);
-  if (!context) {
+  const ctx = useContext(DatabaseContext);
+  if (!ctx)
     throw new Error("useDatabase must be used within a DatabaseProvider");
-  }
-  return context;
+  return ctx;
 };

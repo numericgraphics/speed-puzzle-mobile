@@ -1,111 +1,64 @@
-// import { drizzle } from "drizzle-orm/expo-sqlite";
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
-import { seed } from "drizzle-seed";
-// import * as SQLite from "expo-sqlite";
-// import { SQLiteDatabase } from "expo-sqlite";
+// db/seed.ts
+import { createClient, type Client } from "@libsql/client";
 import { config } from "dotenv";
-import * as schema from "./schema";
 config({ path: ".env" });
 
-/*
-async function main() {
-  // const expo = SQLite.openDatabaseSync("my-db", {
-  //   libSQLOptions: {
-  //     url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-  //     authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-  //   },
-  // });
-  const client = createClient({
-    url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-    authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-  });
-  const db = drizzle(client);
-  //   },
-  // });
-
-  await seed(db, schema).refine((funcs) => {
-    // Build an array [10, 20, 30, ..., 100]
-    const tenToHundred = Array.from({ length: 15 }, (_, i) => (i + 1) * 10);
-
-    return {
-      // 1) Generate 10 users
-      users: {
-        count: 15,
-        // 2) Each user has exactly one score
-        with: {
-          scores: 1,
-        },
-      },
-
-      // 3) Override the `value` column on `scores`:
-      //    Use 'valuesFromArray' so that exactly the ten values [10..100] appear once each
-      scores: {
-        columns: {
-          value: funcs.valuesFromArray({
-            values: tenToHundred,
-            isUnique: true,
-          }),
-        },
-      },
-    };
-  });
-
-  console.log("✅ Seed completed with incremental scores.");
-  // Close the underlying HTTP/WS connection once seeding is done
-  await client.close?.();
+function env(name: string): string {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing env var: ${name}`);
+  return v;
 }
 
-*/
-
-async function main() {
+async function withClient<T>(fn: (c: Client) => Promise<T>) {
   const client = createClient({
-    url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-    authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
+    url: env("EXPO_PUBLIC_TURSO_DB_URL"),
+    authToken: env("EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN"),
   });
-
-  // Open an interactive write‑transaction
-  await client.transaction("write");
-  const db = drizzle(client);
-
-  await seed(db, schema).refine((fns) => {
-    const values = Array.from({ length: 15 }, (_, i) => (i + 1) * 10);
-    return {
-      users: {
-        count: 15,
-        with: { scores: 1 },
-      },
-      scores: {
-        columns: {
-          value: fns.valuesFromArray({ values }),
-        },
-      },
-    };
-  });
-
-  await client.close();
-  console.log("✅ Done seeding without locks.");
+  try {
+    return await fn(client);
+  } finally {
+    await client.close?.();
+  }
 }
 
-main().catch((err) => {
-  console.error("Seed script error:", err);
-  process.exit(1);
-});
+function makeSeedData(count = 15) {
+  return Array.from({ length: count }, (_, i) => ({
+    user_name: `user_${i + 1}`,
+    password: "password",
+    score: (i + 1) * 10,
+  }));
+}
 
-// async function main() {
-//   const db = drizzle({
-//     connection: {
-//       url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-//       authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-//     },
-//   });
-//   await seed(db, schema).refine((f) => ({
-//     users: {
-//       count: 10,
-//       with: {
-//         scores: 1,
-//       },
-//     },
-//   }));
-// }
-// main();
+export async function main(count = 15) {
+  await withClient(async (client) => {
+    const tx = await client.transaction("write");
+    try {
+      for (const u of makeSeedData(count)) {
+        const res = await tx.execute({
+          sql: "INSERT INTO users (user_name, password) VALUES (?, ?)",
+          args: [u.user_name, u.password],
+        });
+        // libSQL returns the last inserted rowid on inserts:
+        const userId = Number(res.lastInsertRowid);
+        await tx.execute({
+          sql: "INSERT INTO scores (value, user_id) VALUES (?, ?)",
+          args: [u.score, userId],
+        });
+      }
+      await tx.commit();
+      console.log(`✅ Seeded ${count} users with scores.`);
+    } catch (err) {
+      await tx.rollback();
+      console.error("❌ Seed failed, rolled back.", err);
+      process.exit(1);
+    }
+  });
+}
+
+if (require.main === module) {
+  const n = Number(process.argv[2]) || 15;
+  main(n).catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

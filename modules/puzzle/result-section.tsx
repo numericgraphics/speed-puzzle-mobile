@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getResultScore, getResultSessionData } from "@/actions/result-actions";
+import { getResultScore } from "@/actions/result-actions";
+import { useSelectQueries } from "@/hooks/useSelectQueries";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
+import { useScoresHelpers } from "@/hooks/useScoresHelpers";
 
 interface ResultSectionProps {
   onRestart: () => void;
 }
 
 export function ResultSection({ onRestart }: ResultSectionProps) {
+  const { getTopScores } = useSelectQueries();
+  const { isScoreInTop10 } = useScoresHelpers();
   const {
     data: score,
     isLoading,
@@ -16,8 +20,25 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     error,
   } = useQuery({
     queryKey: ["result-section-data"],
-    queryFn: getResultSessionData,
+    queryFn: async () => {
+      const [result, topScores] = await Promise.all([
+        getResultScore(),
+        getTopScores(),
+      ]);
+      return { result, topScores } as const;
+    },
   });
+
+  useEffect(() => {
+    async function checkIfScoreInTop10() {
+      const scoreIsPrintable = await isScoreInTop10(score.result);
+      console.log("isScoreInTop10", scoreIsPrintable);
+    }
+
+    if (score?.result) {
+      checkIfScoreInTop10();
+    }
+  }, [score]);
 
   if (isLoading) {
     return <StatusMessage message="Calculating score…" />;
@@ -30,7 +51,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     <CompletedPuzzle
       onRestart={onRestart}
       score={score.result ?? 0}
-      scores={score.topScores.reverse() || []}
+      scores={[...(score?.topScores ?? [])].reverse()}
     />
   );
 }

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+/*import { eq } from "drizzle-orm";
 
 import { db } from "../index";
 import { users } from "../schema";
@@ -42,3 +42,4 @@ export async function getTopScores() {
     score: value,
   }));
 }
+*/
