@@ -41,3 +41,4 @@ ios/
 
 # Android
 android/
+*.apk
