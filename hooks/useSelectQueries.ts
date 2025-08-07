@@ -34,6 +34,7 @@ export function useSelectQueries() {
   }
 
   async function getTopScores() {
+    console.log("getTopScores, Fetching top scores...");
     const rows = await db.getAllAsync(
       `SELECT u.user_name AS name, s.value AS score
        FROM scores s
@@ -41,6 +42,7 @@ export function useSelectQueries() {
        ORDER BY s.value DESC
        LIMIT 5`
     );
+    console.log("getTopScores, Top scores fetched:", rows);
     return rows as Array<{ name: string; score: number }>;
   }
 

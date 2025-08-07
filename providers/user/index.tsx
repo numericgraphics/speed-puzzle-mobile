@@ -38,7 +38,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   } = useSelectQueries();
   const db = useSQLiteContext();
   useEffect(() => {
-    console.log("dbReady --> getAllData ");
+    console.log("dbReady --> getAllData ", db);
     if (db) {
       getAllData();
     }

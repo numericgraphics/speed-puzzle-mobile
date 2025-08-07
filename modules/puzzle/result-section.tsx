@@ -11,7 +11,7 @@ interface ResultSectionProps {
 }
 
 export function ResultSection({ onRestart }: ResultSectionProps) {
-  const { getTopScores } = useSelectQueries();
+  const { getTopScores, getAllScores } = useSelectQueries();
   const { isScoreInTop10 } = useScoresHelpers();
   const {
     data: score,
@@ -21,11 +21,12 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
   } = useQuery({
     queryKey: ["result-section-data"],
     queryFn: async () => {
-      const [result, topScores] = await Promise.all([
+      const [result, topScores, allScores] = await Promise.all([
         getResultScore(),
         getTopScores(),
+        getAllScores(),
       ]);
-      return { result, topScores } as const;
+      return { result, topScores, allScores } as const;
     },
   });
 
@@ -40,6 +41,10 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     }
   }, [score]);
 
+  useEffect(() => {
+    console.log("All scores fetched:", score?.allScores);
+  }, [score?.allScores]);
+
   if (isLoading) {
     return <StatusMessage message="Calculating score…" />;
   }
@@ -51,7 +56,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     <CompletedPuzzle
       onRestart={onRestart}
       score={score.result ?? 0}
-      scores={[...(score?.topScores ?? [])].reverse()}
+      scores={score.topScores.reverse() || []}
     />
   );
 }

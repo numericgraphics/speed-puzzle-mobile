@@ -15,7 +15,7 @@ export const useResultStore = create<ResultSlice>()(
     results: [],
     getResults: () => get().results,
     add: (challenge: GameChallengeType) => {
-      console.log("useResultStore Challenge completed!", challenge);
+      console.log("useResultStore Challenge completed!");
       set((state) => ({
         results: [...state.results, challenge],
       }));
