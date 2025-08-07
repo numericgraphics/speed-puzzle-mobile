@@ -41,10 +41,6 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     }
   }, [score]);
 
-  useEffect(() => {
-    console.log("All scores fetched:", score?.allScores);
-  }, [score?.allScores]);
-
   if (isLoading) {
     return <StatusMessage message="Calculating score…" />;
   }

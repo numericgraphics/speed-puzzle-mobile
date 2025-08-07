@@ -1,27 +1,24 @@
-// db/schema.ts
-// Plain TypeScript types — keep these in sync with the SQL below.
+import { pgTable, serial, bigint, text, integer } from "drizzle-orm/pg-core";
+// ---------- Drizzle ORM table definitions ----------
 
-export type User = {
-  id: number;
-  createdAt: number; // ms since epoch
-  updatedAt: number; // ms since epoch
-  userName: string;
-  password: string;
-};
+// Users table
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+  userName: text("user_name").notNull(),
+  password: text("password").notNull(),
+});
 
-export type InsertUser = {
-  userName: string;
-  password: string;
-};
+// Scores table
+export const scores = pgTable("scores", {
+  id: serial("id").primaryKey(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  value: integer("value").notNull(),
+  userId: integer("user_id").references(() => users.id),
+});
 
-export type Score = {
-  id: number;
-  createdAt: number; // ms since epoch
-  value: number;
-  userId: number | null;
-};
-
-export type InsertScore = {
-  value: number;
-  userId?: number | null;
-};
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;
+export type InsertScore = typeof scores.$inferInsert;
+export type SelectScore = typeof scores.$inferSelect;

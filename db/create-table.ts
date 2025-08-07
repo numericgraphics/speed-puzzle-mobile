@@ -1,4 +1,5 @@
 // db/create-tables.ts
+/*
 import { createClient, type Client } from "@libsql/client";
 import { config } from "dotenv";
 config({ path: ".env" });
@@ -55,3 +56,7 @@ if (require.main === module) {
     process.exit(1);
   });
 }
+
+
+
+*/

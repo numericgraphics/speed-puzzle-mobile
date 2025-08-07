@@ -12,7 +12,6 @@ import React, { createContext, useContext, ReactNode, useEffect } from "react";
 import { useDatabase } from "@/providers/data-base";
 import { useInsertQueries } from "@/hooks/useInsertQueries";
 import { useSelectQueries } from "@/hooks/useSelectQueries";
-import { useSQLiteContext } from "expo-sqlite";
 
 type UserContextValue = {
   getUsers: () => Promise<any[]>;
@@ -36,13 +35,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     getScoresByUserId,
     getTopScores: fetchTopScores,
   } = useSelectQueries();
-  const db = useSQLiteContext();
-  useEffect(() => {
-    console.log("dbReady --> getAllData ", db);
-    if (db) {
-      getAllData();
-    }
-  }, [db]);
+  //
+  // useEffect(() => {
+  //   console.log("dbReady --> getAllData ", db);
+  //   if (db) {
+  //     getAllData();
+  //   }
+  // }, [db]);
   // Fetch all users
   const getUsers = async (): Promise<any[]> => {
     const users = await getAllUsers();

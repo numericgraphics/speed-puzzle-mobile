@@ -1,64 +1,55 @@
-// db/seed.ts
-import { createClient, type Client } from "@libsql/client";
-import { config } from "dotenv";
-config({ path: ".env" });
+// scripts/seed.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { seed } from "drizzle-seed";
+import { faker } from "@faker-js/faker";
 
-function env(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing env var: ${name}`);
-  return v;
-}
+import { users, scores } from "./schema";
 
-async function withClient<T>(fn: (c: Client) => Promise<T>) {
-  const client = createClient({
-    url: env("EXPO_PUBLIC_TURSO_DB_URL"),
-    authToken: env("EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN"),
-  });
-  try {
-    return await fn(client);
-  } finally {
-    await client.close?.();
-  }
-}
+const url = ""; // Replace with your database URL, e.g., from .env
 
-function makeSeedData(count = 15) {
-  return Array.from({ length: count }, (_, i) => ({
-    user_name: `user_${i + 1}`,
-    password: "password",
-    score: (i + 1) * 10,
+async function main() {
+  // 1️⃣  connect through Supavisor (port 6543) — good for serverless jobs
+  const client = postgres(url, { prepare: false });
+  const db = drizzle(client);
+
+  // 2️⃣  make the run reproducible (same seed → same rows)
+  faker.seed(42);
+
+  // 3️⃣  Generate 15 users and 1 score per user
+  await seed(db, { users, scores }).refine((f) => ({
+    users: {
+      count: 15,
+      with: { scores: 1 }, // one-to-many relation ✔︎  [oai_citation:0‡orm.drizzle.team](https://orm.drizzle.team/docs/guides/seeding-using-with-option?utm_source=chatgpt.com)
+      columns: {
+        createdAt: f.int({
+          // generator helpers ✔︎  [oai_citation:1‡orm.drizzle.team](https://orm.drizzle.team/docs/seed-functions?utm_source=chatgpt.com)
+          minValue: 1_600_000_000_000, // Sep 2020
+          maxValue: 1_700_000_000_000, // Nov 2023
+        }),
+        updatedAt: f.int({
+          minValue: 1_600_000_000_000,
+          maxValue: 1_700_000_000_000,
+        }),
+        userName: f.string({}),
+        password: f.string({}),
+      },
+    },
+    scores: {
+      columns: {
+        createdAt: f.int({
+          minValue: 1_600_000_000_000,
+          maxValue: 1_700_000_000_000,
+        }),
+        value: f.int({ minValue: 0, maxValue: 1000 }),
+      },
+    },
   }));
+
+  await client.end(); // optional tidy-up
 }
 
-export async function main(count = 15) {
-  await withClient(async (client) => {
-    const tx = await client.transaction("write");
-    try {
-      for (const u of makeSeedData(count)) {
-        const res = await tx.execute({
-          sql: "INSERT INTO users (user_name, password) VALUES (?, ?)",
-          args: [u.user_name, u.password],
-        });
-        // libSQL returns the last inserted rowid on inserts:
-        const userId = Number(res.lastInsertRowid);
-        await tx.execute({
-          sql: "INSERT INTO scores (value, user_id) VALUES (?, ?)",
-          args: [u.score, userId],
-        });
-      }
-      await tx.commit();
-      console.log(`✅ Seeded ${count} users with scores.`);
-    } catch (err) {
-      await tx.rollback();
-      console.error("❌ Seed failed, rolled back.", err);
-      process.exit(1);
-    }
-  });
-}
-
-if (require.main === module) {
-  const n = Number(process.argv[2]) || 15;
-  main(n).catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
-}
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
