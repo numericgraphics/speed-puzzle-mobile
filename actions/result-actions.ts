@@ -51,17 +51,3 @@ export async function getResultScore(): Promise<number> {
     return totalScore + challengeScore;
   }, 0);
 }
-
-/**
- *
-
-export async function getHightScores() {
-  const topScores = await getTopScores();
-  return topScores;
-}
-export async function getResultSessionData() {
-  const result = await getResultScore();
-  const topScores = await getHightScores();
-  return { result, topScores };
-}
- */

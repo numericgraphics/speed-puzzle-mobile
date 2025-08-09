@@ -4,7 +4,7 @@ import { getResultScore } from "@/actions/result-actions";
 import { useSelectQueries } from "@/hooks/useSelectQueries";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
-import { useScoresHelpers } from "@/hooks/useScoresHelpers";
+import { isScoreInTop10 } from "@/db/helpers/scores";
 
 interface ResultSectionProps {
   onRestart: () => void;
@@ -12,7 +12,6 @@ interface ResultSectionProps {
 
 export function ResultSection({ onRestart }: ResultSectionProps) {
   const { getTopScores, getAllScores } = useSelectQueries();
-  const { isScoreInTop10 } = useScoresHelpers();
   const {
     data: score,
     isLoading,

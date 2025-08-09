@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
 import {
@@ -20,11 +21,6 @@ import {
   Nunito_400Regular,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
-
-import { DB_NAME } from "@/constants";
-import { DatabaseProvider } from "@/providers/data-base";
-import { UserProvider } from "@/providers/user";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusMessage } from "@/components/message-display";
 
 configureReanimatedLogger({
@@ -65,7 +61,6 @@ export default function RootLayout() {
 
   return (
     <Suspense fallback={<StatusMessage message="Connect DB..." />}>
-      {/* <UserProvider> */}
       <GestureHandlerRootView>
         <ThemeProvider value={DefaultTheme}>
           <QueryClientProvider client={queryClient}>
@@ -79,7 +74,6 @@ export default function RootLayout() {
           <StatusBar style="auto" />
         </ThemeProvider>
       </GestureHandlerRootView>
-      {/* </UserProvider> */}
     </Suspense>
   );
 }

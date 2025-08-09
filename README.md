@@ -17,9 +17,8 @@ This Project use the Continuous Native Generation [`CNG`](https://docs.expo.dev/
 
 ### Offline
 
-- [Expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
+- [Supabase](https://supabase.com/docs/guides/database/drizzle)
 - [Drizzle ORM](https://orm.drizzle.team/docs/overview)
-- [Turso db](https://docs.turso.tech/introduction)
 
 ## Install
 
@@ -31,5 +30,4 @@ npx expo prebuild --clean
 
 ## Sources
 
-- https://docs.expo.dev/guides/local-first/#turso
-- https://www.youtube.com/watch?v=SBv32tmyb3k
+- ...
