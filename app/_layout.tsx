@@ -9,7 +9,6 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import { SQLiteProvider } from "expo-sqlite";
 
 import { LuckiestGuy_400Regular } from "@expo-google-fonts/luckiest-guy";
 import {
@@ -24,7 +23,7 @@ import {
 
 import { DB_NAME } from "@/constants";
 import { DatabaseProvider } from "@/providers/data-base";
-import { UserProvider } from "@/providers/user";
+// import { UserProvider } from "@/providers/user";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 configureReanimatedLogger({
@@ -64,32 +63,22 @@ export default function RootLayout() {
   }
 
   return (
-    <SQLiteProvider
-      databaseName={DB_NAME}
-      options={{
-        libSQLOptions: {
-          url: process.env.EXPO_PUBLIC_TURSO_DB_URL!,
-          authToken: process.env.EXPO_PUBLIC_TURSO_DB_AUTH_TOKEN!,
-        },
-      }}
-    >
-      <DatabaseProvider>
-        <UserProvider>
-          <GestureHandlerRootView>
-            <ThemeProvider value={DefaultTheme}>
-              <QueryClientProvider client={queryClient}>
-                <Stack>
-                  <Stack.Screen
-                    name="index"
-                    options={{ headerShown: false, animation: "fade" }}
-                  />
-                </Stack>
-              </QueryClientProvider>
-              <StatusBar style="auto" />
-            </ThemeProvider>
-          </GestureHandlerRootView>
-        </UserProvider>
-      </DatabaseProvider>
-    </SQLiteProvider>
+    <DatabaseProvider>
+      {/* <UserProvider> */}
+      <GestureHandlerRootView>
+        <ThemeProvider value={DefaultTheme}>
+          <QueryClientProvider client={queryClient}>
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{ headerShown: false, animation: "fade" }}
+              />
+            </Stack>
+          </QueryClientProvider>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </GestureHandlerRootView>
+      {/* </UserProvider> */}
+    </DatabaseProvider>
   );
 }
