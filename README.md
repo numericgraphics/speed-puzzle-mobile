@@ -15,12 +15,6 @@ This Project use the Continuous Native Generation [`CNG`](https://docs.expo.dev/
 - [Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction)
 - [Tanstack - react query](https://tanstack.com/query/latest)
 
-### Offline
-
-- [Expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
-- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
-- [Turso db](https://docs.turso.tech/introduction)
-
 ## Install
 
 ```

@@ -1,5 +1,5 @@
 // providers/UserProvider.tsx
-import React, { createContext, useContext, ReactNode, useEffect } from "react";
+/*import React, { createContext, useContext, ReactNode, useEffect } from "react";
 
 import {
   getAllUsers,
@@ -110,3 +110,6 @@ export function useUser(): UserContextValue {
   }
   return context;
 }
+
+
+*/

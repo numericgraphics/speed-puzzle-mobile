@@ -1,14 +1,21 @@
-// providers/DatabaseProvider.tsx
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite"; // assume expo-sqlite is installed
-import * as Network from "expo-network"; // (optional, for offline check)
+// speed-puzzle-mobile/providers/data-base/index.tsx
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import * as Network from "expo-network";
+import { Api } from "../../lib/api";
 
-type DatabaseContextValue = {
-  dbReady: boolean;
-  resyncDB: () => Promise<void>; // function to re-trigger sync
+export type DatabaseContextValue = {
+  api: Api;
+  isConnected: boolean | null;
+  ready: boolean; // true after the initial connectivity + health check
+  lastHealth?: unknown; // value returned by /__debug if reachable
 };
 
-// Create the context with a default undefined value
 const DatabaseContext = createContext<DatabaseContextValue | undefined>(
   undefined
 );
@@ -16,68 +23,47 @@ const DatabaseContext = createContext<DatabaseContextValue | undefined>(
 export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [dbReady, setDbReady] = useState(false);
-  const db = useSQLiteContext(); // open or get the database instance
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const [ready, setReady] = useState(false);
+  const [lastHealth, setLastHealth] = useState<unknown>(undefined);
 
-  // Define the sync function (could also be defined outside)
-  const synchronizeDatabase = async () => {
-    try {
-      // (Optional) Check network status for offline-friendly handling
-      const { isConnected } = await Network.getNetworkStateAsync();
-      if (!isConnected) {
-        console.log("No network connection. Skipping sync.");
-        // If offline, you might choose to set dbReady true to allow offline use of local DB:
-        // setDbReady(true);
-        return; // Skip calling syncLibSQL if offline
-      }
-      // Perform the sync with remote libSQL server (returns a Promise<void>)
-      await db.syncLibSQL();
-      console.log("Database sync completed successfully.");
-      setDbReady(true);
-    } catch (error) {
-      console.error("Error during database sync:", error);
-      // Keep dbReady false on failure, since sync didn't complete
-      setDbReady(false);
-    }
-  };
+  // Single Api instance; resolves baseURL from EXPO_PUBLIC_API_URL or sensible fallbacks
+  const api = useMemo(() => new Api(), []);
 
-  // Run sync on initial mount
   useEffect(() => {
-    console.log("synchronizeDatabase called on mount");
-    if (!db) {
-      console.error("Database instance is null. Cannot synchronize.");
-      return;
-    }
-    if (!dbReady) {
-      synchronizeDatabase();
-    }
-  }, [db, dbReady]);
+    (async () => {
+      try {
+        const state = await Network.getNetworkStateAsync();
+        setIsConnected(state.isConnected ?? null);
 
-  // Provide a manual re-sync function
-  const resyncDB = async (): Promise<void> => {
-    setDbReady(false); // reset flag (database not ready during re-sync)
-    try {
-      await db.syncLibSQL();
-      console.log("Manual database re-sync successful.");
-      setDbReady(true);
-    } catch (error) {
-      console.error("Database re-sync failed:", error);
-      setDbReady(false);
-    }
-  };
+        if (state.isConnected) {
+          const health = await api.health();
+          setLastHealth(health);
+          console.log("[DatabaseProvider] Backend reachable. Health:", health);
+        } else {
+          console.warn("[DatabaseProvider] No network connection");
+        }
+      } catch (err) {
+        console.warn(
+          "[DatabaseProvider] Backend not reachable:",
+          (err as Error).message
+        );
+      } finally {
+        setReady(true);
+      }
+    })();
+  }, [api]);
 
   return (
-    <DatabaseContext.Provider value={{ dbReady, resyncDB }}>
+    <DatabaseContext.Provider value={{ api, isConnected, ready, lastHealth }}>
       {children}
     </DatabaseContext.Provider>
   );
 };
 
-// Custom hook for consuming the context
 export const useDatabase = (): DatabaseContextValue => {
-  const context = useContext(DatabaseContext);
-  if (!context) {
+  const ctx = useContext(DatabaseContext);
+  if (!ctx)
     throw new Error("useDatabase must be used within a DatabaseProvider");
-  }
-  return context;
+  return ctx;
 };
