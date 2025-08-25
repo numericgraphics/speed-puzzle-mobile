@@ -18,7 +18,6 @@ export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
         {
           width: "100%",
           justifyContent: "space-between",
-          backgroundColor: "yellow",
         },
       ]}
     >
