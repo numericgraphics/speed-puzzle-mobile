@@ -23,7 +23,7 @@ export async function fetchUnsplashImage(
 ): Promise<UnsplashImageData[]> {
   const UNSPLASH_ACCESS_KEY = process.env.EXPO_PUBLIC_UNSPLASH_ACCESS_KEY;
   const query = getRandomQuery();
-  console.log("fetchUnsplashImage", query);
+  console.log("fetchUnsplashImage - Query:", query);
   let imagesURL: UnsplashImageData[] = [];
   if (USE_MOCK) {
     const imagesURLTemp = await mockUnsplashApiCall();

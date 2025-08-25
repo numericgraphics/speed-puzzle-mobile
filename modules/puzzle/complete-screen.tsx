@@ -15,7 +15,11 @@ export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
     <View
       style={[
         containers.row,
-        { width: "100%", justifyContent: "space-between" },
+        {
+          width: "100%",
+          justifyContent: "space-between",
+          backgroundColor: "yellow",
+        },
       ]}
     >
       <Text style={[typography.body]}>{name}</Text>
@@ -89,9 +93,9 @@ export function CompletedPuzzle({
       <FlatList
         data={scores}
         renderItem={({ item, index }) => (
-          <ScoreRow name={item.name} score={item.score} />
+          <ScoreRow name={item.user.userName} score={item.score} />
         )}
-        keyExtractor={(item, index) => item.name + index}
+        keyExtractor={(item, index) => item.user.userName + index}
         style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
       />
       <TouchableOpacity disabled={true} onPress={() => console.log("register")}>

@@ -1,14 +1,15 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getResultScore, getResultSessionData } from "@/actions/result-actions";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
+import { useResult } from "@/hooks/use-result";
 
 interface ResultSectionProps {
   onRestart: () => void;
 }
 
 export function ResultSection({ onRestart }: ResultSectionProps) {
+  const { getResultSessionData } = useResult();
   const {
     data: score,
     isLoading,
@@ -30,7 +31,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     <CompletedPuzzle
       onRestart={onRestart}
       score={score.result ?? 0}
-      scores={score.topScores.reverse() || []}
+      scores={score.topScores || []}
     />
   );
 }
