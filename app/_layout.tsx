@@ -22,7 +22,7 @@ import {
 } from "@expo-google-fonts/nunito";
 
 import { DB_NAME } from "@/constants";
-import { DatabaseProvider } from "@/providers/data-base";
+// import { DatabaseProvider } from "@/providers/data-base";
 // import { UserProvider } from "@/providers/user";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -63,22 +63,18 @@ export default function RootLayout() {
   }
 
   return (
-    <DatabaseProvider>
-      {/* <UserProvider> */}
-      <GestureHandlerRootView>
-        <ThemeProvider value={DefaultTheme}>
-          <QueryClientProvider client={queryClient}>
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{ headerShown: false, animation: "fade" }}
-              />
-            </Stack>
-          </QueryClientProvider>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </GestureHandlerRootView>
-      {/* </UserProvider> */}
-    </DatabaseProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider value={DefaultTheme}>
+        <QueryClientProvider client={queryClient}>
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{ headerShown: false, animation: "fade" }}
+            />
+          </Stack>
+        </QueryClientProvider>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

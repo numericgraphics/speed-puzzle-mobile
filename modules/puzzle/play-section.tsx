@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { buildChallenges } from "@/actions/puzzle-actions";
 import PuzzleClient from "./puzzle-client";
 import { StatusMessage } from "@/components/message-display";
+import { buildChallenges } from "@/helpers/challenges";
 
 export function PlaySection() {
   const {

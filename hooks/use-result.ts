@@ -2,7 +2,7 @@
 import { useCallback } from "react";
 import { useResultStore } from "@/stores/results";
 import type { GameChallengeType } from "@/stores/game";
-import { useDatabase } from "@/providers/data-base";
+import { api } from "@/lib/api";
 
 /**
  * React hook exposing result-related actions:
@@ -11,8 +11,6 @@ import { useDatabase } from "@/providers/data-base";
  * - getResultSessionData(): compute local result + fetch scores together
  */
 export function useResult() {
-  const { api } = useDatabase();
-
   /**
    * Compute the aggregated score for the current game.
    * Logic lifted from the original getResultScore function.

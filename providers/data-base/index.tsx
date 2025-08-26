@@ -1,4 +1,5 @@
 // speed-puzzle-mobile/providers/data-base/index.tsx
+/*
 import React, {
   createContext,
   useContext,
@@ -33,10 +34,19 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       try {
+        console.log("[DatabaseProvider] Network api:", api);
+
+        if (!api) {
+          console.warn("[DatabaseProvider] No API instance");
+          return;
+        }
+
         const state = await Network.getNetworkStateAsync();
+        console.log("[DatabaseProvider] Network state:", state);
         setIsConnected(state.isConnected ?? null);
 
         if (state.isConnected) {
+          console.log("[DatabaseProvider] Network connected - call api");
           const health = await api.health();
           setLastHealth(health);
           console.log("[DatabaseProvider] Backend reachable. Health:", health);
@@ -67,3 +77,4 @@ export const useDatabase = (): DatabaseContextValue => {
     throw new Error("useDatabase must be used within a DatabaseProvider");
   return ctx;
 };
+*/

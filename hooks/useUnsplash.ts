@@ -1,4 +1,4 @@
-import { USE_MOCK } from "@/constants";
+/*import { USE_MOCK } from "@/constants";
 import { createImageDataArray } from "@/helpers/unsplash-photo";
 import {
   MockResponse,
@@ -20,14 +20,16 @@ export function useUnsplash() {
         const imagesURLTemp = await mockUnsplashApiCall();
         imagesURL = imagesURLTemp.data;
       } else {
-        const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${UNSPLASH_ACCESS_KEY}`
-        );
+        console.log("useUnsplash - Fetched data");
+        const url = `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${UNSPLASH_ACCESS_KEY}`;
+        console.log("useUnsplash - Fetched data - url", url);
+        const response = await fetch(url);
+        console.log("useUnsplash - Fetched data - response", response);
         const data = (await response.json()) as UnsplashResponse;
         imagesURL = createImageDataArray(data).images;
       }
 
-      console.log("Fetched data:", imagesURL);
+      console.log("useUnsplash - Fetched data:", imagesURL);
       if (imagesURL) {
         setImages(imagesURL);
       }
@@ -55,3 +57,4 @@ export function useUnsplash() {
     getImage,
   };
 }
+*/

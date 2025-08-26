@@ -1,21 +1,17 @@
 // lib/api.ts
 import { Platform } from "react-native";
+import { getRandomQuery } from "@/helpers/queries";
+import { createImageDataArray } from "@/helpers/unsplash-photo";
+import { UnsplashImageData, UnsplashResponse } from "@/types";
 
-/** ---------- Shared DTOs (keep in sync with backend) ---------- */
+/** ---------- Shared DTOs ---------- */
 export type AddUserRequest = {
   userName: string;
   password: string;
   score?: number;
 };
-
 export type AddScoreRequest = { value: number };
-
-export type UserPublic = {
-  id: string;
-  userName: string;
-  bestScore?: number;
-};
-
+export type UserPublic = { id: string; userName: string; bestScore?: number };
 export type ScoreRow = {
   userId: string;
   userName: string;
@@ -23,69 +19,60 @@ export type ScoreRow = {
   createdAt?: string;
 };
 
-/** ---------- Base URL resolution ---------- */
+/** ---------- Base URL ---------- */
 function resolveBaseURL(): string {
   const env = process.env.EXPO_PUBLIC_API_URL?.trim();
   if (env && env.length > 0) return env;
-
-  // Sensible fallbacks for local dev
-  //   if (Platform.OS === "android") {
-  //     // Android emulator maps "localhost" to the emulator device; host is 10.0.2.2
-  //     return "http://10.0.2.2:3000";
-  //   }
   return "http://localhost:3000";
 }
 
-/** ---------- Minimal fetch-based API client ---------- */
-export class Api {
-  private baseURL: string;
+/** ---------- Generic safeFetch wrapper ---------- */
+async function safeFetch<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = `${resolveBaseURL()}${path}`;
+  console.debug(
+    "[Api] Fetch",
+    options.method ?? "GET",
+    url,
+    options.body ? JSON.parse(options.body.toString()) : ""
+  );
 
-  constructor(baseURL: string = resolveBaseURL()) {
-    this.baseURL = baseURL;
-    if (!process.env.EXPO_PUBLIC_API_URL) {
-      console.warn(
-        `[Api] EXPO_PUBLIC_API_URL is not set. Using fallback "${this.baseURL}". ` +
-          `Set EXPO_PUBLIC_API_URL for physical devices or custom hosts.`
-      );
-    }
-  }
-
-  private async request<T = any>(path: string, init?: RequestInit): Promise<T> {
-    const url = `${this.baseURL}${path}`;
-    console.debug("[Api] Request:", url);
+  try {
     const res = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
-        ...(init?.headers || {}),
+        ...(options.headers || {}),
       },
-      ...init,
+      ...options,
     });
-
-    console.debug("[Api] Response:", res);
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       throw new Error(
-        `HTTP ${res.status} ${res.statusText} for ${path}${
+        `HTTP ${res.status} ${res.statusText} for "${path}"${
           text ? ` — ${text}` : ""
         }`
       );
     }
 
-    const type = res.headers.get("content-type") || "";
-    return (
-      type.includes("application/json") ? res.json() : (res.text() as any)
-    ) as T;
+    console.debug("[Api] Response available");
+    return (await res.json()) as T;
+  } catch (err: any) {
+    console.error("[Api] Error on", path, err);
+    throw err;
   }
+}
 
-  /** ---------- Endpoints ---------- */
+/** ---------- Api client with module-level singleton ---------- */
+export class Api {
   health(): Promise<any> {
-    console.log("[Api] Health check");
-    return this.request("/__debug");
+    return safeFetch("/__debug", { method: "GET" });
   }
 
   addUser(body: AddUserRequest): Promise<UserPublic[]> {
-    return this.request("/adduser", {
+    return safeFetch<UserPublic[]>("/adduser", {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -95,28 +82,60 @@ export class Api {
     userName: string,
     body: AddScoreRequest
   ): Promise<{ userId: string; value: number }> {
-    return this.request(`/users/${encodeURIComponent(userName)}/scores`, {
+    const path = `/users/${encodeURIComponent(userName)}/scores`;
+    return safeFetch<{ userId: string; value: number }>(path, {
       method: "POST",
       body: JSON.stringify(body),
     });
   }
 
   listUsers(): Promise<UserPublic[]> {
-    return this.request("/users");
+    return safeFetch<UserPublic[]>("/users");
   }
 
   topScores(limit = 10): Promise<ScoreRow[]> {
-    return this.request(`/scores/top?limit=${limit}`);
+    return safeFetch<ScoreRow[]>(`/scores/top?limit=${limit}`);
   }
 
   bottomScores(limit = 10): Promise<{ limit: number; scores: ScoreRow[] }> {
-    return this.request(`/scores/bottom?limit=${limit}`);
+    return safeFetch<{ limit: number; scores: ScoreRow[] }>(
+      `/scores/bottom?limit=${limit}`
+    );
   }
 
   compareScore(value: number): Promise<any> {
-    return this.request("/scores/compare", {
+    return safeFetch<any>("/scores/compare", {
       method: "POST",
       body: JSON.stringify({ value }),
     });
   }
+
+  /** Fetch Unsplash images with safeFetch and fallback on error */
+  async fetchUnsplashImage(count = 1): Promise<UnsplashImageData[]> {
+    try {
+      const query = getRandomQuery();
+      const path = `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${process.env.EXPO_PUBLIC_UNSPLASH_ACCESS_KEY}`;
+      console.debug("[Api] UNSPLASH GET", path);
+
+      const res = await fetch(path);
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(
+          `Unsplash HTTP ${res.status} ${res.statusText}${
+            text ? ` — ${text}` : ""
+          }`
+        );
+      }
+
+      const data = (await res.json()) as UnsplashResponse;
+      const images = createImageDataArray(data).images;
+      return images;
+    } catch (err) {
+      console.error("[Api] Error fetching Unsplash images:", err);
+      return [];
+    }
+  }
 }
+
+/** ---------- Singleton Export ---------- */
+export const api = new Api();

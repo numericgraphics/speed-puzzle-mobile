@@ -7,14 +7,12 @@ import {
   useNeedNextChallenge,
   useGameStoreStartTimer,
 } from "@/stores/game";
-import { useUnsplashStoreActions } from "@/stores/unsplash";
 import { useTimerActions, useTimerStore } from "@/stores/timer";
 import { router } from "expo-router";
 
 export function usePuzzle(challenges) {
   const { currentChallengeIndex, completed } = useGameStore();
   const { nextChallenge, setChallenges } = useGameStoreActions();
-  const { resetImages } = useUnsplashStoreActions();
   const needNextChallenge = useNeedNextChallenge();
   const startTimer = useGameStoreStartTimer();
   const timerActions = useTimerStore((state) => state.actions);
@@ -59,9 +57,8 @@ export function usePuzzle(challenges) {
 
   const onAnimationEnd = useCallback(() => {
     timerActions.reset();
-    resetImages();
     router.replace("/?finished=true");
-  }, [resetImages, timerActions]);
+  }, [timerActions]);
 
   return {
     image,
