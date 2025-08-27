@@ -77,15 +77,23 @@ export function useResult() {
     [api]
   );
 
+  const compareUserScores = useCallback(async (userScore: number) => {
+    const res = await api.compareScore(userScore);
+
+    // If the user's score is higher than the lowest top score, they are in the top scores
+    return res.isBottom10;
+  }, []);
+
   /**
    * Retrieves both the calculated result and the current scores in parallel.
    */
   const getResultSessionData = useCallback(async () => {
     const [result, topScores] = await Promise.all([
       getResultScore(),
-      getScores(),
+      getScores(5),
     ]);
-    return { result, topScores };
+    const compareResult = await compareUserScores(result);
+    return { result, topScores, compareResult };
   }, [getResultScore, getScores]);
 
   return { getResultScore, getScores, getResultSessionData };

@@ -32,6 +32,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
       onRestart={onRestart}
       score={score.result ?? 0}
       scores={score.topScores || []}
+      compareResult={score.compareResult}
     />
   );
 }

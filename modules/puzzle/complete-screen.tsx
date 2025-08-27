@@ -31,16 +31,20 @@ interface CompletedPuzzleProps {
   onRestart: () => void;
   score: number;
   scores: any[];
+  compareResult: boolean;
 }
 
 export function CompletedPuzzle({
   onRestart,
   score,
   scores,
+  compareResult,
 }: CompletedPuzzleProps) {
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
+
+  console.log("CompletedPuzzle - compareResult", compareResult);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -97,11 +101,16 @@ export function CompletedPuzzle({
         keyExtractor={(item, index) => item.user.userName + index}
         style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
       />
-      <TouchableOpacity disabled={true} onPress={() => console.log("register")}>
-        <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
-          Register
-        </Text>
-      </TouchableOpacity>
+      {compareResult && (
+        <TouchableOpacity
+          disabled={true}
+          onPress={() => console.log("register")}
+        >
+          <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
+            Register
+          </Text>
+        </TouchableOpacity>
+      )}
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
         onPress={() => {

@@ -2,7 +2,11 @@
 import { Platform } from "react-native";
 import { getRandomQuery } from "@/helpers/queries";
 import { createImageDataArray } from "@/helpers/unsplash-photo";
-import { UnsplashImageData, UnsplashResponse } from "@/types";
+import {
+  CompareScoreApiType,
+  UnsplashImageData,
+  UnsplashResponse,
+} from "@/types";
 
 /** ---------- Shared DTOs ---------- */
 export type AddUserRequest = {
@@ -103,8 +107,8 @@ export class Api {
     );
   }
 
-  compareScore(value: number): Promise<any> {
-    return safeFetch<any>("/scores/compare", {
+  compareScore(value: number): Promise<CompareScoreApiType> {
+    return safeFetch<CompareScoreApiType>("/scores/compare", {
       method: "POST",
       body: JSON.stringify({ value }),
     });
