@@ -151,3 +151,9 @@ export type CompareScoreApiType = {
   threshold: number | null;
   bottom10Count: number;
 };
+
+export type User = {
+  id: string;
+  userName: string;
+  bestScore: number | null; // lower is better
+};

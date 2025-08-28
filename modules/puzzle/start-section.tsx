@@ -8,12 +8,14 @@ import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
+import { useRegistration } from "@/hooks/use-registration";
 
 interface StartSessionProps {
   onStart: () => void;
 }
 
 export function StartSession({ onStart }: StartSessionProps) {
+  const { user } = useRegistration();
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
@@ -40,7 +42,9 @@ export function StartSession({ onStart }: StartSessionProps) {
         />
       </View>
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
-        Welcome to the Puzzle Game !
+        {user
+          ? ` Welcome back ${user.userName}`
+          : "Welcome to the Puzzle Game !"}
       </Text>
       <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         Tap the button below to start the game.

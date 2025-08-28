@@ -7,21 +7,21 @@ import { api } from "@/lib/api";
 /**
  * React hook exposing result-related actions:
  * - getResultScore(): compute aggregated score from the in-memory results store
- * - getScores(limit?): fetch scores from backend (bottom list by default)
- * - getResultSessionData(): compute local result + fetch scores together
+ * - getRegisteredScores(limit?): fetch scores from backend (bottom list by default)
+ * - getScoresForResultSection(): compute local result + fetch scores together
  */
-export function useResult() {
+export function useScores() {
   /**
    * Compute the aggregated score for the current game.
    * Logic lifted from the original getResultScore function.
    */
-  const getResultScore = useCallback(async (): Promise<number> => {
+  const getScore = useCallback(async (): Promise<number> => {
     const results = useResultStore.getState().getResults();
     const MAX_COMPLEXITY = 3;
 
     if (results.length === 0) return 0;
 
-    return results.reduce(
+    const score = results.reduce(
       (totalScore: number, challenge: GameChallengeType) => {
         const { complexity, timerValue, moves } = challenge;
 
@@ -62,6 +62,8 @@ export function useResult() {
       },
       0
     );
+    useResultStore.setState({ score });
+    return score;
   }, []);
 
   /**
@@ -69,7 +71,7 @@ export function useResult() {
    * Uses the `bottomScores` endpoint to mirror previous behavior.
    * Returns the raw array of scores.
    */
-  const getScores = useCallback(
+  const getRegisteredScores = useCallback(
     async (limit = 10) => {
       const res = await api.bottomScores(limit); // { limit, scores }
       return res.scores ?? [];
@@ -87,14 +89,14 @@ export function useResult() {
   /**
    * Retrieves both the calculated result and the current scores in parallel.
    */
-  const getResultSessionData = useCallback(async () => {
+  const getScoresForResultSection = useCallback(async () => {
     const [result, topScores] = await Promise.all([
-      getResultScore(),
-      getScores(5),
+      getScore(),
+      getRegisteredScores(5),
     ]);
     const compareResult = await compareUserScores(result);
     return { result, topScores, compareResult };
-  }, [getResultScore, getScores]);
+  }, [getScore, getRegisteredScores]);
 
-  return { getResultScore, getScores, getResultSessionData };
+  return { getScore, getRegisteredScores, getScoresForResultSection };
 }

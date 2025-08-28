@@ -7,6 +7,23 @@ import { PlaySection } from "@/modules/puzzle/play-section";
 import { ResultSection } from "@/modules/puzzle/result-section";
 import { StartSession } from "@/modules/puzzle/start-section";
 import { useGameStoreActions } from "@/stores/game";
+import RegistrationModal from "@/components/modals/register";
+import {
+  RegistrationProvider,
+  useRegistration,
+} from "@/hooks/use-registration";
+
+function ModalRoot() {
+  const { state, close, submit, user } = useRegistration();
+  return (
+    <RegistrationModal
+      visible={state.visible}
+      onClose={close}
+      onSubmit={submit}
+      submitError={state.submitError}
+    />
+  );
+}
 
 function Index() {
   const playing = useLocalSearchParams().play === "true";
@@ -27,13 +44,16 @@ function Index() {
 
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
-      {playing ? (
-        <PlaySection />
-      ) : finished ? (
-        <ResultSection onRestart={onRestart} />
-      ) : (
-        <StartSession onStart={onStart} />
-      )}
+      <RegistrationProvider>
+        {playing ? (
+          <PlaySection />
+        ) : finished ? (
+          <ResultSection onRestart={onRestart} />
+        ) : (
+          <StartSession onStart={onStart} />
+        )}
+        <ModalRoot />
+      </RegistrationProvider>
     </SafeAreaView>
   );
 }
