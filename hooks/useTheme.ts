@@ -70,9 +70,24 @@ export const useTheme = () => {
       },
     });
 
+    const inputs = StyleSheet.create({
+      textInput: {
+        fontFamily: theme.text.fontFamily.default,
+        color: colorScheme === "light" ? theme.color.black : theme.color.white,
+        borderWidth: 1,
+        borderColor:
+          colorScheme === "light" ? theme.color.black : theme.color.white,
+        paddingHorizontal: theme.spacer[2].x,
+        paddingVertical: theme.spacer[1].y,
+        borderRadius: 8,
+        backgroundColor: "transparent",
+        fontSize: theme.text.fontSize.md,
+      },
+    });
+
     return {
       theme,
-      styles: { containers, typography, buttons },
+      styles: { containers, typography, buttons, inputs },
       isDark,
     };
   }, [colorScheme, theme]);

@@ -4,6 +4,7 @@ import { GameChallengeType } from "./game";
 
 // ------ currentChallenge slice ------
 interface ResultSlice {
+  score: number;
   results: GameChallengeType[];
   add: (challenge: GameChallengeType) => void;
   getResults: () => GameChallengeType[];
@@ -12,6 +13,7 @@ interface ResultSlice {
 
 export const useResultStore = create<ResultSlice>()(
   devtools((set, get) => ({
+    score: NaN,
     results: [],
     getResults: () => get().results,
     add: (challenge: GameChallengeType) => {
@@ -20,7 +22,7 @@ export const useResultStore = create<ResultSlice>()(
         results: [...state.results, challenge],
       }));
     },
-    reset: () => set({ results: [] }),
+    reset: () => set({ results: [], score: 0 }),
   }))
 );
 

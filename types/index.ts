@@ -145,3 +145,15 @@ export type RegisterApiType = {
   message: string;
   user: {};
 };
+
+export type CompareScoreApiType = {
+  isBottom10: boolean;
+  threshold: number | null;
+  bottom10Count: number;
+};
+
+export type User = {
+  id: string;
+  userName: string;
+  bestScore: number | null; // lower is better
+};

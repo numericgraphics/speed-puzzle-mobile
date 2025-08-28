@@ -7,6 +7,7 @@ import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
+import { User } from "@/types";
 
 export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
   const { styles } = useTheme();
@@ -31,16 +32,24 @@ interface CompletedPuzzleProps {
   onRestart: () => void;
   score: number;
   scores: any[];
+  compareResult: boolean;
+  register: () => void;
+  user: User | null;
 }
 
 export function CompletedPuzzle({
   onRestart,
   score,
   scores,
+  compareResult,
+  register,
+  user,
 }: CompletedPuzzleProps) {
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
+
+  console.log("CompletedPuzzle - compareResult", compareResult);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -51,7 +60,7 @@ export function CompletedPuzzle({
 
   return (
     <Animated.View
-      entering={FadeIn.duration(300)}
+      entering={FadeIn.duration(300).delay(1000)}
       exiting={FadeOut.duration(300)}
       style={containers.centeredFullScreen}
     >
@@ -65,12 +74,15 @@ export function CompletedPuzzle({
       </View>
 
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
-        Congrats, you finished the game !
+        {compareResult ? "Bravo" : "Good"} {user?.userName}, you finished the
+        game !
       </Text>
       <Text
         style={[typography.labelBold, { paddingBottom: theme.spacer[2].y }]}
       >
-        Your final score
+        {compareResult
+          ? "Your score is in the 10 best scores"
+          : "Your final score"}
       </Text>
       <Text
         style={[
@@ -91,17 +103,19 @@ export function CompletedPuzzle({
       </Text>
       <FlatList
         data={scores}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <ScoreRow name={item.user.userName} score={item.score} />
         )}
         keyExtractor={(item, index) => item.user.userName + index}
         style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
       />
-      <TouchableOpacity disabled={true} onPress={() => console.log("register")}>
-        <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
-          Register
-        </Text>
-      </TouchableOpacity>
+      {compareResult && (
+        <TouchableOpacity disabled={!compareResult} onPress={() => register()}>
+          <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
+            {user ? "Register your score" : "Sign up to save your score"}
+          </Text>
+        </TouchableOpacity>
+      )}
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
         onPress={() => {
