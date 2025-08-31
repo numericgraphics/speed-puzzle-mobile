@@ -54,7 +54,7 @@ type Action =
   | { type: "SUBMIT_ERROR"; error: string };
 
 const initialState: State = {
-  visible: false,
+  visible: true,
   submitting: false,
   submitError: null,
   lastOpenedFor: null,
