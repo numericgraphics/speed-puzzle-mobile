@@ -98,7 +98,7 @@ const Draggable: React.FC<DraggableProps> = ({
         positions.value = objectMove(positions.get(), currentIndex, newIndex);
       }
     })
-    .onFinalize((event) => {
+    .onEnd(() => {
       isDragging.value = false;
       scale.value = withSpring(1);
       const finalPositionY = (positions.value[idKey] ?? 0) * itemHeight;
