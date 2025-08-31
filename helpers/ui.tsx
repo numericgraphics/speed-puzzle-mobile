@@ -43,13 +43,15 @@ export const Section: React.FC<React.PropsWithChildren<{ title: string }>> = ({
 };
 
 export const Divider: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   return (
     <View
       style={{
         height: 1,
         opacity: 0.2,
-        backgroundColor: theme.color[400] ?? theme.color.black,
+        backgroundColor: isDark
+          ? theme.color.white
+          : theme.color[400] ?? theme.color.black,
         marginVertical: theme.spacer[3].y,
         width: "100%",
       }}

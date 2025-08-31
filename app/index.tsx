@@ -1,6 +1,6 @@
 import React from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/hooks/useTheme";
 import { PlaySection } from "@/modules/puzzle/play-section";
@@ -43,7 +43,6 @@ function Index() {
   };
 
   const gotoInformations = () => {
-    restartGame();
     router.push("/informations");
   };
 
