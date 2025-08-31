@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, ScrollView, Dimensions } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { Link } from "expo-router";
-import { useTheme } from "@/hooks/useTheme";
-import {
-  AnimatedRectanglesLayer,
-  AnimatedRectanglesLayerHandle,
-} from "@/components/logo/advanced-animated";
-import { InformationScreen } from "@/modules/informations";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useTheme } from "@/hooks/useTheme";
+import { AnimatedRectanglesLayerHandle } from "@/components/logo/advanced-animated";
+import { InformationScreen } from "@/modules/informations";
 
 export default function InformationsScreen() {
   const { styles, theme } = useTheme();
@@ -15,16 +13,14 @@ export default function InformationsScreen() {
   const { containers } = styles;
   const headerRef = useRef<AnimatedRectanglesLayerHandle>(null);
 
-  const HEADER_HEIGHT = 140; // enough space for the animation + title
-  const FOOTER_HEIGHT = 80; // space for the back button
+  const HEADER_HEIGHT = 140;
+  const FOOTER_HEIGHT = 80;
 
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
       <View style={{ flex: 1 }}>
-        {/* Sticky Header */}
         <View
           style={{
-            //   position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -58,7 +54,6 @@ export default function InformationsScreen() {
         {/* Sticky Footer (Back button) */}
         <View
           style={{
-            //   position: "absolute",
             left: 0,
             right: 0,
             bottom: 0,
