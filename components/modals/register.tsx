@@ -27,7 +27,7 @@ export default function RegistrationModal({
   onSubmit,
   submitError,
 }: RegistrationModalProps) {
-  const { styles } = useTheme();
+  const { styles, isDark } = useTheme();
 
   const {
     control,
@@ -61,6 +61,8 @@ export default function RegistrationModal({
             maxWidth: 420,
             padding: 25,
             borderRadius: 25,
+            borderColor: isDark ? "#fff" : "#000",
+            borderWidth: 1,
             backgroundColor: styles.containers.main?.backgroundColor ?? "#fff",
           }}
         >

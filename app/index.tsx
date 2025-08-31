@@ -1,6 +1,6 @@
 import React from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/hooks/useTheme";
 import { PlaySection } from "@/modules/puzzle/play-section";
@@ -42,6 +42,10 @@ function Index() {
     router.push("/?play=true");
   };
 
+  const gotoInformations = () => {
+    router.push("/informations");
+  };
+
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
       <RegistrationProvider>
@@ -50,7 +54,7 @@ function Index() {
         ) : finished ? (
           <ResultSection onRestart={onRestart} />
         ) : (
-          <StartSession onStart={onStart} />
+          <StartSession onStart={onStart} gotoInformations={gotoInformations} />
         )}
         <ModalRoot />
       </RegistrationProvider>

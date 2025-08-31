@@ -71,6 +71,10 @@ export default function RootLayout() {
               name="index"
               options={{ headerShown: false, animation: "fade" }}
             />
+            <Stack.Screen
+              name="informations"
+              options={{ headerShown: false, animation: "fade" }}
+            />
           </Stack>
         </QueryClientProvider>
         <StatusBar style="auto" />

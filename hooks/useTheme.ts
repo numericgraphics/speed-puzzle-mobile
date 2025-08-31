@@ -45,6 +45,11 @@ export const useTheme = () => {
         fontSize: theme.text.fontSize.lg,
         textAlign: "center",
       },
+      bodyBold: {
+        fontFamily: theme.text.fontFamily.bold,
+        color: colorScheme === "light" ? theme.color.black : theme.color.white,
+        fontSize: theme.text.fontSize.lg,
+      },
       labelBold: {
         fontFamily: theme.text.fontFamily.bold,
         fontSize: theme.text.fontSize.md,
