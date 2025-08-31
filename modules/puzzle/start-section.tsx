@@ -9,12 +9,14 @@ import {
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
 import { useRegistration } from "@/hooks/use-registration";
+import { Link } from "expo-router";
 
 interface StartSessionProps {
   onStart: () => void;
+  gotoInformations: () => void;
 }
 
-export function StartSession({ onStart }: StartSessionProps) {
+export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
   const { user } = useRegistration();
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
@@ -56,6 +58,12 @@ export function StartSession({ onStart }: StartSessionProps) {
         }}
       >
         Start Game
+      </Text>
+      <Text
+        style={[buttons.linkButton, { marginTop: theme.spacer[1].y }]}
+        onPress={() => gotoInformations()}
+      >
+        How to Play
       </Text>
     </Animated.View>
   );

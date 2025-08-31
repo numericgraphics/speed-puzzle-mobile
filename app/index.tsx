@@ -42,6 +42,11 @@ function Index() {
     router.push("/?play=true");
   };
 
+  const gotoInformations = () => {
+    restartGame();
+    router.push("/informations");
+  };
+
   return (
     <SafeAreaView style={[containers.main, containers.centeredFullScreen]}>
       <RegistrationProvider>
@@ -50,7 +55,7 @@ function Index() {
         ) : finished ? (
           <ResultSection onRestart={onRestart} />
         ) : (
-          <StartSession onStart={onStart} />
+          <StartSession onStart={onStart} gotoInformations={gotoInformations} />
         )}
         <ModalRoot />
       </RegistrationProvider>

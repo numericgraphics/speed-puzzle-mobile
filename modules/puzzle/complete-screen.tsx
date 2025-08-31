@@ -54,7 +54,7 @@ export function CompletedPuzzle({
   useEffect(() => {
     const timeout = setTimeout(() => {
       animationRef.current?.handleStartY();
-    }, 500);
+    }, 1500);
     return () => clearTimeout(timeout);
   }, []);
 
