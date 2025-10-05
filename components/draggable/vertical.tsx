@@ -8,6 +8,7 @@ import Animated, {
   SharedValue,
   ReduceMotion,
 } from "react-native-reanimated";
+import { runOnJS } from "react-native-worklets";
 
 import { animatedReactionConfig } from "@/config/animation";
 
@@ -31,7 +32,7 @@ export interface DraggableProps {
   children: React.ReactNode;
   imageHeight?: number;
   itemWidth?: number;
-  onDragEnd: (event: SharedValue<Record<string, number>>) => void;
+  onDragEnd: (positions: Record<string, number>) => void;
 }
 
 export const DraggableVertical: React.FC<DraggableProps> = ({
@@ -77,15 +78,15 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
         positions.value = objectMove(positions.value, currentIndex, newIndex);
       }
     })
-    .onFinalize((event) => {
+    .onEnd(() => {
+      runOnJS(onDragEnd)(positions.value);
+    })
+    .onFinalize(() => {
       isDragging.value = false;
       scale.value = withSpring(1);
       offsetX.value = withSpring(
         (positions.value[idKey] ?? 0) * itemWidth,
-        animatedReactionConfig,
-        () => {
-          onDragEnd(positions);
-        }
+        animatedReactionConfig
       );
     });
 

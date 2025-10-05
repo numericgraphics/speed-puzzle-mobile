@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
   SharedValue,
 } from "react-native-reanimated";
+import { runOnJS } from "react-native-worklets";
 
 // Utility function to swap two items' order in the positions object (id -> order index)
 const objectMove = (
@@ -38,7 +39,7 @@ type DraggableProps = {
   /** Height of each item (used for calculating positions) */
   itemHeight?: number;
 
-  onDragEnd: (event: any) => void;
+  onDragEnd: (positions: Record<string, number>) => void;
 };
 
 const Draggable: React.FC<DraggableProps> = ({
@@ -99,12 +100,13 @@ const Draggable: React.FC<DraggableProps> = ({
       }
     })
     .onEnd(() => {
+      runOnJS(onDragEnd)(positions.value);
+    })
+    .onFinalize(() => {
       isDragging.value = false;
       scale.value = withSpring(1);
       const finalPositionY = (positions.value[idKey] ?? 0) * itemHeight;
-      offsetY.value = withSpring(finalPositionY, animatedReactionConfig, () => {
-        onDragEnd(positions);
-      });
+      offsetY.value = withSpring(finalPositionY, animatedReactionConfig);
     });
 
   // Animated style applied to the draggable item
