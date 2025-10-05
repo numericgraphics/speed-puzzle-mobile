@@ -6,7 +6,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
 import { ArrayExtended } from "@/utils/array";
 import { getRandomBoolean } from "@/utils/math";
-import { useUnsplashStore } from "./unsplash";
+// import { useUnsplashStore } from "./unsplash";
 import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { useChallengeStore } from "./challenges";
 import { useResultCompleted, useResultStore } from "./results";

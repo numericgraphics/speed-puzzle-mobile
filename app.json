@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thepark001.speedpuzzle"
+      "bundleIdentifier": "com.thepark001.speedpuzzle",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "edgeToEdgeEnabled": true,
@@ -47,14 +50,16 @@
           "initialOrientation": "PORTRAIT"
         }
       ],
-      [
-        "expo-sqlite",
-        {
-          "useLibSQL": true
-        }
-      ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
