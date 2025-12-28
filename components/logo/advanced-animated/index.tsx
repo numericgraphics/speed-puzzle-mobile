@@ -1,5 +1,4 @@
 import React, {
-  forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -25,10 +24,12 @@ interface Props {
   color?: string;
 }
 
-export const AnimatedRectanglesLayer = forwardRef<
-  AnimatedRectanglesLayerHandle,
-  Props
->(({ width, height, color = "white" }, ref) => {
+export const AnimatedRectanglesLayer = ({
+  width,
+  height,
+  color = "white",
+  ref,
+}: Props & { ref?: React.Ref<AnimatedRectanglesLayerHandle> }) => {
   const topRef = useRef<AnimatedRectangleHandle>(null);
   const middleRef = useRef<AnimatedRectangleHandle>(null);
   const bottomRef = useRef<AnimatedRectangleHandle>(null);
@@ -108,7 +109,7 @@ export const AnimatedRectanglesLayer = forwardRef<
       })}
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   container: { alignItems: "center", justifyContent: "center" },

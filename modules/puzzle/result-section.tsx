@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
 import { useScores } from "@/hooks/use-scores";
@@ -12,6 +12,7 @@ interface ResultSectionProps {
 export function ResultSection({ onRestart }: ResultSectionProps) {
   const { getScoresForResultSection } = useScores();
   const { open, user, submitScoreWithoutModal } = useRegistration();
+  const queryClient = useQueryClient();
   const {
     data: score,
     isLoading,
@@ -20,6 +21,7 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
   } = useQuery({
     queryKey: ["scores-result-section"],
     queryFn: getScoresForResultSection,
+    refetchOnMount: "always",
   });
 
   if (isLoading) {
@@ -39,7 +41,10 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
 
   return (
     <CompletedPuzzle
-      onRestart={onRestart}
+      onRestart={() => {
+        queryClient.removeQueries({ queryKey: ["scores-result-section"] });
+        onRestart();
+      }}
       score={score.result ?? 0}
       scores={score.topScores || []}
       compareResult={score.compareResult}
