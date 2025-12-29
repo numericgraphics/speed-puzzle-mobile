@@ -1,5 +1,4 @@
 import React, {
-  forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -32,10 +31,14 @@ interface Props {
   style?: StyleProp<ViewStyle>;
 }
 
-export const GenericAnimatedRectangle = forwardRef<
-  AnimatedRectangleHandle,
-  Props
->(({ width, height, shape, color = "white", style }, ref) => {
+export const GenericAnimatedRectangle = ({
+  width,
+  height,
+  shape,
+  color = "white",
+  style,
+  ref,
+}: Props & { ref?: React.Ref<AnimatedRectangleHandle> }) => {
   const anim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -148,4 +151,4 @@ export const GenericAnimatedRectangle = forwardRef<
       </Svg>
     </Animated.View>
   );
-});
+};
