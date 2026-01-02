@@ -21,6 +21,7 @@ function ModalRoot() {
       onClose={close}
       onSubmit={submit}
       submitError={state.submitError}
+      isSuccess={state.success}
     />
   );
 }
