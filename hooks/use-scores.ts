@@ -89,6 +89,11 @@ export function useScores() {
   /**
    * Retrieves both the calculated result and the current scores in parallel.
    */
+  // TODO: getScore() is purely local, but a backend failure (e.g. 500) in
+  // getRegisteredScores/compareUserScores currently throws and takes the
+  // whole result down with it. Catch backend errors here so the local
+  // score still reaches ResultSection and the user can keep playing even
+  // when the score isn't registered.
   const getScoresForResultSection = useCallback(async () => {
     const [result, topScores] = await Promise.all([
       getScore(),
