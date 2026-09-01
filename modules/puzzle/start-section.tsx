@@ -9,7 +9,7 @@ import {
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
 import { useRegistration } from "@/hooks/use-registration";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 interface StartSessionProps {
   onStart: () => void;
@@ -64,6 +64,12 @@ export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
         onPress={() => gotoInformations()}
       >
         How to Play
+      </Text>
+      <Text
+        style={[buttons.linkButton, { marginTop: theme.spacer[4].y, opacity: 0.5, fontSize: 12 }]}
+        onPress={() => router.push("/debug-ui")}
+      >
+        Debug UI
       </Text>
     </Animated.View>
   );

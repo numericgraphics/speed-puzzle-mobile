@@ -54,11 +54,15 @@ async function safeFetch<T>(
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(
-        `HTTP ${res.status} ${res.statusText} for "${path}"${
-          text ? ` — ${text}` : ""
-        }`
-      );
+      // Try to parse JSON error if available, otherwise use text
+      let errorMessage = text;
+      try {
+        const json = JSON.parse(text);
+        if (json.message) errorMessage = json.message;
+        else if (json.error) errorMessage = json.error;
+      } catch {}
+
+      throw new Error(errorMessage || `HTTP ${res.status} ${res.statusText}`);
     }
 
     console.debug("[Api] Response available");

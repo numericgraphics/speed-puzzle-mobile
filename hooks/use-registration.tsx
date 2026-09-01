@@ -41,6 +41,7 @@ type State = {
   visible: boolean;
   submitting: boolean;
   submitError: string | null;
+  success: boolean;
   lastOpenedFor: number | null;
 };
 
@@ -57,6 +58,7 @@ const initialState: State = {
   visible: false,
   submitting: false,
   submitError: null,
+  success: false,
   lastOpenedFor: null,
 };
 
@@ -67,14 +69,21 @@ function reducer(state: State, action: Action): State {
         ...state,
         visible: true,
         submitError: null,
+        success: false,
       };
     }
     case "CLOSE":
-      return { ...state, visible: false, submitting: false, submitError: null };
+      return {
+        ...state,
+        visible: false,
+        submitting: false,
+        submitError: null,
+        success: false,
+      };
     case "SUBMIT_START":
-      return { ...state, submitting: true, submitError: null };
+      return { ...state, submitting: true, submitError: null, success: false };
     case "SUBMIT_SUCCESS":
-      return { ...state, submitting: false, visible: false };
+      return { ...state, submitting: false, success: true };
     case "SUBMIT_SCORE_START":
       return { ...state, submitting: true, submitError: null };
     case "SUBMIT_SCORE_SUCCESS":
