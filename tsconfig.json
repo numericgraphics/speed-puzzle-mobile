@@ -3,6 +3,7 @@
   "compilerOptions": {
     "strict": false,
     "moduleResolution": "bundler",
+    "types": ["node", "jest"],
     "paths": {
       "@/*": ["./*"]
     }
