@@ -1,89 +1,39 @@
 // actions/result-actions.ts
 import { useCallback } from "react";
 import { useResultStore } from "@/stores/results";
-import type { GameChallengeType } from "@/stores/game";
 import { api } from "@/lib/api";
+import { computeTotalScore } from "@/helpers/scores";
 
 /**
  * React hook exposing result-related actions:
  * - getResultScore(): compute aggregated score from the in-memory results store
- * - getRegisteredScores(limit?): fetch scores from backend (bottom list by default)
+ * - getRegisteredScores(limit?): fetch the top (highest) scores from backend
  * - getScoresForResultSection(): compute local result + fetch scores together
  */
 export function useScores() {
   /**
    * Compute the aggregated score for the current game.
-   * Logic lifted from the original getResultScore function.
    */
   const getScore = useCallback(async (): Promise<number> => {
     const results = useResultStore.getState().getResults();
-    const MAX_COMPLEXITY = 3;
-
-    if (results.length === 0) return 0;
-
-    const score = results.reduce(
-      (totalScore: number, challenge: GameChallengeType) => {
-        const { complexity, timerValue, moves } = challenge;
-
-        // Convert ms → s for finer granularity
-        const elapsedSec = timerValue / 1000;
-
-        // Tier threshold (middle tier if complexity ≤ half of max)
-        const midThreshold = Math.ceil(MAX_COMPLEXITY / 2);
-
-        // Ideal benchmarks & base score
-        let idealTime: number;
-        const idealMoves = complexity;
-        let baseScore: number;
-
-        if (complexity === 1) {
-          idealTime = 1;
-          baseScore = 100;
-        } else if (complexity <= midThreshold) {
-          idealTime = MAX_COMPLEXITY;
-          baseScore = 150;
-        } else {
-          idealTime = MAX_COMPLEXITY * 2;
-          baseScore = 200;
-        }
-
-        // Penalties
-        const timePenalty = Math.max(0, elapsedSec - idealTime);
-        const extraMoves = Math.max(0, moves - idealMoves);
-        const movePenalty = extraMoves * 2;
-
-        // Final clamped score for this challenge
-        const challengeScore = Math.max(
-          0,
-          Math.round(baseScore - timePenalty - movePenalty)
-        );
-
-        return totalScore + challengeScore;
-      },
-      0
-    );
+    const score = computeTotalScore(results);
     useResultStore.setState({ score });
     return score;
   }, []);
 
   /**
-   * Fetches the scores from the backend.
-   * Uses the `bottomScores` endpoint to mirror previous behavior.
-   * Returns the raw array of scores.
+   * Fetches the top (highest) scores from the backend.
    */
-  const getRegisteredScores = useCallback(
-    async (limit = 10) => {
-      const res = await api.bottomScores(limit); // { limit, scores }
-      return res.scores ?? [];
-    },
-    [api]
-  );
+  const getRegisteredScores = useCallback(async (limit = 10) => {
+    const scores = await api.topScores(limit);
+    return scores ?? [];
+  }, []);
 
   const compareUserScores = useCallback(async (userScore: number) => {
     const res = await api.compareScore(userScore);
 
-    // If the user's score is higher than the lowest top score, they are in the top scores
-    return res.isBottom10;
+    // Scoring is higher-is-better: qualifies if it's in the top 10.
+    return res.isTop10;
   }, []);
 
   /**
@@ -101,7 +51,7 @@ export function useScores() {
     ]);
     const compareResult = await compareUserScores(result);
     return { result, topScores, compareResult };
-  }, [getScore, getRegisteredScores]);
+  }, [getScore, getRegisteredScores, compareUserScores]);
 
   return { getScore, getRegisteredScores, getScoresForResultSection };
 }

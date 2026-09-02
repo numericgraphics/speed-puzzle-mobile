@@ -31,7 +31,7 @@ async function saveUser(user: User): Promise<void> {
 
 function isBetterScore(current: number, best: number | null): boolean {
   if (best == null) return true;
-  return current < best; // lower is better
+  return current > best; // higher is better
 }
 
 // --- Types ---

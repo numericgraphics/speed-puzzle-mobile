@@ -1,5 +1,4 @@
 // lib/api.ts
-import { Platform } from "react-native";
 import { getRandomQuery } from "@/helpers/queries";
 import { createImageDataArray } from "@/helpers/unsplash-photo";
 import {
@@ -17,10 +16,13 @@ export type AddUserRequest = {
 export type AddScoreRequest = { value: number };
 export type UserPublic = { id: string; userName: string; bestScore?: number };
 export type ScoreRow = {
-  userId: string;
-  userName: string;
-  value: number;
-  createdAt?: string;
+  score: number;
+  user: {
+    _id: string;
+    userName: string;
+    createdAt?: number;
+    updatedAt?: number;
+  };
 };
 
 /** ---------- Base URL ---------- */
@@ -33,14 +35,14 @@ function resolveBaseURL(): string {
 /** ---------- Generic safeFetch wrapper ---------- */
 async function safeFetch<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const url = `${resolveBaseURL()}${path}`;
   console.debug(
     "[Api] Fetch",
     options.method ?? "GET",
     url,
-    options.body ? JSON.parse(options.body.toString()) : ""
+    options.body ? JSON.parse(options.body.toString()) : "",
   );
 
   try {
@@ -57,7 +59,7 @@ async function safeFetch<T>(
       throw new Error(
         `HTTP ${res.status} ${res.statusText} for "${path}"${
           text ? ` — ${text}` : ""
-        }`
+        }`,
       );
     }
 
@@ -84,7 +86,7 @@ export class Api {
 
   addScore(
     userName: string,
-    body: AddScoreRequest
+    body: AddScoreRequest,
   ): Promise<{ userId: string; value: number }> {
     const path = `/users/${encodeURIComponent(userName)}/scores`;
     return safeFetch<{ userId: string; value: number }>(path, {
@@ -103,7 +105,7 @@ export class Api {
 
   bottomScores(limit = 10): Promise<{ limit: number; scores: ScoreRow[] }> {
     return safeFetch<{ limit: number; scores: ScoreRow[] }>(
-      `/scores/bottom?limit=${limit}`
+      `/scores/bottom?limit=${limit}`,
     );
   }
 
@@ -127,7 +129,7 @@ export class Api {
         throw new Error(
           `Unsplash HTTP ${res.status} ${res.statusText}${
             text ? ` — ${text}` : ""
-          }`
+          }`,
         );
       }
 

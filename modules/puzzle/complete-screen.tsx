@@ -8,6 +8,7 @@ import {
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
 import { User } from "@/types";
+import { ScoreRow as ScoreRowData } from "@/lib/api";
 
 export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
   const { styles } = useTheme();
@@ -31,7 +32,7 @@ export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
 interface CompletedPuzzleProps {
   onRestart: () => void;
   score: number;
-  scores: any[];
+  scores: ScoreRowData[];
   compareResult: boolean;
   register: () => void;
   user: User | null;
