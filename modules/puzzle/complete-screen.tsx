@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { useTheme } from "@/hooks/useTheme";

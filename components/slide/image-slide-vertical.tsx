@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { SlideType } from "@/modules/puzzle/puzzle-container";

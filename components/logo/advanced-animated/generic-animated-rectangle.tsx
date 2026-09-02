@@ -1,8 +1,4 @@
-import React, {
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import React, { useEffect, useImperativeHandle, useRef } from "react";
 import { Animated, StyleProp, ViewStyle } from "react-native";
 import { Svg, Rect } from "react-native-svg";
 import type { RectDimensions } from "./rectangles-config";
@@ -47,29 +43,29 @@ export const GenericAnimatedRectangle = ({
   >();
 
   useEffect(() => {
+    function runAnimation() {
+      opacity.setValue(currentConfig.opacityStart);
+      anim.setValue(0);
+
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: currentConfig.opacityEnd,
+          duration: currentConfig.duration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: currentConfig.duration,
+          easing: currentConfig.easing,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+
     if (currentConfig) {
       runAnimation();
     }
-  }, [currentConfig]);
-
-  function runAnimation() {
-    opacity.setValue(currentConfig.opacityStart);
-    anim.setValue(0);
-
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: currentConfig.opacityEnd,
-        duration: currentConfig.duration,
-        useNativeDriver: true,
-      }),
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: currentConfig.duration,
-        easing: currentConfig.easing,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }
+  }, [currentConfig, anim, opacity]);
 
   useImperativeHandle(
     ref,
@@ -90,7 +86,7 @@ export const GenericAnimatedRectangle = ({
         setCurrentConfig(animationYLongEndedConfig[shape.id]);
       },
     }),
-    [shape.id]
+    [shape.id],
   );
 
   if (!currentConfig) {

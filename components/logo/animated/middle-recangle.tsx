@@ -25,7 +25,7 @@ export const AnimatedMiddleRectangle = ({
       easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [anim]);
 
   const translateY = anim.interpolate({
     inputRange: [0, 1],

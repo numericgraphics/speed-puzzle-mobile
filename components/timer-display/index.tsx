@@ -43,7 +43,7 @@ function TimeDisplay({ completed }: TimeDisplayProps) {
     } else {
       scale.value = withTiming(1, { duration: 500 });
     }
-  }, [completed]);
+  }, [completed, scale]);
 
   // Start ticking on mount; stop on unmount
   // useEffect(() => {

@@ -25,7 +25,7 @@ export const AnimatedBottomRectangle = ({
       easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [anim]);
 
   // slide from -200px above into place
   const translateY = anim.interpolate({

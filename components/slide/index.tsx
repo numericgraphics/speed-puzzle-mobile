@@ -15,15 +15,7 @@ export interface SlideProps {
 }
 
 export const Slide: React.FC<SlideProps> = memo(
-  ({
-    index,
-    url,
-    slideWidth,
-    slideHeight,
-    imageHeight,
-    backgroundColor,
-    cropStartY,
-  }) => {
+  ({ index, url, slideHeight, imageHeight, backgroundColor, cropStartY }) => {
     const drag = useReorderableDrag();
     console.log("redraw", index);
     // const image = useImage(url);
@@ -71,8 +63,10 @@ export const Slide: React.FC<SlideProps> = memo(
         </View>
       </Pressable>
     );
-  }
+  },
 );
+
+Slide.displayName = "Slide";
 
 const styles = StyleSheet.create({
   container: {

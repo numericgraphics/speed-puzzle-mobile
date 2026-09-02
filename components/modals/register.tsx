@@ -2,7 +2,6 @@ import React from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { useTheme } from "@/hooks/useTheme";
-import { User } from "@/types";
 
 type FormValues = {
   userName: string;
