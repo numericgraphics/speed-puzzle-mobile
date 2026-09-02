@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { useImperativeHandle } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 import { Svg, Rect } from "react-native-svg";
@@ -28,10 +28,14 @@ interface Props {
   style?: StyleProp<ViewStyle>;
 }
 
-export const GenericAnimatedRectangle = forwardRef<
-  AnimatedRectangleHandle,
-  Props
->(({ width, height, shape, color = "white", style }, ref) => {
+export const GenericAnimatedRectangle = ({
+  width,
+  height,
+  shape,
+  color = "white",
+  style,
+  ref,
+}: Props & { ref?: React.Ref<AnimatedRectangleHandle> }) => {
   const [currentConfig, setCurrentConfig] = React.useState<
     AnimationConfig | undefined
   >();
@@ -115,4 +119,4 @@ export const GenericAnimatedRectangle = forwardRef<
       </Svg>
     </Animated.View>
   );
-});
+};

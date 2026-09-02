@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
-  runOnJS,
-  runOnUI,
-  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import { runOnJS } from "react-native-worklets";
 
 import { PuzzlePieceType } from "@/types";
 import { PUZZLE_SLIDE_NUMBER } from "@/constants";
@@ -35,7 +33,7 @@ export default function PuzzleContainerVertical({
   url: string;
   pieces: PuzzlePieceType[];
 }) {
-  const { theme, styles, isDark } = useTheme();
+  const { theme } = useTheme();
 
   const { triggerNextChallenge, incrementChallengeMove } =
     useGameStoreActions();
@@ -57,8 +55,8 @@ export default function PuzzleContainerVertical({
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
   }, [pieces, positions]);
 
-  function onVerifyOrder(positions: Record<string, number>) {
-    const ordered = PuzzlePieces.checkPuzzleOrderMobile(positions);
+  function onVerifyOrder(currentPositions: Record<string, number>) {
+    const ordered = PuzzlePieces.checkPuzzleOrderMobile(currentPositions);
     if (ordered) {
       useChallengeStore.getState().markCompleted();
       opacity.value = withDelay(
@@ -70,10 +68,9 @@ export default function PuzzleContainerVertical({
     }
   }
 
-  const onDragEnd = (event: SharedValue<Record<string, number>>) => {
-    "worklet";
-    runOnJS(incrementChallengeMove)();
-    runOnJS(onVerifyOrder)(event.value);
+  const onDragEnd = (currentPositions: Record<string, number>) => {
+    incrementChallengeMove();
+    onVerifyOrder(currentPositions);
   };
 
   return (
