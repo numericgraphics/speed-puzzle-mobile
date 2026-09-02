@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { DefaultTheme, Slot, Stack, ThemeProvider } from "expo-router";
+import { DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -19,10 +19,6 @@ import {
   Nunito_400Regular,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
-
-import { DB_NAME } from "@/constants";
-// import { DatabaseProvider } from "@/providers/data-base";
-// import { UserProvider } from "@/providers/user";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 configureReanimatedLogger({

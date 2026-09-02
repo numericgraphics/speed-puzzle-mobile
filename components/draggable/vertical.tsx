@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedReaction,
   withSpring,
   SharedValue,
-  ReduceMotion,
 } from "react-native-reanimated";
 import { runOnJS } from "react-native-worklets";
 
@@ -15,7 +14,7 @@ import { animatedReactionConfig } from "@/config/animation";
 const objectMove = (
   object: Record<string, number>,
   from: number,
-  to: number
+  to: number,
 ): Record<string, number> => {
   "worklet";
   const newObj = { ...object };
@@ -56,7 +55,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
         offsetX.value = withSpring(now * itemWidth, animatedReactionConfig);
       }
     },
-    [isDragging]
+    [isDragging],
   );
 
   const panGesture = Gesture.Pan()
@@ -71,7 +70,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
 
       const newIndex = Math.max(
         0,
-        Math.min(Math.floor(newX / itemWidth), itemCount - 1)
+        Math.min(Math.floor(newX / itemWidth), itemCount - 1),
       );
       const currentIndex = positions.value[idKey];
       if (newIndex !== currentIndex) {
@@ -86,7 +85,7 @@ export const DraggableVertical: React.FC<DraggableProps> = ({
       scale.value = withSpring(1);
       offsetX.value = withSpring(
         (positions.value[idKey] ?? 0) * itemWidth,
-        animatedReactionConfig
+        animatedReactionConfig,
       );
     });
 

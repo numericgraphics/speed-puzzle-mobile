@@ -14,7 +14,7 @@ import {
 } from "@/hooks/use-registration";
 
 function ModalRoot() {
-  const { state, close, submit, user } = useRegistration();
+  const { state, close, submit } = useRegistration();
   return (
     <RegistrationModal
       visible={state.visible}

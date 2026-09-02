@@ -1,18 +1,13 @@
-import React, { useEffect, useRef } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { useTheme } from "@/hooks/useTheme";
-import { AnimatedRectanglesLayerHandle } from "@/components/logo/advanced-animated";
 import { InformationScreen } from "@/modules/informations";
 
 export default function InformationsScreen() {
   const { styles, theme } = useTheme();
   const { typography, buttons } = styles;
   const { containers } = styles;
-  const headerRef = useRef<AnimatedRectanglesLayerHandle>(null);
-
   const HEADER_HEIGHT = 140;
   const FOOTER_HEIGHT = 80;
 

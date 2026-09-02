@@ -147,13 +147,13 @@ export type RegisterApiType = {
 };
 
 export type CompareScoreApiType = {
-  isBottom10: boolean;
+  isTop10: boolean;
   threshold: number | null;
-  bottom10Count: number;
+  top10Count: number;
 };
 
 export type User = {
   id: string;
   userName: string;
-  bestScore: number | null; // lower is better
+  bestScore: number | null; // higher is better
 };

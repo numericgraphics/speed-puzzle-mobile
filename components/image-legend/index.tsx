@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Linking, StyleSheet } from "react-native";
+import { View, Text, Linking } from "react-native";
 import { UnsplashImageData } from "@/types";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTheme } from "@/hooks/useTheme";
