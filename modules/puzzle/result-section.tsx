@@ -28,6 +28,9 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     return <StatusMessage message="Calculating score…" />;
   }
   if (isError) {
+    // TODO: handle backend errors (e.g. 500) gracefully instead of throwing —
+    // let the user see their local result and keep playing even if the
+    // score couldn't be fetched/registered.
     throw error;
   }
   const register = () => {
