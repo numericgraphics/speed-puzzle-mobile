@@ -5,13 +5,17 @@ import { useTheme } from "@/hooks/useTheme";
 
 type FormValues = {
   userName: string;
-  password: string;
+  email: string;
 };
 
 type RegistrationModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (values: FormValues) => Promise<void> | void;
+  onSubmit: (values: { userName: string; email?: string }) => Promise<void> | void;
+  submitting: boolean;
+  submitted: boolean;
+  recognized: boolean;
+  userName?: string;
   /**
    * Optionally pass an error string from your API to display under the button.
    */
@@ -19,11 +23,16 @@ type RegistrationModalProps = {
 };
 
 const NO_SPACE = /^\S+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegistrationModal({
   visible,
   onClose,
   onSubmit,
+  submitting,
+  submitted,
+  recognized,
+  userName,
   submitError,
 }: RegistrationModalProps) {
   const { styles, isDark } = useTheme();
@@ -31,14 +40,17 @@ export default function RegistrationModal({
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isValid },
   } = useForm<FormValues>({
     mode: "onChange",
-    defaultValues: { userName: "", password: "" },
+    defaultValues: { userName: "", email: "" },
   });
 
   const submit = handleSubmit(async (data) => {
-    await onSubmit(data);
+    await onSubmit({
+      userName: data.userName,
+      email: data.email?.trim() || undefined,
+    });
   });
 
   return (
@@ -65,128 +77,159 @@ export default function RegistrationModal({
             backgroundColor: styles.containers.main?.backgroundColor ?? "#fff",
           }}
         >
-          <Text style={[styles.typography.title, { marginBottom: 12 }]}>
-            New Top Score 🎉
-          </Text>
-          <Text style={[styles.typography.body, { marginBottom: 16 }]}>
-            You’re in the top 10 fastest times. Save your score:
-          </Text>
-
-          {/* Username */}
-          <Text style={[styles.typography.labelBold, { marginBottom: 6 }]}>
-            Username
-          </Text>
-          <Controller
-            control={control}
-            name="userName"
-            rules={{
-              required: "Username is required",
-              minLength: { value: 4, message: "Min length is 4" },
-              maxLength: { value: 9, message: "Max length is 9" },
-              pattern: { value: NO_SPACE, message: "No spaces allowed" },
-            }}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <TextInput
-                ref={ref}
-                style={[styles.inputs.textInput, { marginBottom: 6 }]}
-                placeholder="Your username"
-                placeholderTextColor={"#999"}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-                autoCorrect={false}
-                textContentType="username"
-                returnKeyType="next"
-              />
-            )}
-          />
-          {errors.userName && (
-            <Text
-              style={[
-                styles.typography.label,
-                { color: "red", marginBottom: 10 },
-              ]}
-            >
-              {errors.userName.message}
-            </Text>
-          )}
-
-          {/* Password */}
-          <Text style={[styles.typography.labelBold, { marginBottom: 6 }]}>
-            Password
-          </Text>
-          <Controller
-            control={control}
-            name="password"
-            rules={{
-              required: "Password is required",
-              minLength: { value: 4, message: "Min length is 4" },
-              maxLength: { value: 9, message: "Max length is 9" },
-              pattern: { value: NO_SPACE, message: "No spaces allowed" },
-            }}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <TextInput
-                ref={ref}
-                style={[styles.inputs.textInput, { marginBottom: 6 }]}
-                placeholder="Your password"
-                placeholderTextColor={"#999"}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCapitalize="none"
-                autoCorrect={false}
-                textContentType="password"
-                secureTextEntry
-                returnKeyType="done"
-              />
-            )}
-          />
-          {errors.password && (
-            <Text
-              style={[
-                styles.typography.label,
-                { color: "red", marginBottom: 10 },
-              ]}
-            >
-              {errors.password.message}
-            </Text>
-          )}
-
-          {submitError ? (
-            <Text
-              style={[
-                styles.typography.label,
-                { color: "red", marginBottom: 10 },
-              ]}
-            >
-              {submitError}
-            </Text>
-          ) : null}
-
-          <View
-            style={[
-              styles.containers.row,
-              {
-                justifyContent: "space-between",
-                marginTop: 50,
-                // backgroundColor: "yellow",
-              },
-            ]}
-          >
-            <TouchableOpacity onPress={onClose} disabled={isSubmitting}>
-              <Text style={styles.buttons.linkButton}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={submit}
-              disabled={!isValid || isSubmitting}
-            >
-              <Text style={styles.buttons.linkButton}>
-                {isSubmitting ? "Saving..." : "Save Score"}
+          {submitted ? (
+            <>
+              <Text style={[styles.typography.title, { marginBottom: 12 }]}>
+                {recognized ? "Welcome Back 👋" : "You’re on the Board 🎉"}
               </Text>
-            </TouchableOpacity>
-          </View>
+              <Text style={[styles.typography.body, { marginBottom: 24 }]}>
+                {recognized
+                  ? `We recognized ${userName} from that email — this device is now linked to your player.`
+                  : `${userName} is saved. Nice run!`}
+              </Text>
+              <View
+                style={[styles.containers.row, { justifyContent: "flex-end" }]}
+              >
+                <TouchableOpacity onPress={onClose}>
+                  <Text style={styles.buttons.linkButton}>Continue</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.typography.title, { marginBottom: 12 }]}>
+                New Top Score 🎉
+              </Text>
+              <Text style={[styles.typography.body, { marginBottom: 16 }]}>
+                You’re in the top 10 fastest times. Enter your name for the
+                leaderboard:
+              </Text>
+
+              {/* Username */}
+              <Text style={[styles.typography.labelBold, { marginBottom: 6 }]}>
+                Name
+              </Text>
+              <Controller
+                control={control}
+                name="userName"
+                rules={{
+                  required: "Name is required",
+                  minLength: { value: 4, message: "Min length is 4" },
+                  maxLength: { value: 9, message: "Max length is 9" },
+                  pattern: { value: NO_SPACE, message: "No spaces allowed" },
+                }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <TextInput
+                    ref={ref}
+                    style={[styles.inputs.textInput, { marginBottom: 6 }]}
+                    placeholder="Your name"
+                    placeholderTextColor={"#999"}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    textContentType="username"
+                    returnKeyType="next"
+                  />
+                )}
+              />
+              {errors.userName && (
+                <Text
+                  style={[
+                    styles.typography.label,
+                    { color: "red", marginBottom: 10 },
+                  ]}
+                >
+                  {errors.userName.message}
+                </Text>
+              )}
+
+              {/* Email (optional) */}
+              <Text style={[styles.typography.labelBold, { marginBottom: 6 }]}>
+                Email (optional)
+              </Text>
+              <Controller
+                control={control}
+                name="email"
+                rules={{
+                  pattern: {
+                    value: EMAIL_PATTERN,
+                    message: "Enter a valid email",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <TextInput
+                    ref={ref}
+                    style={[styles.inputs.textInput, { marginBottom: 6 }]}
+                    placeholder="you@example.com"
+                    placeholderTextColor={"#999"}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    textContentType="emailAddress"
+                    returnKeyType="done"
+                  />
+                )}
+              />
+              <Text
+                style={[
+                  styles.typography.label,
+                  { marginBottom: 6, opacity: 0.7 },
+                ]}
+              >
+                Keeps your name and scores if you switch devices — for
+                support use only, no login required.
+              </Text>
+              {errors.email && (
+                <Text
+                  style={[
+                    styles.typography.label,
+                    { color: "red", marginBottom: 10 },
+                  ]}
+                >
+                  {errors.email.message}
+                </Text>
+              )}
+
+              {submitError ? (
+                <Text
+                  style={[
+                    styles.typography.label,
+                    { color: "red", marginBottom: 10 },
+                  ]}
+                >
+                  {submitError}
+                </Text>
+              ) : null}
+
+              <View
+                style={[
+                  styles.containers.row,
+                  {
+                    justifyContent: "space-between",
+                    marginTop: 50,
+                  },
+                ]}
+              >
+                <TouchableOpacity onPress={onClose} disabled={submitting}>
+                  <Text style={styles.buttons.linkButton}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={submit}
+                  disabled={!isValid || submitting}
+                >
+                  <Text style={styles.buttons.linkButton}>
+                    {submitting ? "Saving..." : "Save Score"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Modal>

@@ -31,6 +31,7 @@ export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
 
 interface CompletedPuzzleProps {
   onRestart: () => void;
+  onGoHome: () => void;
   score: number;
   scores: ScoreRowData[];
   compareResult: boolean;
@@ -40,6 +41,7 @@ interface CompletedPuzzleProps {
 
 export function CompletedPuzzle({
   onRestart,
+  onGoHome,
   score,
   scores,
   compareResult,
@@ -124,6 +126,14 @@ export function CompletedPuzzle({
         }}
       >
         Play again !
+      </Text>
+      <Text
+        style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
+        onPress={() => {
+          animationRef.current?.handleEndX(() => onGoHome());
+        }}
+      >
+        Back to Home
       </Text>
     </Animated.View>
   );

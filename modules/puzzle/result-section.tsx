@@ -7,11 +7,12 @@ import { useRegistration } from "@/hooks/use-registration";
 
 interface ResultSectionProps {
   onRestart: () => void;
+  onGoHome: () => void;
 }
 
-export function ResultSection({ onRestart }: ResultSectionProps) {
+export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
   const { getScoresForResultSection } = useScores();
-  const { open, user, submitScoreWithoutModal } = useRegistration();
+  const { open, user, openScoreConfirm } = useRegistration();
   const queryClient = useQueryClient();
   const {
     data: score,
@@ -34,11 +35,10 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
     throw error;
   }
   const register = () => {
-    console.log("register user", user);
     if (!user) {
       open();
     } else {
-      submitScoreWithoutModal();
+      openScoreConfirm();
     }
   };
 
@@ -47,6 +47,10 @@ export function ResultSection({ onRestart }: ResultSectionProps) {
       onRestart={() => {
         queryClient.removeQueries({ queryKey: ["scores-result-section"] });
         onRestart();
+      }}
+      onGoHome={() => {
+        queryClient.removeQueries({ queryKey: ["scores-result-section"] });
+        onGoHome();
       }}
       score={score.result ?? 0}
       scores={score.topScores || []}

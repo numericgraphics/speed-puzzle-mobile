@@ -10,11 +10,19 @@ import {
 /** ---------- Shared DTOs ---------- */
 export type AddUserRequest = {
   userName: string;
-  password: string;
+  email?: string;
   score?: number;
 };
 export type AddScoreRequest = { value: number };
-export type UserPublic = { id: string; userName: string; bestScore?: number };
+export type UserPublic = {
+  id: string;
+  userName: string;
+  bestScore?: number;
+  email?: string;
+};
+export type AddUserResponse =
+  | UserPublic[]
+  | { recognized: true; user: UserPublic };
 export type ScoreRow = {
   score: number;
   user: {
@@ -77,8 +85,8 @@ export class Api {
     return safeFetch("/__debug", { method: "GET" });
   }
 
-  addUser(body: AddUserRequest): Promise<UserPublic[]> {
-    return safeFetch<UserPublic[]>("/adduser", {
+  addUser(body: AddUserRequest): Promise<AddUserResponse> {
+    return safeFetch<AddUserResponse>("/adduser", {
       method: "POST",
       body: JSON.stringify(body),
     });
@@ -97,6 +105,18 @@ export class Api {
 
   listUsers(): Promise<UserPublic[]> {
     return safeFetch<UserPublic[]>("/users");
+  }
+
+  /** Returns null on a 404 (no user with that email) rather than throwing. */
+  async findUserByEmail(email: string): Promise<UserPublic | null> {
+    try {
+      return await safeFetch<UserPublic>(
+        `/users/lookup?email=${encodeURIComponent(email)}`,
+      );
+    } catch (err: any) {
+      if (String(err?.message).includes("HTTP 404")) return null;
+      throw err;
+    }
   }
 
   topScores(limit = 10): Promise<ScoreRow[]> {

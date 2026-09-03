@@ -131,13 +131,11 @@ export type ChallengeGlobalScoreType = {
 
 export type RegisterForm = {
   userName: string;
-  password: string;
   scores: any[];
 };
 
 export type UserInformationsType = {
   userName: string;
-  password: string;
   score: string;
 };
 
@@ -156,4 +154,5 @@ export type User = {
   id: string;
   userName: string;
   bestScore: number | null; // higher is better
+  email: string | null; // optional recognition/recovery key, not used for login
 };
