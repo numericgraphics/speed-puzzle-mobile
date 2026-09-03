@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { api } from "@/lib/api";
+import { api, UserPublic } from "@/lib/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/types";
 import { useResultStore } from "@/stores/results";
@@ -29,26 +29,38 @@ async function saveUser(user: User): Promise<void> {
   } catch {}
 }
 
+async function clearUser(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+  } catch {}
+}
+
 function isBetterScore(current: number, best: number | null): boolean {
   if (best == null) return true;
   return current > best; // higher is better
 }
 
 // --- Types ---
-export type HighScoreForm = { userName: string; password: string };
+export type HighScoreForm = { userName: string; email?: string };
 
 type State = {
   visible: boolean;
   submitting: boolean;
   submitError: string | null;
   lastOpenedFor: number | null;
+  scoreConfirmVisible: boolean;
+  scoreSubmitted: boolean;
+  submitted: boolean;
+  recognized: boolean;
 };
 
 type Action =
   | { type: "OPEN" }
   | { type: "CLOSE" }
   | { type: "SUBMIT_START" }
-  | { type: "SUBMIT_SUCCESS" }
+  | { type: "SUBMIT_SUCCESS"; recognized: boolean }
+  | { type: "OPEN_SCORE_CONFIRM" }
+  | { type: "CLOSE_SCORE_CONFIRM" }
   | { type: "SUBMIT_SCORE_START" }
   | { type: "SUBMIT_SCORE_SUCCESS" }
   | { type: "SUBMIT_ERROR"; error: string };
@@ -58,6 +70,10 @@ const initialState: State = {
   submitting: false,
   submitError: null,
   lastOpenedFor: null,
+  scoreConfirmVisible: false,
+  scoreSubmitted: false,
+  submitted: false,
+  recognized: false,
 };
 
 function reducer(state: State, action: Action): State {
@@ -67,18 +83,46 @@ function reducer(state: State, action: Action): State {
         ...state,
         visible: true,
         submitError: null,
+        submitted: false,
+        recognized: false,
       };
     }
     case "CLOSE":
-      return { ...state, visible: false, submitting: false, submitError: null };
+      return {
+        ...state,
+        visible: false,
+        submitting: false,
+        submitError: null,
+        submitted: false,
+      };
     case "SUBMIT_START":
       return { ...state, submitting: true, submitError: null };
     case "SUBMIT_SUCCESS":
-      return { ...state, submitting: false, visible: false };
+      return {
+        ...state,
+        submitting: false,
+        submitted: true,
+        recognized: action.recognized,
+      };
+    case "OPEN_SCORE_CONFIRM":
+      return {
+        ...state,
+        scoreConfirmVisible: true,
+        scoreSubmitted: false,
+        submitError: null,
+      };
+    case "CLOSE_SCORE_CONFIRM":
+      return {
+        ...state,
+        scoreConfirmVisible: false,
+        submitting: false,
+        scoreSubmitted: false,
+        submitError: null,
+      };
     case "SUBMIT_SCORE_START":
       return { ...state, submitting: true, submitError: null };
     case "SUBMIT_SCORE_SUCCESS":
-      return { ...state, submitting: false };
+      return { ...state, submitting: false, scoreSubmitted: true };
     case "SUBMIT_ERROR":
       return { ...state, submitting: false, submitError: action.error };
     default:
@@ -92,7 +136,12 @@ interface CtxValue {
   open: () => void;
   close: () => void;
   submit: (form: HighScoreForm) => Promise<void>;
+  openScoreConfirm: () => void;
+  closeScoreConfirm: () => void;
   submitScoreWithoutModal: () => Promise<void>;
+  switchPlayer: () => Promise<void>;
+  findUserByEmail: (email: string) => Promise<UserPublic | null>;
+  recoverPlayer: (found: UserPublic) => Promise<void>;
   user: User | null;
 }
 
@@ -125,6 +174,14 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
     dispatch({ type: "CLOSE" });
   }, []);
 
+  const openScoreConfirm = useCallback(() => {
+    dispatch({ type: "OPEN_SCORE_CONFIRM" });
+  }, []);
+
+  const closeScoreConfirm = useCallback(() => {
+    dispatch({ type: "CLOSE_SCORE_CONFIRM" });
+  }, []);
+
   const submitScoreWithoutModal = useCallback(async (): Promise<void> => {
     if (!user) throw new Error("User not found");
     if (!score) throw new Error("Payload.score not found");
@@ -132,7 +189,6 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       const currentScore = score;
-      console.log("Submitting score without modal:", currentScore);
 
       const response = await api.addScore(user.userName, {
         value: currentScore,
@@ -142,57 +198,67 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
         id: response.userId || user.id,
         userName: user.userName,
         bestScore: improved ? currentScore : user.bestScore,
+        email: user.email,
       };
       setUser(nextUser);
       await saveUser(nextUser);
       dispatch({ type: "SUBMIT_SCORE_SUCCESS" });
-      console.log("Score submitted:", response);
-    } catch (error) {
-      console.error("Error submitting score:", error);
+    } catch (e: any) {
+      dispatch({
+        type: "SUBMIT_ERROR",
+        error: e?.message ?? "Could not save your score",
+      });
     }
-  }, [user]);
+  }, [user, score]);
 
   const submit = useCallback(
     async (form: HighScoreForm) => {
       try {
         dispatch({ type: "SUBMIT_START" });
-        // const valid = (s: string) =>
-        //   s.length >= 4 && s.length <= 9 && /^\S+$/.test(s);
-        // if (!valid(form.userName) || !valid(form.password)) {
-        //   throw new Error("Username and password must be 4–9 chars, no spaces");
-        // }
-
-        console.log("Submitting registration for", form);
-        console.log("Submitting state", state);
-        console.log("Submitting User", user);
 
         const currentScore = score ?? null;
-
-        const body =
-          currentScore != null
-            ? {
-                userName: form.userName,
-                password: form.password,
-                score: currentScore,
-              }
-            : { userName: form.userName, password: form.password };
-
-        const list = await api.addUser(body as any);
-        let created = list.find((u) => u.userName === form.userName) || null;
-        if (!created) {
-          const all = await api.listUsers();
-          created = all.find((u) => u.userName === form.userName) || null;
-        }
-        if (!created) throw new Error("User created but could not be resolved");
-
-        const nextUser: User = {
-          id: created.id,
-          userName: created.userName,
-          bestScore: currentScore ?? null,
+        const email = form.email?.trim() || undefined;
+        const body = {
+          userName: form.userName,
+          ...(email ? { email } : {}),
+          ...(currentScore != null ? { score: currentScore } : {}),
         };
-        setUser(nextUser);
-        await saveUser(nextUser);
-        dispatch({ type: "SUBMIT_SUCCESS" });
+
+        const response = await api.addUser(body);
+
+        if (Array.isArray(response)) {
+          let created =
+            response.find((u) => u.userName === form.userName) || null;
+          if (!created) {
+            const all = await api.listUsers();
+            created = all.find((u) => u.userName === form.userName) || null;
+          }
+          if (!created)
+            throw new Error("User created but could not be resolved");
+
+          const nextUser: User = {
+            id: created.id,
+            userName: created.userName,
+            bestScore: currentScore ?? null,
+            email: created.email ?? email ?? null,
+          };
+          setUser(nextUser);
+          await saveUser(nextUser);
+          dispatch({ type: "SUBMIT_SUCCESS", recognized: false });
+          return;
+        }
+
+        // Email matched an existing player — this device now recognizes
+        // them too, like re-adding a known name to the cabinet.
+        const recognizedUser: User = {
+          id: response.user.id,
+          userName: response.user.userName,
+          bestScore: response.user.bestScore ?? null,
+          email: response.user.email ?? email ?? null,
+        };
+        setUser(recognizedUser);
+        await saveUser(recognizedUser);
+        dispatch({ type: "SUBMIT_SUCCESS", recognized: true });
       } catch (e: any) {
         dispatch({
           type: "SUBMIT_ERROR",
@@ -200,12 +266,69 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
         });
       }
     },
-    [score, user]
+    [score]
   );
 
+  /**
+   * Forget the player stored on this device, like walking away from the
+   * cabinet — the next top-10 score will prompt for a fresh name.
+   */
+  const switchPlayer = useCallback(async () => {
+    setUser(null);
+    await clearUser();
+  }, []);
+
+  /**
+   * Look up a player by their recovery email — for a device with no local
+   * player at all (fresh install, or after switchPlayer). Returns null if
+   * no user has that email on file; throws on a network/server error.
+   */
+  const findUserByEmail = useCallback(async (email: string) => {
+    return api.findUserByEmail(email);
+  }, []);
+
+  /**
+   * Adopt a looked-up player as this device's local player, mirroring
+   * switchPlayer's local-storage effect in the opposite direction.
+   */
+  const recoverPlayer = useCallback(async (found: UserPublic) => {
+    const recovered: User = {
+      id: found.id,
+      userName: found.userName,
+      bestScore: found.bestScore ?? null,
+      email: found.email ?? null,
+    };
+    setUser(recovered);
+    await saveUser(recovered);
+  }, []);
+
   const value = useMemo(
-    () => ({ state, open, close, submit, submitScoreWithoutModal, user }),
-    [state, open, close, submit, submitScoreWithoutModal, user]
+    () => ({
+      state,
+      open,
+      close,
+      submit,
+      openScoreConfirm,
+      closeScoreConfirm,
+      submitScoreWithoutModal,
+      switchPlayer,
+      findUserByEmail,
+      recoverPlayer,
+      user,
+    }),
+    [
+      state,
+      open,
+      close,
+      submit,
+      openScoreConfirm,
+      closeScoreConfirm,
+      submitScoreWithoutModal,
+      switchPlayer,
+      findUserByEmail,
+      recoverPlayer,
+      user,
+    ]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

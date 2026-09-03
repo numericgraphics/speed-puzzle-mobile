@@ -55,14 +55,27 @@ export const InformationScreen: React.FC = () => {
           the
           <Bold> 10 highest scores</Bold> currently recorded (higher is
           better). When you finish a game and your score makes the cut,
-          you’ll be invited to create a username (with a password) and save
-          that score. Usernames must be unique.
+          you’ll be invited to enter a name and save that score, like signing
+          a high-score board — no account or password needed. Names must be
+          unique.
+        </Paragraph>
+        <Paragraph>
+          You can also add an <Bold>optional email</Bold> when you register.
+          It’s not used for login — it just lets us recognize you again if
+          you switch devices or reinstall the app. From your player screen,
+          use <Bold>Recover by email</Bold> to reconnect to your name and
+          saved score on a new device.
         </Paragraph>
         <Paragraph>
           After you’ve registered once, every time you finish a game we’ll
           <Bold> automatically save</Bold> your result —
           <Bold> but only if it improves your saved score</Bold>. If it doesn’t
           beat your best, it won’t replace it (that’s normal).
+        </Paragraph>
+        <Paragraph>
+          Once registered, your <Bold>name on the start screen is tappable</Bold> —
+          tap it to open your profile, switch player, or recover your account
+          on a new device.
         </Paragraph>
       </Section>
 

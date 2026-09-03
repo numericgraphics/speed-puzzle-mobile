@@ -14,9 +14,14 @@ import { Link } from "expo-router";
 interface StartSessionProps {
   onStart: () => void;
   gotoInformations: () => void;
+  onOpenProfile: () => void;
 }
 
-export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
+export function StartSession({
+  onStart,
+  gotoInformations,
+  onOpenProfile,
+}: StartSessionProps) {
   const { user } = useRegistration();
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
@@ -43,10 +48,11 @@ export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
           color={isDark ? theme.color.white : theme.color.black}
         />
       </View>
-      <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
-        {user
-          ? ` Welcome back ${user.userName}`
-          : "Welcome to the Puzzle Game !"}
+      <Text
+        style={[typography.title, { paddingBottom: theme.spacer[1].y }]}
+        onPress={user ? onOpenProfile : undefined}
+      >
+        {user ? ` Welcome back ${user.userName}*` : "Welcome to the Puzzle Game !"}
       </Text>
       <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         Tap the button below to start the game.
@@ -65,6 +71,16 @@ export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
       >
         How to Play
       </Text>
+      {user && (
+        <Text
+          style={[
+            typography.body,
+            { opacity: 0.6, marginTop: theme.spacer[2].y },
+          ]}
+        >
+          *Tap your name to manage profile
+        </Text>
+      )}
     </Animated.View>
   );
 }
