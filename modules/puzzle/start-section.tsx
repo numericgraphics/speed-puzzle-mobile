@@ -1,6 +1,6 @@
 // StartScreenPuzzle.tsx (example with SharedValue)
 import React, { useEffect, useRef } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { useTheme } from "@/hooks/useTheme";
@@ -14,15 +14,10 @@ import { Link } from "expo-router";
 interface StartSessionProps {
   onStart: () => void;
   gotoInformations: () => void;
-  onOpenProfile: () => void;
 }
 
-export function StartSession({
-  onStart,
-  gotoInformations,
-  onOpenProfile,
-}: StartSessionProps) {
-  const { user } = useRegistration();
+export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
+  const { user, open } = useRegistration();
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
@@ -41,18 +36,17 @@ export function StartSession({
       style={containers.centeredFullScreen}
     >
       <View style={{ bottom: theme.spacer[5].y }}>
-        <AnimatedRectanglesLayer
-          ref={animationRef}
-          width={50}
-          height={50}
-          color={isDark ? theme.color.white : theme.color.black}
-        />
+        <TouchableOpacity onPress={open}>
+          <AnimatedRectanglesLayer
+            ref={animationRef}
+            width={50}
+            height={50}
+            color={isDark ? theme.color.white : theme.color.black}
+          />
+        </TouchableOpacity>
       </View>
-      <Text
-        style={[typography.title, { paddingBottom: theme.spacer[1].y }]}
-        onPress={user ? onOpenProfile : undefined}
-      >
-        {user ? ` Welcome back ${user.userName}*` : "Welcome to the Puzzle Game !"}
+      <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
+        {user ? `Welcome back ${user.userName}` : "Welcome to the Puzzle Game !"}
       </Text>
       <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         Tap the button below to start the game.
@@ -71,16 +65,11 @@ export function StartSession({
       >
         How to Play
       </Text>
-      {user && (
-        <Text
-          style={[
-            typography.body,
-            { opacity: 0.6, marginTop: theme.spacer[2].y },
-          ]}
-        >
-          *Tap your name to manage profile
-        </Text>
-      )}
+      <Text
+        style={[typography.body, { opacity: 0.6, marginTop: theme.spacer[2].y }]}
+      >
+        Tap the logo to {user ? "manage your profile" : "sign up or log in"}
+      </Text>
     </Animated.View>
   );
 }

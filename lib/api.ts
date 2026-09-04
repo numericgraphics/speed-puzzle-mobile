@@ -10,7 +10,6 @@ import {
 /** ---------- Shared DTOs ---------- */
 export type AddUserRequest = {
   userName: string;
-  email?: string;
   score?: number;
 };
 export type AddScoreRequest = { value: number };
@@ -18,11 +17,9 @@ export type UserPublic = {
   id: string;
   userName: string;
   bestScore?: number;
-  email?: string;
 };
-export type AddUserResponse =
-  | UserPublic[]
-  | { recognized: true; user: UserPublic };
+export type AddUserResponse = { user: UserPublic; key: string };
+export type LoginRequest = { userName: string; key: string };
 export type ScoreRow = {
   score: number;
   user: {
@@ -85,11 +82,28 @@ export class Api {
     return safeFetch("/__debug", { method: "GET" });
   }
 
-  addUser(body: AddUserRequest): Promise<AddUserResponse> {
-    return safeFetch<AddUserResponse>("/adduser", {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
+  /**
+   * Backend returns raw Mongo docs ({ _id, userName, ... }) — map to
+   * UserPublic ({ id, ... }). Returns null on a 409 (username taken)
+   * rather than throwing.
+   */
+  async addUser(body: AddUserRequest): Promise<AddUserResponse | null> {
+    try {
+      const raw = await safeFetch<{
+        user: { _id: string; userName: string };
+        key: string;
+      }>("/adduser", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      return {
+        user: { id: raw.user._id, userName: raw.user.userName },
+        key: raw.key,
+      };
+    } catch (err: any) {
+      if (String(err?.message).includes("HTTP 409")) return null;
+      throw err;
+    }
   }
 
   addScore(
@@ -103,18 +117,16 @@ export class Api {
     });
   }
 
-  listUsers(): Promise<UserPublic[]> {
-    return safeFetch<UserPublic[]>("/users");
-  }
-
-  /** Returns null on a 404 (no user with that email) rather than throwing. */
-  async findUserByEmail(email: string): Promise<UserPublic | null> {
+  /** Returns null on a 401 (invalid username/key) rather than throwing. */
+  async login(body: LoginRequest): Promise<UserPublic | null> {
     try {
-      return await safeFetch<UserPublic>(
-        `/users/lookup?email=${encodeURIComponent(email)}`,
+      const raw = await safeFetch<{ user: { _id: string; userName: string } }>(
+        "/login",
+        { method: "POST", body: JSON.stringify(body) },
       );
+      return { id: raw.user._id, userName: raw.user.userName };
     } catch (err: any) {
-      if (String(err?.message).includes("HTTP 404")) return null;
+      if (String(err?.message).includes("HTTP 401")) return null;
       throw err;
     }
   }

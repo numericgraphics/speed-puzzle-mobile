@@ -55,16 +55,18 @@ export const InformationScreen: React.FC = () => {
           the
           <Bold> 10 highest scores</Bold> currently recorded (higher is
           better). When you finish a game and your score makes the cut,
-          you’ll be invited to enter a name and save that score, like signing
-          a high-score board — no account or password needed. Names must be
-          unique.
+          you’ll be invited to sign up, like signing a high-score board — no
+          email or password needed. Names must be unique.
         </Paragraph>
         <Paragraph>
-          You can also add an <Bold>optional email</Bold> when you register.
-          It’s not used for login — it just lets us recognize you again if
-          you switch devices or reinstall the app. From your player screen,
-          use <Bold>Recover by email</Bold> to reconnect to your name and
-          saved score on a new device.
+          When you sign up, we generate a <Bold>recovery key</Bold> for you
+          and show it once. <Bold>Write it down</Bold> — it’s the only way to
+          get back into your account on another device or after
+          reinstalling, and we can’t show it to you again.
+        </Paragraph>
+        <Paragraph>
+          To reconnect on a new device, tap the logo and choose{" "}
+          <Bold>Log in</Bold>, then enter your username and recovery key.
         </Paragraph>
         <Paragraph>
           After you’ve registered once, every time you finish a game we’ll
@@ -73,9 +75,9 @@ export const InformationScreen: React.FC = () => {
           beat your best, it won’t replace it (that’s normal).
         </Paragraph>
         <Paragraph>
-          Once registered, your <Bold>name on the start screen is tappable</Bold> —
-          tap it to open your profile, switch player, or recover your account
-          on a new device.
+          The animated logo at the top of the start and result screens is
+          tappable — tap it any time to <Bold>sign up, log in, or manage your
+          profile</Bold>.
         </Paragraph>
       </Section>
 

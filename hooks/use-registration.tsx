@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { api, UserPublic } from "@/lib/api";
+import { api } from "@/lib/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/types";
 import { useResultStore } from "@/stores/results";
@@ -41,7 +41,8 @@ function isBetterScore(current: number, best: number | null): boolean {
 }
 
 // --- Types ---
-export type HighScoreForm = { userName: string; email?: string };
+export type SignUpForm = { userName: string };
+export type LoginForm = { userName: string; key: string };
 
 type State = {
   visible: boolean;
@@ -50,20 +51,28 @@ type State = {
   lastOpenedFor: number | null;
   scoreConfirmVisible: boolean;
   scoreSubmitted: boolean;
+  scoreRegisteredForRun: boolean;
   submitted: boolean;
-  recognized: boolean;
+  generatedKey: string | null;
+  loginFailed: boolean;
+  usernameTaken: boolean;
 };
 
 type Action =
   | { type: "OPEN" }
   | { type: "CLOSE" }
   | { type: "SUBMIT_START" }
-  | { type: "SUBMIT_SUCCESS"; recognized: boolean }
+  | { type: "SUBMIT_SUCCESS"; key: string }
+  | { type: "USERNAME_TAKEN" }
+  | { type: "LOGIN_START" }
+  | { type: "LOGIN_SUCCESS" }
+  | { type: "LOGIN_FAILED" }
   | { type: "OPEN_SCORE_CONFIRM" }
   | { type: "CLOSE_SCORE_CONFIRM" }
   | { type: "SUBMIT_SCORE_START" }
   | { type: "SUBMIT_SCORE_SUCCESS" }
-  | { type: "SUBMIT_ERROR"; error: string };
+  | { type: "SUBMIT_ERROR"; error: string }
+  | { type: "RESET_SCORE_REGISTRATION" };
 
 const initialState: State = {
   visible: false,
@@ -72,8 +81,11 @@ const initialState: State = {
   lastOpenedFor: null,
   scoreConfirmVisible: false,
   scoreSubmitted: false,
+  scoreRegisteredForRun: false,
   submitted: false,
-  recognized: false,
+  generatedKey: null,
+  loginFailed: false,
+  usernameTaken: false,
 };
 
 function reducer(state: State, action: Action): State {
@@ -84,7 +96,9 @@ function reducer(state: State, action: Action): State {
         visible: true,
         submitError: null,
         submitted: false,
-        recognized: false,
+        generatedKey: null,
+        loginFailed: false,
+        usernameTaken: false,
       };
     }
     case "CLOSE":
@@ -94,16 +108,33 @@ function reducer(state: State, action: Action): State {
         submitting: false,
         submitError: null,
         submitted: false,
+        generatedKey: null,
+        loginFailed: false,
+        usernameTaken: false,
       };
     case "SUBMIT_START":
-      return { ...state, submitting: true, submitError: null };
+      return { ...state, submitting: true, submitError: null, usernameTaken: false };
     case "SUBMIT_SUCCESS":
       return {
         ...state,
         submitting: false,
         submitted: true,
-        recognized: action.recognized,
+        generatedKey: action.key,
+        scoreRegisteredForRun: true,
       };
+    case "USERNAME_TAKEN":
+      return { ...state, submitting: false, usernameTaken: true };
+    case "LOGIN_START":
+      return { ...state, submitting: true, submitError: null, loginFailed: false };
+    case "LOGIN_SUCCESS":
+      return {
+        ...state,
+        submitting: false,
+        submitted: true,
+        scoreRegisteredForRun: true,
+      };
+    case "LOGIN_FAILED":
+      return { ...state, submitting: false, loginFailed: true };
     case "OPEN_SCORE_CONFIRM":
       return {
         ...state,
@@ -122,9 +153,16 @@ function reducer(state: State, action: Action): State {
     case "SUBMIT_SCORE_START":
       return { ...state, submitting: true, submitError: null };
     case "SUBMIT_SCORE_SUCCESS":
-      return { ...state, submitting: false, scoreSubmitted: true };
+      return {
+        ...state,
+        submitting: false,
+        scoreSubmitted: true,
+        scoreRegisteredForRun: true,
+      };
     case "SUBMIT_ERROR":
       return { ...state, submitting: false, submitError: action.error };
+    case "RESET_SCORE_REGISTRATION":
+      return { ...state, scoreRegisteredForRun: false };
     default:
       return state;
   }
@@ -135,13 +173,13 @@ interface CtxValue {
   state: State;
   open: () => void;
   close: () => void;
-  submit: (form: HighScoreForm) => Promise<void>;
+  signUp: (form: SignUpForm) => Promise<void>;
+  login: (form: LoginForm) => Promise<void>;
+  resetScoreRegistration: () => void;
   openScoreConfirm: () => void;
   closeScoreConfirm: () => void;
   submitScoreWithoutModal: () => Promise<void>;
   switchPlayer: () => Promise<void>;
-  findUserByEmail: (email: string) => Promise<UserPublic | null>;
-  recoverPlayer: (found: UserPublic) => Promise<void>;
   user: User | null;
 }
 
@@ -174,6 +212,10 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
     dispatch({ type: "CLOSE" });
   }, []);
 
+  const resetScoreRegistration = useCallback(() => {
+    dispatch({ type: "RESET_SCORE_REGISTRATION" });
+  }, []);
+
   const openScoreConfirm = useCallback(() => {
     dispatch({ type: "OPEN_SCORE_CONFIRM" });
   }, []);
@@ -198,7 +240,6 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
         id: response.userId || user.id,
         userName: user.userName,
         bestScore: improved ? currentScore : user.bestScore,
-        email: user.email,
       };
       setUser(nextUser);
       await saveUser(nextUser);
@@ -211,63 +252,78 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [user, score]);
 
-  const submit = useCallback(
-    async (form: HighScoreForm) => {
+  /**
+   * Create a brand-new player. The server generates and returns a recovery
+   * key exactly once here — it is never stored server-side in plaintext and
+   * cannot be retrieved again, so the UI must force the user to acknowledge
+   * they've saved it before this modal can close.
+   */
+  const signUp = useCallback(
+    async (form: SignUpForm) => {
       try {
         dispatch({ type: "SUBMIT_START" });
 
         const currentScore = score ?? null;
-        const email = form.email?.trim() || undefined;
         const body = {
           userName: form.userName,
-          ...(email ? { email } : {}),
           ...(currentScore != null ? { score: currentScore } : {}),
         };
 
-        const response = await api.addUser(body);
-
-        if (Array.isArray(response)) {
-          let created =
-            response.find((u) => u.userName === form.userName) || null;
-          if (!created) {
-            const all = await api.listUsers();
-            created = all.find((u) => u.userName === form.userName) || null;
-          }
-          if (!created)
-            throw new Error("User created but could not be resolved");
-
-          const nextUser: User = {
-            id: created.id,
-            userName: created.userName,
-            bestScore: currentScore ?? null,
-            email: created.email ?? email ?? null,
-          };
-          setUser(nextUser);
-          await saveUser(nextUser);
-          dispatch({ type: "SUBMIT_SUCCESS", recognized: false });
+        const result = await api.addUser(body);
+        if (!result) {
+          dispatch({ type: "USERNAME_TAKEN" });
           return;
         }
+        const { user: created, key } = result;
 
-        // Email matched an existing player — this device now recognizes
-        // them too, like re-adding a known name to the cabinet.
-        const recognizedUser: User = {
-          id: response.user.id,
-          userName: response.user.userName,
-          bestScore: response.user.bestScore ?? null,
-          email: response.user.email ?? email ?? null,
+        const nextUser: User = {
+          id: created.id,
+          userName: created.userName,
+          bestScore: currentScore ?? null,
         };
-        setUser(recognizedUser);
-        await saveUser(recognizedUser);
-        dispatch({ type: "SUBMIT_SUCCESS", recognized: true });
+        setUser(nextUser);
+        await saveUser(nextUser);
+        dispatch({ type: "SUBMIT_SUCCESS", key });
       } catch (e: any) {
         dispatch({
           type: "SUBMIT_ERROR",
-          error: e?.message ?? "Submit failed",
+          error: e?.message ?? "Sign up failed",
         });
       }
     },
     [score]
   );
+
+  /**
+   * Recover a player on this device using their username + recovery key —
+   * the only recovery path now that there's no email on file.
+   */
+  const login = useCallback(async (form: LoginForm) => {
+    dispatch({ type: "LOGIN_START" });
+    try {
+      const found = await api.login({
+        userName: form.userName,
+        key: form.key,
+      });
+      if (!found) {
+        dispatch({ type: "LOGIN_FAILED" });
+        return;
+      }
+      const nextUser: User = {
+        id: found.id,
+        userName: found.userName,
+        bestScore: found.bestScore ?? null,
+      };
+      setUser(nextUser);
+      await saveUser(nextUser);
+      dispatch({ type: "LOGIN_SUCCESS" });
+    } catch (e: any) {
+      dispatch({
+        type: "SUBMIT_ERROR",
+        error: e?.message ?? "Login failed",
+      });
+    }
+  }, []);
 
   /**
    * Forget the player stored on this device, like walking away from the
@@ -278,55 +334,31 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
     await clearUser();
   }, []);
 
-  /**
-   * Look up a player by their recovery email — for a device with no local
-   * player at all (fresh install, or after switchPlayer). Returns null if
-   * no user has that email on file; throws on a network/server error.
-   */
-  const findUserByEmail = useCallback(async (email: string) => {
-    return api.findUserByEmail(email);
-  }, []);
-
-  /**
-   * Adopt a looked-up player as this device's local player, mirroring
-   * switchPlayer's local-storage effect in the opposite direction.
-   */
-  const recoverPlayer = useCallback(async (found: UserPublic) => {
-    const recovered: User = {
-      id: found.id,
-      userName: found.userName,
-      bestScore: found.bestScore ?? null,
-      email: found.email ?? null,
-    };
-    setUser(recovered);
-    await saveUser(recovered);
-  }, []);
-
   const value = useMemo(
     () => ({
       state,
       open,
       close,
-      submit,
+      signUp,
+      login,
+      resetScoreRegistration,
       openScoreConfirm,
       closeScoreConfirm,
       submitScoreWithoutModal,
       switchPlayer,
-      findUserByEmail,
-      recoverPlayer,
       user,
     }),
     [
       state,
       open,
       close,
-      submit,
+      signUp,
+      login,
+      resetScoreRegistration,
       openScoreConfirm,
       closeScoreConfirm,
       submitScoreWithoutModal,
       switchPlayer,
-      findUserByEmail,
-      recoverPlayer,
       user,
     ]
   );

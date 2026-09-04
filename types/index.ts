@@ -154,5 +154,4 @@ export type User = {
   id: string;
   userName: string;
   bestScore: number | null; // higher is better
-  email: string | null; // optional recognition/recovery key, not used for login
 };

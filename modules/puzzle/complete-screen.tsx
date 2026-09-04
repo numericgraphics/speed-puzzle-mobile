@@ -7,6 +7,7 @@ import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
+import { useRegistration } from "@/hooks/use-registration";
 import { User } from "@/types";
 import { ScoreRow as ScoreRowData } from "@/lib/api";
 
@@ -36,6 +37,7 @@ interface CompletedPuzzleProps {
   scores: ScoreRowData[];
   compareResult: boolean;
   register: () => void;
+  registered: boolean;
   user: User | null;
 }
 
@@ -46,11 +48,13 @@ export function CompletedPuzzle({
   scores,
   compareResult,
   register,
+  registered,
   user,
 }: CompletedPuzzleProps) {
   const { styles, theme, isDark } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
+  const { open } = useRegistration();
 
   console.log("CompletedPuzzle - compareResult", compareResult);
 
@@ -68,12 +72,14 @@ export function CompletedPuzzle({
       style={containers.centeredFullScreen}
     >
       <View style={{ bottom: theme.spacer[5].y }}>
-        <AnimatedRectanglesLayer
-          ref={animationRef}
-          width={50}
-          height={50}
-          color={isDark ? theme.color.white : theme.color.black}
-        />
+        <TouchableOpacity onPress={open}>
+          <AnimatedRectanglesLayer
+            ref={animationRef}
+            width={50}
+            height={50}
+            color={isDark ? theme.color.white : theme.color.black}
+          />
+        </TouchableOpacity>
       </View>
 
       <Text style={[typography.title, { paddingBottom: theme.spacer[1].y }]}>
@@ -113,11 +119,26 @@ export function CompletedPuzzle({
         style={{ maxHeight: "20%", marginHorizontal: theme.spacer[8].x }}
       />
       {compareResult && (
-        <TouchableOpacity disabled={!compareResult} onPress={() => register()}>
-          <Text style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}>
-            {user ? "Register your score" : "Sign up to save your score"}
-          </Text>
-        </TouchableOpacity>
+        <>
+          {registered ? (
+            <Text
+              style={[
+                typography.label,
+                { marginTop: theme.spacer[2].y, opacity: 0.7 },
+              ]}
+            >
+              Score registered ✓
+            </Text>
+          ) : (
+            <TouchableOpacity onPress={() => register()}>
+              <Text
+                style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
+              >
+                {user ? "Register your score" : "Sign up to save your score"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
       <Text
         style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}

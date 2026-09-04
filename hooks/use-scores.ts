@@ -47,7 +47,7 @@ export function useScores() {
   const getScoresForResultSection = useCallback(async () => {
     const [result, topScores] = await Promise.all([
       getScore(),
-      getRegisteredScores(5),
+      getRegisteredScores(10),
     ]);
     const compareResult = await compareUserScores(result);
     return { result, topScores, compareResult };

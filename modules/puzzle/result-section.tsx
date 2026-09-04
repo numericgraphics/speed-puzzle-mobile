@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
@@ -12,7 +12,8 @@ interface ResultSectionProps {
 
 export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
   const { getScoresForResultSection } = useScores();
-  const { open, user, openScoreConfirm } = useRegistration();
+  const { open, user, openScoreConfirm, state, resetScoreRegistration } =
+    useRegistration();
   const queryClient = useQueryClient();
   const {
     data: score,
@@ -24,6 +25,12 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
     queryFn: getScoresForResultSection,
     refetchOnMount: "always",
   });
+
+  useEffect(() => {
+    if (state.scoreRegisteredForRun) {
+      queryClient.invalidateQueries({ queryKey: ["scores-result-section"] });
+    }
+  }, [state.scoreRegisteredForRun, queryClient]);
 
   if (isLoading) {
     return <StatusMessage message="Calculating score…" />;
@@ -46,16 +53,19 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
     <CompletedPuzzle
       onRestart={() => {
         queryClient.removeQueries({ queryKey: ["scores-result-section"] });
+        resetScoreRegistration();
         onRestart();
       }}
       onGoHome={() => {
         queryClient.removeQueries({ queryKey: ["scores-result-section"] });
+        resetScoreRegistration();
         onGoHome();
       }}
       score={score.result ?? 0}
       scores={score.topScores || []}
       compareResult={score.compareResult}
       register={register}
+      registered={state.scoreRegisteredForRun}
       user={user}
     />
   );
