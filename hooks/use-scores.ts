@@ -20,7 +20,7 @@ export function useScores() {
     const score = computeTotalScore(results);
     log.scores.debug(
       "getScore",
-      JSON.stringify({ resultsCount: results.length, score })
+      JSON.stringify({ resultsCount: results.length, score }),
     );
     useResultStore.setState({ score });
     return score;
@@ -58,7 +58,11 @@ export function useScores() {
     const compareResult = await compareUserScores(result);
     log.scores.debug(
       "getScoresForResultSection RESOLVED",
-      JSON.stringify({ result, topScoresCount: topScores.length, compareResult })
+      JSON.stringify({
+        result,
+        topScoresCount: topScores.length,
+        compareResult,
+      }),
     );
     return { result, topScores, compareResult };
   }, [getScore, getRegisteredScores, compareUserScores]);

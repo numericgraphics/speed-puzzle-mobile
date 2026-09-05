@@ -30,7 +30,7 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
 
   log.scores.debug(
     "ResultSection render",
-    JSON.stringify({ isLoading, isFetching, score })
+    JSON.stringify({ isLoading, isFetching, score }),
   );
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
     }
   }, [state.scoreRegisteredForRun, queryClient]);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <StatusMessage message="Calculating score…" />;
   }
   if (isError) {
