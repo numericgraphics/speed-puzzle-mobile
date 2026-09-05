@@ -50,7 +50,7 @@ export function SignUpStep({
       />
 
       <Text style={[styles.typography.label, { marginBottom: 10, opacity: 0.7 }]}>
-        We&apos;ll generate a recovery key for you after this — it&apos;s the
+        We'll generate a recovery key for you after this — it's the
         only way to get back into this account, so make sure you can save it.
       </Text>
 

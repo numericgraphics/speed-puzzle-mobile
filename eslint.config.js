@@ -14,6 +14,9 @@ module.exports = defineConfig([
       // SharedValue.value mutation and Animated.Value ref usage.
       "react-hooks/immutability": "off",
       "react-hooks/refs": "off",
+      // Raw apostrophes/quotes in JSX text are fine in RN/Expo (no HTML injection risk);
+      // we prefer readable text over &apos;/&quot; entities.
+      "react/no-unescaped-entities": "off",
     },
   },
 ]);

@@ -29,11 +29,11 @@ export function KeyRevealStep({
   return (
     <>
       <Text style={[styles.typography.title, { marginBottom: 12 }]}>
-        You&apos;re on the Board 🎉
+        You're on the Board 🎉
       </Text>
       <Text style={[styles.typography.body, { marginBottom: theme.spacer[2].y }]}>
-        Save this recovery key somewhere safe. It&apos;s the only way to sign
-        back in as {user?.userName} on another device — we can&apos;t show it
+        Save this recovery key somewhere safe. It's the only way to sign
+        back in as {user?.userName} on another device — we can't show it
         to you again.
       </Text>
       <View
