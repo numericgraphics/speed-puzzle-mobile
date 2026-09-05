@@ -10,6 +10,7 @@ import {
 import { useRegistration } from "@/hooks/use-registration";
 import { User } from "@/types";
 import { ScoreRow as ScoreRowData } from "@/lib/api";
+import { log } from "@/lib/logger";
 
 export const ScoreRow = ({ name, score }: { name: string; score: number }) => {
   const { styles } = useTheme();
@@ -56,7 +57,7 @@ export function CompletedPuzzle({
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
   const { open } = useRegistration();
 
-  console.log("CompletedPuzzle - compareResult", compareResult);
+  log.scores.debug("CompletedPuzzle - compareResult", compareResult);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

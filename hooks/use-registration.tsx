@@ -11,6 +11,7 @@ import { api } from "@/lib/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "@/types";
 import { useResultStore } from "@/stores/results";
+import { log } from "@/lib/logger";
 
 const STORAGE_KEY = "@hp:user";
 
@@ -195,7 +196,7 @@ export const RegistrationProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     (async () => {
       const u = await loadUser();
-      console.log("Loaded user from storage:", u);
+      log.scores.debug("Loaded user from storage:", u);
       if (u) setUser(u);
     })();
   }, []);

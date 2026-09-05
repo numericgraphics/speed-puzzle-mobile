@@ -6,6 +6,7 @@ import {
   UnsplashImageData,
   UnsplashResponse,
 } from "@/types";
+import { log } from "@/lib/logger";
 
 /** ---------- Shared DTOs ---------- */
 export type AddUserRequest = {
@@ -43,8 +44,8 @@ async function safeFetch<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = `${resolveBaseURL()}${path}`;
-  console.debug(
-    "[Api] Fetch",
+  log.api.debug(
+    "Fetch",
     options.method ?? "GET",
     url,
     options.body ? JSON.parse(options.body.toString()) : "",
@@ -68,10 +69,10 @@ async function safeFetch<T>(
       );
     }
 
-    console.debug("[Api] Response available");
+    log.api.debug("Response available");
     return (await res.json()) as T;
   } catch (err: any) {
-    console.error("[Api] Error on", path, err);
+    log.api.error("Error on", path, err);
     throw err;
   }
 }
@@ -153,7 +154,7 @@ export class Api {
     try {
       const query = getRandomQuery();
       const path = `https://api.unsplash.com/search/photos?query=${query}&per_page=${count}&client_id=${process.env.EXPO_PUBLIC_UNSPLASH_ACCESS_KEY}`;
-      console.debug("[Api] UNSPLASH GET", path);
+      log.api.debug("UNSPLASH GET", path);
 
       const res = await fetch(path);
       if (!res.ok) {
@@ -169,7 +170,7 @@ export class Api {
       const images = createImageDataArray(data).images;
       return images;
     } catch (err) {
-      console.error("[Api] Error fetching Unsplash images:", err);
+      log.api.error("Error fetching Unsplash images:", err);
       return [];
     }
   }

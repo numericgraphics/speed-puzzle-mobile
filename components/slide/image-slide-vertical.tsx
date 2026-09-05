@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { SlideType } from "@/modules/puzzle/puzzle-container";
+import { log } from "@/lib/logger";
 
 const SlideVertical = ({
   id,
@@ -12,7 +13,7 @@ const SlideVertical = ({
 }: SlideType) => {
   const contentPosition = useRef(-(slideWidth * index + 100));
 
-  console.log("SlideVertical url", url);
+  log.puzzle.debug("SlideVertical url", url);
 
   return (
     <View style={[styles.container, { width: slideWidth }]}>

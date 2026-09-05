@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { differenceInMilliseconds } from "date-fns";
+import { log } from "@/lib/logger";
 
 const STORAGE_KEY = "@start_time";
 
@@ -19,7 +20,7 @@ class ElapsedTimer {
       this.elapsed = differenceInMilliseconds(now, parsedStart);
       return this.elapsed;
     } catch (err) {
-      console.warn("Failed to get elapsed time:", err);
+      log.timer.warn("Failed to get elapsed time:", err);
       return 0;
     }
   }
@@ -47,7 +48,7 @@ class ElapsedTimer {
     this.elapsed = 0;
     this.clearInterval();
     AsyncStorage.removeItem(STORAGE_KEY).catch((err) => {
-      console.warn("Failed to reset timer:", err);
+      log.timer.warn("Failed to reset timer:", err);
     });
   }
 

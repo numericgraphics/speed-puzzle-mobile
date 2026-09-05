@@ -4,6 +4,7 @@ import { CompletedPuzzle } from "./complete-screen";
 import { StatusMessage } from "@/components/message-display";
 import { useScores } from "@/hooks/use-scores";
 import { useRegistration } from "@/hooks/use-registration";
+import { log } from "@/lib/logger";
 
 interface ResultSectionProps {
   onRestart: () => void;
@@ -27,14 +28,14 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
     refetchOnMount: "always",
   });
 
-  console.log(
-    "[score-debug] ResultSection render",
+  log.scores.debug(
+    "ResultSection render",
     JSON.stringify({ isLoading, isFetching, score })
   );
 
   useEffect(() => {
     if (state.scoreRegisteredForRun) {
-      console.log("[score-debug] ResultSection invalidating for scoreRegisteredForRun");
+      log.scores.debug("ResultSection invalidating for scoreRegisteredForRun");
       queryClient.invalidateQueries({ queryKey: ["scores-result-section"] });
     }
   }, [state.scoreRegisteredForRun, queryClient]);

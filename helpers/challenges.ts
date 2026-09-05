@@ -4,6 +4,7 @@ import { UnsplashImageData } from "@/types";
 import { getRandomBoolean } from "@/utils/math";
 import { api } from "@/lib/api";
 import PuzzlePieces from "./puzzle";
+import { log } from "@/lib/logger";
 
 export async function buildChallenges() {
   let images: UnsplashImageData[] = [];
@@ -25,6 +26,6 @@ export async function buildChallenges() {
       };
     })
   );
-  console.log("Challenges built:", challenges);
+  log.puzzle.debug("Challenges built:", challenges);
   return challenges;
 }

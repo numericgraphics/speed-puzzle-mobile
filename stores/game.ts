@@ -4,6 +4,7 @@ import { PuzzlePieceType, UnsplashImageData } from "@/types";
 import { useChallengeStore } from "./challenges";
 import { useTimerStore } from "./timer";
 import { useResultStore } from "./results";
+import { log } from "@/lib/logger";
 
 interface GameStoreActions {
   setChallenges: (challenges: GameChallengeType[]) => void;
@@ -53,7 +54,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       nextChallenge: () => {
-        console.log("GAME STORE - nextChallenge");
+        log.game.debug("nextChallenge");
         const { currentChallengeIndex, challenges } = get();
         // If we can move to the next challenge, do so
         if (currentChallengeIndex < challenges.length - 1) {
@@ -80,7 +81,7 @@ export const useGameStore = create<GameStoreState>()(
       },
 
       triggerNextChallenge: () => {
-        console.log("GAME STORE - triggerNextChallenge");
+        log.game.debug("triggerNextChallenge");
         const { challenges, currentChallengeIndex } = get();
 
         const { timerValue } = useTimerStore.getState();
@@ -91,8 +92,8 @@ export const useGameStore = create<GameStoreState>()(
           timerValue,
           moves: currentMove,
         };
-        console.log(
-          "[score-debug] triggerNextChallenge writing result",
+        log.game.debug(
+          "triggerNextChallenge writing result",
           JSON.stringify({
             currentChallengeIndex,
             isLastChallenge: currentChallengeIndex === challenges.length - 1,
@@ -102,8 +103,8 @@ export const useGameStore = create<GameStoreState>()(
           }),
         );
         useResultStore.getState().add(updatedChallenges[currentChallengeIndex]);
-        console.log(
-          "[score-debug] triggerNextChallenge wrote result",
+        log.game.debug(
+          "triggerNextChallenge wrote result",
           JSON.stringify({
             resultsCountAfterAdd: useResultStore.getState().results.length,
           }),

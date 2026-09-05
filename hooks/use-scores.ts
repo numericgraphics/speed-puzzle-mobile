@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useResultStore } from "@/stores/results";
 import { api } from "@/lib/api";
 import { computeTotalScore } from "@/helpers/scores";
+import { log } from "@/lib/logger";
 
 /**
  * React hook exposing result-related actions:
@@ -17,8 +18,8 @@ export function useScores() {
   const getScore = useCallback(async (): Promise<number> => {
     const results = useResultStore.getState().getResults();
     const score = computeTotalScore(results);
-    console.log(
-      "[score-debug] getScore",
+    log.scores.debug(
+      "getScore",
       JSON.stringify({ resultsCount: results.length, score })
     );
     useResultStore.setState({ score });
@@ -49,14 +50,14 @@ export function useScores() {
   // score still reaches ResultSection and the user can keep playing even
   // when the score isn't registered.
   const getScoresForResultSection = useCallback(async () => {
-    console.log("[score-debug] getScoresForResultSection START");
+    log.scores.debug("getScoresForResultSection START");
     const [result, topScores] = await Promise.all([
       getScore(),
       getRegisteredScores(10),
     ]);
     const compareResult = await compareUserScores(result);
-    console.log(
-      "[score-debug] getScoresForResultSection RESOLVED",
+    log.scores.debug(
+      "getScoresForResultSection RESOLVED",
       JSON.stringify({ result, topScoresCount: topScores.length, compareResult })
     );
     return { result, topScores, compareResult };

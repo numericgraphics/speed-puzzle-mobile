@@ -12,6 +12,7 @@ import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
 } from "@/components/logo/advanced-animated";
+import { log } from "@/lib/logger";
 
 function PuzzleClient({ challenges }) {
   const { theme, styles, isDark } = useTheme();
@@ -29,7 +30,7 @@ function PuzzleClient({ challenges }) {
   }, []);
 
   useEffect(() => {
-    console.log("usePuzzle - completed:", completed);
+    log.puzzle.debug("usePuzzle - completed:", completed);
     if (completed) {
       animationRef.current?.handleEndYLong(onAnimationEnd);
     }

@@ -1,5 +1,6 @@
 import { PuzzlePieceType } from "@/types";
 import { ArrayExtended } from "@/utils/array";
+import { log } from "@/lib/logger";
 
 const PuzzlePieces = {
   checkPuzzleOrder(array: PuzzlePieceType[]): boolean {
@@ -20,9 +21,9 @@ const PuzzlePieces = {
     const test = array.map((item) => {
       return item.index;
     });
-    console.log("checkPuzzleComplexity test array", test.toString());
+    log.puzzle.debug("checkPuzzleComplexity test array", test.toString());
     const result = ArrayExtended.getMinimumOperationsToSortArray(test);
-    console.log("checkPuzzleComplexity result", result);
+    log.puzzle.debug("checkPuzzleComplexity result", result);
     return result;
   },
 

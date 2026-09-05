@@ -1,3 +1,5 @@
+import { log } from "@/lib/logger";
+
 export class ImageExtended {
   static async preLoadImage(url: string) {
     return new Promise((resolve, reject) => {
@@ -9,7 +11,7 @@ export class ImageExtended {
       }
 
       function onerror(e: any) {
-        console.log("IMAGE PRE-CACHED ERROR", e);
+        log.ui.warn("Image pre-cache error", e);
         reject(false);
       }
 
