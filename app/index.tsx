@@ -14,6 +14,7 @@ import {
   useRegistration,
 } from "@/hooks/use-registration";
 import { useResultStore } from "@/stores/results";
+import { log } from "@/lib/logger";
 
 function ModalRoot() {
   const {
@@ -67,7 +68,7 @@ function Index() {
   const { containers } = styles;
 
   const onStart = () => {
-    console.log("Start button pressed");
+    log.ui.debug("Start button pressed");
     router.push("/?play=true");
   };
 

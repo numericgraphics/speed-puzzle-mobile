@@ -45,16 +45,6 @@ function TimeDisplay({ completed }: TimeDisplayProps) {
     }
   }, [completed, scale]);
 
-  // Start ticking on mount; stop on unmount
-  // useEffect(() => {
-  //   console.log("isRunning", isRunning);
-  //   if (!isRunning) start();
-  // }, [isRunning]);
-
-  // console.log("timerValue", timerValue);
-
-  // return null;
-
   const totalMillis = timerValue;
   const totalSecs = Math.floor(totalMillis / 1000);
   const minutes = Math.floor(totalSecs / 60);

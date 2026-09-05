@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { log } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -49,14 +50,13 @@ export const useTimerStore = create<TimerState>()(
 
           intervalId = setInterval(() => {
             set({ timerValue: Date.now() - origin });
-            // console.log("interval", Date.now() - origin);
           }, 10); // ~33 fps
 
           set({ running: true });
         },
 
         stop() {
-          console.log("useTimerStore stop - intervalId", intervalId);
+          log.timer.debug("useTimerStore stop - intervalId", intervalId);
           if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;

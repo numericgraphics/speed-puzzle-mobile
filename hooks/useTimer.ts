@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { differenceInSeconds, differenceInMilliseconds } from "date-fns";
+import { differenceInMilliseconds } from "date-fns";
+import { log } from "@/lib/logger";
 
 const STORAGE_KEY = "@start_time";
 
@@ -21,7 +22,7 @@ export const useElapsedTimer = () => {
       const now = new Date();
       return differenceInMilliseconds(now, parsedStart);
     } catch (err) {
-      console.warn("Failed to get elapsed time:", err);
+      log.timer.warn("Failed to get elapsed time:", err);
       return 0;
     }
   }, []);
@@ -37,7 +38,7 @@ export const useElapsedTimer = () => {
       }
       appState.current = nextAppState;
     },
-    [getElapsedTime]
+    [getElapsedTime],
   );
 
   useEffect(() => {

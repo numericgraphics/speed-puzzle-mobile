@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { GameChallengeType } from "./game";
+import { log } from "@/lib/logger";
 
 // ------ currentChallenge slice ------
 interface ResultSlice {
@@ -17,7 +18,7 @@ export const useResultStore = create<ResultSlice>()(
     results: [],
     getResults: () => get().results,
     add: (challenge: GameChallengeType) => {
-      console.log("useResultStore Challenge completed!", challenge);
+      log.game.debug("useResultStore Challenge completed!", challenge);
       set((state) => ({
         results: [...state.results, challenge],
       }));

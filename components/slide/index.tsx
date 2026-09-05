@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useReorderableDrag } from "react-native-reorderable-list";
 import MemoizedImage from "./memorize-image";
+import { log } from "@/lib/logger";
 
 export interface SlideProps {
   id: string;
@@ -17,7 +18,7 @@ export interface SlideProps {
 export const Slide: React.FC<SlideProps> = memo(
   ({ index, url, slideHeight, imageHeight, backgroundColor, cropStartY }) => {
     const drag = useReorderableDrag();
-    console.log("redraw", index);
+    log.puzzle.debug("redraw", index);
     // const image = useImage(url);
 
     // if (!image)
