@@ -1,15 +1,9 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-import PuzzlePieces from "@/helpers/puzzle";
 import { PuzzlePieceType, UnsplashImageData } from "@/types";
-import { PUZZLE_SLIDE_NUMBER } from "@/constants";
-import { ArrayExtended } from "@/utils/array";
-import { getRandomBoolean } from "@/utils/math";
-// import { useUnsplashStore } from "./unsplash";
-import { useTimerActions, useTimerStore, useTimerValue } from "./timer";
 import { useChallengeStore } from "./challenges";
-import { useResultCompleted, useResultStore } from "./results";
+import { useTimerStore } from "./timer";
+import { useResultStore } from "./results";
 
 interface GameStoreActions {
   setChallenges: (challenges: GameChallengeType[]) => void;
@@ -97,7 +91,23 @@ export const useGameStore = create<GameStoreState>()(
           timerValue,
           moves: currentMove,
         };
+        console.log(
+          "[score-debug] triggerNextChallenge writing result",
+          JSON.stringify({
+            currentChallengeIndex,
+            isLastChallenge: currentChallengeIndex === challenges.length - 1,
+            timerValue,
+            currentMove,
+            resultsCountBeforeAdd: useResultStore.getState().results.length,
+          }),
+        );
         useResultStore.getState().add(updatedChallenges[currentChallengeIndex]);
+        console.log(
+          "[score-debug] triggerNextChallenge wrote result",
+          JSON.stringify({
+            resultsCountAfterAdd: useResultStore.getState().results.length,
+          }),
+        );
         set({
           needNextChallenge: true,
           startTimer: false,
@@ -130,7 +140,7 @@ export const useGameStore = create<GameStoreState>()(
         useChallengeStore.getState().increment();
       },
     },
-  }))
+  })),
 );
 
 export const useNeedNextChallenge = () =>

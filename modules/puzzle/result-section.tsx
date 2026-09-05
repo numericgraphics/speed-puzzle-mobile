@@ -18,6 +18,7 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
   const {
     data: score,
     isLoading,
+    isFetching,
     isError,
     error,
   } = useQuery({
@@ -26,8 +27,14 @@ export function ResultSection({ onRestart, onGoHome }: ResultSectionProps) {
     refetchOnMount: "always",
   });
 
+  console.log(
+    "[score-debug] ResultSection render",
+    JSON.stringify({ isLoading, isFetching, score })
+  );
+
   useEffect(() => {
     if (state.scoreRegisteredForRun) {
+      console.log("[score-debug] ResultSection invalidating for scoreRegisteredForRun");
       queryClient.invalidateQueries({ queryKey: ["scores-result-section"] });
     }
   }, [state.scoreRegisteredForRun, queryClient]);
