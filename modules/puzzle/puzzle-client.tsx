@@ -34,7 +34,7 @@ function PuzzleClient({ challenges }) {
     if (completed) {
       animationRef.current?.handleEndYLong(onAnimationEnd);
     }
-  }, [completed]);
+  }, [completed, onAnimationEnd]);
 
   return (
     <>
