@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { Dimensions } from "react-native";
-import {
+import { useWindowDimensions } from "react-native";
+import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import Animated from "react-native-reanimated";
 import { runOnJS } from "react-native-worklets";
 
 import Draggable from "../../components/draggable";
@@ -17,10 +16,6 @@ import { useGameStoreActions } from "@/stores/game";
 import { useTheme } from "@/hooks/useTheme";
 import PuzzlePieces from "@/helpers/puzzle";
 import { useChallengeStore } from "@/stores/challenges";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const SLIDE_HEIGHT = 120; // Height of each slide
-const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
 
 export interface SlideType {
   id: string;
@@ -40,6 +35,9 @@ export interface PuzzleContainerProps {
 export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
   const { theme, styles } = useTheme();
   const { containers } = styles;
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const SLIDE_HEIGHT = 120; // Height of each slide
+  const IMAGE_HEIGHT = SLIDE_HEIGHT * PUZZLE_SLIDE_NUMBER; // Image height should cover all slides
   const { triggerNextChallenge, incrementChallengeMove } =
     useGameStoreActions();
   if (!pieces || pieces.length === 0) {
@@ -50,8 +48,8 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
       {},
       ...pieces?.map((item: PuzzlePieceType, index) => ({
         [index]: item.index,
-      }))
-    )
+      })),
+    ),
   );
   const opacity = useSharedValue(0); // fully opaque
   const animatedStyle = useAnimatedStyle(() => ({
@@ -61,10 +59,12 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
   useEffect(() => {
     positions.value = Object.assign(
       {},
-      ...pieces.map((item: PuzzlePieceType, index) => ({ [index]: item.index }))
+      ...pieces.map((item: PuzzlePieceType, index) => ({
+        [index]: item.index,
+      })),
     );
     opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
-  }, [pieces, positions]);
+  }, [pieces, positions, opacity]);
 
   function onVerifyOrder(currentPositions: Record<string, number>) {
     const ordered = PuzzlePieces.checkPuzzleOrderMobile(currentPositions);
@@ -74,7 +74,7 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
         1200,
         withTiming(0, { duration: 500 }, (done) => {
           if (done) runOnJS(triggerNextChallenge)();
-        })
+        }),
       );
     }
   }

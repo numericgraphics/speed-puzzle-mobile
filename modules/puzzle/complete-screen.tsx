@@ -52,7 +52,7 @@ export function CompletedPuzzle({
   registered,
   user,
 }: CompletedPuzzleProps) {
-  const { styles, theme, isDark } = useTheme();
+  const { styles, theme, isDark, maxFontSizeMultiplier } = useTheme();
   const { containers, typography, buttons } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
   const { open } = useRegistration();
@@ -95,14 +95,8 @@ export function CompletedPuzzle({
           : "Your final score"}
       </Text>
       <Text
-        style={[
-          typography.title,
-          {
-            fontSize: 48,
-            fontWeight: "bold",
-            paddingBottom: theme.spacer[3].y,
-          },
-        ]}
+        style={[typography.display, { paddingBottom: theme.spacer[3].y }]}
+        maxFontSizeMultiplier={maxFontSizeMultiplier.display}
       >
         {score}
       </Text>

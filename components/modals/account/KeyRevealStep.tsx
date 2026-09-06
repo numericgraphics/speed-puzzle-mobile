@@ -11,7 +11,7 @@ export function KeyRevealStep({
   user,
   generatedKey,
 }: AccountModalProps) {
-  const { styles, theme, isDark } = useTheme();
+  const { styles, theme, isDark, maxFontSizeMultiplier } = useTheme();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,9 @@ export function KeyRevealStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>
+      <Text
+        style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}
+      >
         You're on the Board 🎉
       </Text>
       <Text style={[styles.typography.body, { marginBottom: theme.spacer[2].y }]}>
@@ -49,12 +51,12 @@ export function KeyRevealStep({
           style={[
             styles.typography.title,
             {
-              fontSize: 28,
               letterSpacing: 2,
               textAlign: "center",
               fontFamily: "monospace",
             },
           ]}
+          maxFontSizeMultiplier={maxFontSizeMultiplier.title}
           selectable
         >
           {generatedKey}

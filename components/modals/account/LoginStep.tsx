@@ -32,7 +32,9 @@ export function LoginStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>Log In</Text>
+      <Text style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}>
+        Log In
+      </Text>
       <Text style={[styles.typography.body, { marginBottom: theme.spacer[2].y }]}>
         Enter your username and recovery key to reconnect this device to your
         player.
@@ -60,12 +62,12 @@ export function LoginStep({
       />
 
       {loginFailed ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text style={[styles.typography.label, { color: "red", marginBottom: theme.spacer[1].y }]}>
           Invalid username or key.
         </Text>
       ) : null}
       {submitError ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text style={[styles.typography.label, { color: "red", marginBottom: theme.spacer[1].y }]}>
           {submitError}
         </Text>
       ) : null}
