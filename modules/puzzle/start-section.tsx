@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
@@ -19,7 +20,7 @@ interface StartSessionProps {
 export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
   const { user, open } = useRegistration();
   const { styles, theme, isDark } = useTheme();
-  const { containers, typography, buttons } = styles;
+  const { containers, typography } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
 
   useEffect(() => {
@@ -51,20 +52,20 @@ export function StartSession({ onStart, gotoInformations }: StartSessionProps) {
       <Text style={[typography.body, { paddingBottom: theme.spacer[2].y }]}>
         Tap the button below to start the game.
       </Text>
-      <Text
-        style={[buttons.linkButton, { marginTop: theme.spacer[4].y }]}
+      <Button
+        label="Start Game"
+        icon="play"
         onPress={() => {
           animationRef.current?.handleEndX(() => onStart());
         }}
-      >
-        Start Game
-      </Text>
-      <Text
-        style={[buttons.linkButton, { marginTop: theme.spacer[1].y }]}
+        style={{ marginTop: theme.spacer[4].y }}
+      />
+      <Button
+        label="How to Play"
+        icon="information-outline"
         onPress={() => gotoInformations()}
-      >
-        How to Play
-      </Text>
+        style={{ marginTop: theme.spacer[1].y }}
+      />
       <Text
         style={[typography.body, { opacity: 0.6, marginTop: theme.spacer[2].y }]}
       >

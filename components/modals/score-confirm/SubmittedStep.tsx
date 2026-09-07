@@ -1,6 +1,7 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 import { ScoreConfirmModalProps } from "./types";
 
 export function SubmittedStep({
@@ -19,9 +20,7 @@ export function SubmittedStep({
         {score} is now on the leaderboard for {userName}.
       </Text>
       <View style={[styles.containers.row, { justifyContent: "flex-end" }]}>
-        <TouchableOpacity onPress={onRequestClose}>
-          <Text style={styles.buttons.linkButton}>Continue</Text>
-        </TouchableOpacity>
+        <Button label="Continue" icon="arrow-right" onPress={onRequestClose} />
       </View>
     </>
   );

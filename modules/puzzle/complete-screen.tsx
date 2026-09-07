@@ -3,6 +3,7 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 import {
   AnimatedRectanglesLayer,
   AnimatedRectanglesLayerHandle,
@@ -53,7 +54,7 @@ export function CompletedPuzzle({
   user,
 }: CompletedPuzzleProps) {
   const { styles, theme, isDark, maxFontSizeMultiplier } = useTheme();
-  const { containers, typography, buttons } = styles;
+  const { containers, typography } = styles;
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
   const { open } = useRegistration();
 
@@ -125,32 +126,31 @@ export function CompletedPuzzle({
               Score registered ✓
             </Text>
           ) : (
-            <TouchableOpacity onPress={() => register()}>
-              <Text
-                style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
-              >
-                {user ? "Register your score" : "Sign up to save your score"}
-              </Text>
-            </TouchableOpacity>
+            <Button
+              label={user ? "Register your score" : "Sign up to save your score"}
+              icon="account-plus"
+              onPress={() => register()}
+              style={{ marginTop: theme.spacer[2].y }}
+            />
           )}
         </>
       )}
-      <Text
-        style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
+      <Button
+        label="Play again !"
+        icon="play"
         onPress={() => {
           animationRef.current?.handleEndX(() => onRestart());
         }}
-      >
-        Play again !
-      </Text>
-      <Text
-        style={[buttons.linkButton, { marginTop: theme.spacer[2].y }]}
+        style={{ marginTop: theme.spacer[2].y }}
+      />
+      <Button
+        label="Back to Home"
+        icon="home"
         onPress={() => {
           animationRef.current?.handleEndX(() => onGoHome());
         }}
-      >
-        Back to Home
-      </Text>
+        style={{ marginTop: theme.spacer[2].y }}
+      />
     </Animated.View>
   );
 }
