@@ -57,13 +57,13 @@ export function SignUpStep({
       </Text>
 
       {usernameTaken ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: theme.spacer[1].y }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           That username is already taken — try another one.
         </Text>
       ) : null}
 
       {submitError ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: theme.spacer[1].y }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           {submitError}
         </Text>
       ) : null}

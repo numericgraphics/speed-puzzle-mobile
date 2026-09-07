@@ -17,6 +17,7 @@ const theme = {
     warning: "#FFC60E",
     placeholder: "rgba(255, 255, 255, 0.7)",
     textAreaPlaceholder: "rgba(255, 255, 255, 0.5)",
+    overlay: "rgba(0, 0, 0, 0.6)",
   },
   text: {
     color: {

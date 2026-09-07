@@ -24,7 +24,7 @@ export function ConfirmStep({
       </Text>
 
       {submitError ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: theme.spacer[1].y }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           {submitError}
         </Text>
       ) : null}

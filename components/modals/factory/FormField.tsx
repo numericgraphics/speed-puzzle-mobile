@@ -24,7 +24,7 @@ export function FormField({
   error,
   ...inputProps
 }: FormFieldProps) {
-  const { styles } = useTheme();
+  const { theme, styles } = useTheme();
 
   return (
     <>
@@ -35,8 +35,11 @@ export function FormField({
         render={({ field: { onChange, onBlur, value, ref } }) => (
           <TextInput
             ref={ref}
-            style={[styles.inputs.textInput, { marginBottom: 6 }]}
-            placeholderTextColor={"#999"}
+            style={[
+              styles.inputs.textInput,
+              { marginBottom: theme.spacer[1].y },
+            ]}
+            placeholderTextColor={theme.color.inactive}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -46,7 +49,12 @@ export function FormField({
         )}
       />
       {error && (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text
+          style={[
+            styles.typography.label,
+            { color: theme.color.error, marginBottom: theme.spacer[1].y },
+          ]}
+        >
           {error.message}
         </Text>
       )}

@@ -10,6 +10,7 @@ import {
   animationYLongEndedConfig,
   AnimationConfig,
 } from "./animations-config";
+import theme from "@/themes/default";
 
 export interface AnimatedRectangleHandle {
   startX(): void;
@@ -31,7 +32,7 @@ export const GenericAnimatedRectangle = ({
   width,
   height,
   shape,
-  color = "white",
+  color = theme.color.white,
   style,
   ref,
 }: Props & { ref?: React.Ref<AnimatedRectangleHandle> }) => {

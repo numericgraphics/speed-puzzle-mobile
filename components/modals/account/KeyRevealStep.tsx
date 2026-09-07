@@ -43,7 +43,7 @@ export function KeyRevealStep({
           padding: theme.spacer[2].y,
           borderRadius: 12,
           borderWidth: 1,
-          borderColor: isDark ? "#fff" : "#000",
+          borderColor: isDark ? theme.color.white : theme.color.black,
           marginBottom: theme.spacer[2].y,
         }}
       >
