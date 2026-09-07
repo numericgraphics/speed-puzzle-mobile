@@ -12,7 +12,7 @@ export function SubmittedStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>
+      <Text style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}>
         Score Saved 🎉
       </Text>
       <Text style={[styles.typography.body, { marginBottom: theme.spacer[3].y }]}>

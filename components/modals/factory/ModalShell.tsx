@@ -18,7 +18,7 @@ export function ModalShell({
   children,
   maxWidth = 460,
 }: ModalShellProps) {
-  const { styles, isDark } = useTheme();
+  const { theme, styles, isDark } = useTheme();
 
   return (
     <Modal
@@ -30,18 +30,19 @@ export function ModalShell({
       <View
         style={[
           styles.containers.centeredFullScreen,
-          { padding: 24, backgroundColor: "rgba(0,0,0,0.6)" },
+          { padding: theme.spacer[3].x, backgroundColor: theme.color.overlay },
         ]}
       >
         <View
           style={{
             width: "100%",
             maxWidth,
-            padding: 28,
+            padding: theme.spacer[3].x,
             borderRadius: 25,
-            borderColor: isDark ? "#fff" : "#000",
+            borderColor: isDark ? theme.color.white : theme.color.black,
             borderWidth: 1,
-            backgroundColor: styles.containers.main?.backgroundColor ?? "#fff",
+            backgroundColor:
+              styles.containers.main?.backgroundColor ?? theme.color.white,
           }}
         >
           {children}

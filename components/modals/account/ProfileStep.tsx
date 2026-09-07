@@ -12,8 +12,10 @@ export function ProfileStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>Player</Text>
-      <Text style={[styles.typography.body, { marginBottom: 6 }]}>
+      <Text style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}>
+        Player
+      </Text>
+      <Text style={[styles.typography.body, { marginBottom: theme.spacer[1].y }]}>
         {user?.userName}
       </Text>
       <Text style={[styles.typography.label, { marginBottom: theme.spacer[3].y }]}>

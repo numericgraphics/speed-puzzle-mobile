@@ -31,7 +31,9 @@ export function SignUpStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>Sign Up</Text>
+      <Text style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}>
+        Sign Up
+      </Text>
 
       <FormField
         control={control}
@@ -49,19 +51,19 @@ export function SignUpStep({
         }}
       />
 
-      <Text style={[styles.typography.label, { marginBottom: 10, opacity: 0.7 }]}>
+      <Text style={[styles.typography.label, { marginBottom: theme.spacer[1].y, opacity: 0.7 }]}>
         We'll generate a recovery key for you after this — it's the
         only way to get back into this account, so make sure you can save it.
       </Text>
 
       {usernameTaken ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           That username is already taken — try another one.
         </Text>
       ) : null}
 
       {submitError ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           {submitError}
         </Text>
       ) : null}

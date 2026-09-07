@@ -9,6 +9,7 @@ import {
   GenericAnimatedRectangle,
   AnimatedRectangleHandle,
 } from "././generic-animated-rectangle";
+import theme from "@/themes/default";
 
 export interface AnimatedRectanglesLayerHandle {
   handleStartX(callback?: () => void): void;
@@ -27,7 +28,7 @@ interface Props {
 export const AnimatedRectanglesLayer = ({
   width,
   height,
-  color = "white",
+  color = theme.color.white,
   ref,
 }: Props & { ref?: React.Ref<AnimatedRectanglesLayerHandle> }) => {
   const topRef = useRef<AnimatedRectangleHandle>(null);

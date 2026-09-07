@@ -1,12 +1,21 @@
-import theme from "@/themes/default";
+import baseTheme from "@/themes/default";
 import { useMemo } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
+import { useResponsiveTheme } from "./useResponsiveTheme";
 
 export const useTheme = () => {
   const colorScheme = useColorScheme() || "light";
+  const { fontSize, spacer } = useResponsiveTheme();
 
   const result = useMemo(() => {
     const isDark = colorScheme === "light" ? false : true;
+
+    const theme = {
+      ...baseTheme,
+      spacer,
+      size: fontSize,
+      text: { ...baseTheme.text, fontSize },
+    };
 
     const containers = StyleSheet.create({
       centeredFullScreen: {
@@ -60,7 +69,26 @@ export const useTheme = () => {
         fontSize: theme.text.fontSize.md,
         color: colorScheme === "light" ? theme.color.black : theme.color.white,
       },
+      display: {
+        fontFamily: theme.text.fontFamily.bold,
+        color: colorScheme === "light" ? theme.color.black : theme.color.white,
+        fontSize: theme.text.fontSize.display,
+        fontWeight: "bold",
+        textAlign: "center",
+      },
     });
+
+    // Caps on the OS-level accessibility text-scale multiplier, so a large
+    // system font setting can't blow up short/critical UI text while body
+    // copy is still allowed to grow generously.
+    const maxFontSizeMultiplier = {
+      title: 1.4,
+      body: 2.0,
+      bodyBold: 1.8,
+      labelBold: 1.6,
+      label: 1.6,
+      display: 1.3,
+    };
 
     const buttons = StyleSheet.create({
       linkButton: {
@@ -93,9 +121,10 @@ export const useTheme = () => {
     return {
       theme,
       styles: { containers, typography, buttons, inputs },
+      maxFontSizeMultiplier,
       isDark,
     };
-  }, [colorScheme, theme]);
+  }, [colorScheme, fontSize, spacer]);
 
   return result;
 };

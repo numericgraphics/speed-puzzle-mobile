@@ -16,7 +16,7 @@ export function ConfirmStep({
 
   return (
     <>
-      <Text style={[styles.typography.title, { marginBottom: 12 }]}>
+      <Text style={[styles.typography.title, { marginBottom: theme.spacer[1].y }]}>
         New Top Score 🎉
       </Text>
       <Text style={[styles.typography.body, { marginBottom: theme.spacer[2].y }]}>
@@ -24,7 +24,7 @@ export function ConfirmStep({
       </Text>
 
       {submitError ? (
-        <Text style={[styles.typography.label, { color: "red", marginBottom: 10 }]}>
+        <Text style={[styles.typography.label, { color: theme.color.error, marginBottom: theme.spacer[1].y }]}>
           {submitError}
         </Text>
       ) : null}

@@ -1,12 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
-
 import PuzzleContainer from "@/modules/puzzle/puzzle-container";
-import RectangleLogo from "@/components/logo/rectangles";
-//import TimeDisplay from "@/components/timer-display";
 import { PuzzleLegend } from "@/components/image-legend";
-
 import { usePuzzle } from "@/hooks/use-puzzle";
 import {
   AnimatedRectanglesLayer,
@@ -15,8 +11,7 @@ import {
 import { log } from "@/lib/logger";
 
 function PuzzleClient({ challenges }) {
-  const { theme, styles, isDark } = useTheme();
-  const { containers } = styles;
+  const { theme, isDark } = useTheme();
   const { image, pieces, completed, onAnimationEnd } = usePuzzle(challenges);
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
 
