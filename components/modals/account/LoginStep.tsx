@@ -1,7 +1,8 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text } from "react-native";
 import { useForm } from "react-hook-form";
 import { useTheme } from "@/hooks/useTheme";
+import { LinkText } from "@/components/ui/LinkText";
 import { FormField } from "../factory/FormField";
 import { FormActions } from "../factory/FormActions";
 import { AccountModalProps } from "./types";
@@ -77,18 +78,20 @@ export function LoginStep({
         onSubmit={submit}
         submitLabel="Log in"
         submittingLabel="Checking..."
+        submitIcon="login"
         submitting={submitting}
         disabled={!isValid}
       />
 
-      <TouchableOpacity
-        onPress={() => onChangeMode("signUp")}
-        style={{ marginTop: theme.spacer[2].y }}
+      <Text
+        style={[
+          styles.typography.label,
+          { textAlign: "center", marginTop: theme.spacer[2].y },
+        ]}
       >
-        <Text style={[styles.typography.label, { textAlign: "center" }]}>
-          New here? Sign up instead
-        </Text>
-      </TouchableOpacity>
+        New here?{" "}
+        <LinkText label="Sign up instead" onPress={() => onChangeMode("signUp")} />
+      </Text>
     </>
   );
 }

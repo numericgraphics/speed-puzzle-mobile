@@ -34,6 +34,7 @@ export function ConfirmStep({
         onSubmit={onConfirm}
         submitLabel="Save Score"
         submittingLabel="Saving..."
+        submitIcon="content-save"
         submitting={submitting}
       />
     </>

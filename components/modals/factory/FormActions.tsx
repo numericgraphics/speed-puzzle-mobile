@@ -1,6 +1,7 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
+import { Button, ButtonIconName } from "@/components/ui/Button";
+import { ButtonGroup } from "@/components/ui/ButtonGroup";
 
 type FormActionsProps = {
   onCancel: () => void;
@@ -8,6 +9,7 @@ type FormActionsProps = {
   submitLabel: string;
   submittingLabel: string;
   submitting: boolean;
+  submitIcon?: ButtonIconName;
   disabled?: boolean;
 };
 
@@ -17,25 +19,21 @@ export function FormActions({
   submitLabel,
   submittingLabel,
   submitting,
+  submitIcon,
   disabled,
 }: FormActionsProps) {
-  const { styles, theme } = useTheme();
+  const { theme } = useTheme();
 
   return (
-    <View
-      style={[
-        styles.containers.row,
-        { justifyContent: "space-between", marginTop: theme.spacer[3].y },
-      ]}
-    >
-      <TouchableOpacity onPress={onCancel} disabled={submitting}>
-        <Text style={styles.buttons.linkButton}>Cancel</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onSubmit} disabled={disabled || submitting}>
-        <Text style={styles.buttons.linkButton}>
-          {submitting ? submittingLabel : submitLabel}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <ButtonGroup style={{ marginTop: theme.spacer[3].y }}>
+      <Button label="Cancel" icon="cancel" onPress={onCancel} disabled={submitting} />
+      <Button
+        label={submitting ? submittingLabel : submitLabel}
+        icon={submitIcon}
+        onPress={onSubmit}
+        disabled={disabled || submitting}
+        loading={submitting}
+      />
+    </ButtonGroup>
   );
 }

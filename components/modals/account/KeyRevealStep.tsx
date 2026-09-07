@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 import { AccountModalProps } from "./types";
 
 const COPIED_RESET_MS = 2000;
@@ -63,16 +64,16 @@ export function KeyRevealStep({
         </Text>
       </View>
 
-      <TouchableOpacity onPress={copyKey} style={{ marginBottom: theme.spacer[2].y }}>
-        <Text style={[styles.buttons.linkButton, { textAlign: "center" }]}>
-          {copied ? "Copied ✓" : "Copy key"}
-        </Text>
-      </TouchableOpacity>
+      <Button
+        label={copied ? "Copied ✓" : "Copy key"}
+        icon="content-copy"
+        onPress={copyKey}
+        fullWidth
+        style={{ marginBottom: theme.spacer[2].y }}
+      />
 
       <View style={[styles.containers.row, { justifyContent: "flex-end" }]}>
-        <TouchableOpacity onPress={onRequestClose}>
-          <Text style={styles.buttons.linkButton}>Continue</Text>
-        </TouchableOpacity>
+        <Button label="Continue" icon="arrow-right" onPress={onRequestClose} />
       </View>
     </>
   );

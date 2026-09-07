@@ -3,10 +3,11 @@ import { View, Text, Linking } from "react-native";
 import { UnsplashImageData } from "@/types";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 
 export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
   const { styles, theme } = useTheme();
-  const { containers, typography, buttons } = styles;
+  const { containers, typography } = styles;
   return (
     <Animated.View
       entering={FadeIn.duration(1500)}
@@ -22,14 +23,13 @@ export function PuzzleLegend({ image }: { image: UnsplashImageData }) {
         <Text style={typography.label}>{image?.user}</Text>
       </View>
       <View style={containers.row}>
-        <Text
-          style={buttons.linkButton}
+        <Button
+          label="Link"
+          icon="open-in-new"
           onPress={() => {
             Linking.openURL(image?.link);
           }}
-        >
-          Link
-        </Text>
+        />
       </View>
     </Animated.View>
   );

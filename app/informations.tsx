@@ -1,12 +1,13 @@
 import { View, Text, ScrollView } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/hooks/useTheme";
+import { Button } from "@/components/ui/Button";
 import { InformationScreen } from "@/modules/informations";
 
 export default function InformationsScreen() {
   const { styles, theme } = useTheme();
-  const { typography, buttons } = styles;
+  const { typography } = styles;
   const { containers } = styles;
   const HEADER_HEIGHT = 140;
   const FOOTER_HEIGHT = 80;
@@ -58,9 +59,11 @@ export default function InformationsScreen() {
             paddingBottom: theme.spacer[2].y,
           }}
         >
-          <Link href="/" asChild>
-            <Text style={buttons.linkButton}>Back</Text>
-          </Link>
+          <Button
+            label="Back"
+            icon="home"
+            onPress={() => router.replace("/")}
+          />
         </View>
       </View>
     </SafeAreaView>
