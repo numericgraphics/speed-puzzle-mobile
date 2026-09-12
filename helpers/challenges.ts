@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { NUMBER_OF_QUESTION, PUZZLE_SLIDE_NUMBER, USE_MOCK } from "@/constants";
 import { mockUnsplashApiCall } from "@/mock/promises/unsplash-api-call";
 import { UnsplashImageData } from "@/types";
@@ -26,6 +27,12 @@ export async function buildChallenges() {
       };
     })
   );
+  if (challenges[0]) {
+    await Image.prefetch(challenges[0].image.url, "memory-disk").catch(
+      () => {},
+    );
+  }
+
   log.puzzle.debug("Challenges built:", challenges);
   return challenges;
 }
