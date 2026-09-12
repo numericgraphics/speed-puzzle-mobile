@@ -30,9 +30,10 @@ export interface SlideType {
 export interface PuzzleContainerProps {
   url: string;
   pieces: PuzzlePieceType[];
+  ready: boolean;
 }
 
-export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
+export default function PuzzleContainer({ url, pieces, ready }: PuzzleContainerProps) {
   const { theme, styles } = useTheme();
   const { containers } = styles;
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -63,8 +64,12 @@ export default function PuzzleContainer({ url, pieces }: PuzzleContainerProps) {
         [index]: item.index,
       })),
     );
-    opacity.value = withDelay(500, withTiming(1, { duration: 500 }));
-  }, [pieces, positions, opacity]);
+  }, [pieces, positions]);
+
+  useEffect(() => {
+    if (!ready) return;
+    opacity.value = withDelay(200, withTiming(1, { duration: 500 }));
+  }, [ready, opacity]);
 
   function onVerifyOrder(currentPositions: Record<string, number>) {
     const ordered = PuzzlePieces.checkPuzzleOrderMobile(currentPositions);
