@@ -63,12 +63,13 @@ function ModalRoot() {
 function Index() {
   const playing = useLocalSearchParams().play === "true";
   const finished = useLocalSearchParams().finished === "true";
-  const { restartGame } = useGameStoreActions();
+  const { startGame, restartGame } = useGameStoreActions();
   const { styles } = useTheme();
   const { containers } = styles;
 
   const onStart = () => {
     log.ui.debug("Start button pressed");
+    startGame();
     router.push("/?play=true");
   };
 

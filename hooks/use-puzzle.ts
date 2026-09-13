@@ -87,5 +87,6 @@ export function usePuzzle(challenges) {
     imageReady,
     onAnimationEnd,
     completed,
+    currentChallengeIndex,
   };
 }
