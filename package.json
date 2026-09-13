@@ -13,7 +13,8 @@
     "seed": "npx ts-node db/seeder.ts",
     "build-local": "eas build --platform android --local --profile preview",
     "build-android": "eas build --platform android --profile preview",
-    "build-ios": "eas build --platform ios --profile preview"
+    "build-ios": "eas build --platform ios --profile preview",
+    "android-emulator": "emulator -avd Pixel_9_API_35"
   },
   "jest": {
     "preset": "jest-expo"

@@ -149,7 +149,7 @@ export class Api {
     });
   }
 
-  /** Fetch Unsplash images with safeFetch and fallback on error */
+  /** Fetch Unsplash images with safeFetch */
   async fetchUnsplashImage(count = 1): Promise<UnsplashImageData[]> {
     try {
       const query = getRandomQuery();
@@ -171,7 +171,7 @@ export class Api {
       return images;
     } catch (err) {
       log.api.error("Error fetching Unsplash images:", err);
-      return [];
+      throw err;
     }
   }
 }

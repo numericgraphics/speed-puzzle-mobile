@@ -58,15 +58,6 @@ export default function PuzzleContainer({ url, pieces, ready }: PuzzleContainerP
   }));
 
   useEffect(() => {
-    positions.value = Object.assign(
-      {},
-      ...pieces.map((item: PuzzlePieceType, index) => ({
-        [index]: item.index,
-      })),
-    );
-  }, [pieces, positions]);
-
-  useEffect(() => {
     if (!ready) return;
     opacity.value = withDelay(200, withTiming(1, { duration: 500 }));
   }, [ready, opacity]);

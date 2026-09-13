@@ -1,5 +1,6 @@
 import React from "react";
 import { router, useLocalSearchParams } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/hooks/useTheme";
@@ -66,14 +67,17 @@ function Index() {
   const { restartGame } = useGameStoreActions();
   const { styles } = useTheme();
   const { containers } = styles;
+  const queryClient = useQueryClient();
 
   const onStart = () => {
     log.ui.debug("Start button pressed");
+    queryClient.removeQueries({ queryKey: ["challenges"] });
     router.push("/?play=true");
   };
 
   const onRestart = () => {
     restartGame();
+    queryClient.removeQueries({ queryKey: ["challenges"] });
     router.push("/?play=true");
   };
 

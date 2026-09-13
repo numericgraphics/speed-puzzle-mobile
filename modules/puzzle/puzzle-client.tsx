@@ -12,8 +12,14 @@ import { log } from "@/lib/logger";
 
 function PuzzleClient({ challenges }) {
   const { theme, isDark } = useTheme();
-  const { image, pieces, completed, imageReady, onAnimationEnd } =
-    usePuzzle(challenges);
+  const {
+    image,
+    pieces,
+    completed,
+    imageReady,
+    onAnimationEnd,
+    currentChallengeIndex,
+  } = usePuzzle(challenges);
   const animationRef = useRef<AnimatedRectanglesLayerHandle>(null);
 
   useEffect(() => {
@@ -43,7 +49,12 @@ function PuzzleClient({ challenges }) {
         />
       </View>
 
-      <PuzzleContainer url={image?.url} pieces={pieces} ready={imageReady} />
+      <PuzzleContainer
+        key={currentChallengeIndex}
+        url={image?.url}
+        pieces={pieces}
+        ready={imageReady}
+      />
 
       <PuzzleLegend image={image} />
     </>
