@@ -5,6 +5,7 @@ import { useChallengeStore } from "./challenges";
 import { useTimerStore } from "./timer";
 import { useResultStore } from "./results";
 import { log } from "@/lib/logger";
+import { queryClient } from "@/lib/query-client";
 
 interface GameStoreActions {
   setChallenges: (challenges: GameChallengeType[]) => void;
@@ -123,6 +124,7 @@ export const useGameStore = create<GameStoreState>()(
       startGame: () => {
         // Turn on loading
         set({ loading: true, started: true, challenges: [] });
+        queryClient.removeQueries({ queryKey: ["challenges"] });
       },
 
       restartGame: () => {
@@ -135,6 +137,7 @@ export const useGameStore = create<GameStoreState>()(
         });
         useChallengeStore.getState().reset();
         useResultStore.getState().reset();
+        queryClient.removeQueries({ queryKey: ["challenges"] });
       },
 
       incrementChallengeMove: () => {
