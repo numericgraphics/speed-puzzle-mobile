@@ -1,8 +1,10 @@
 // modules/information/index.tsx
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Linking } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 import { Bold, Divider, Paragraph, Section } from "@/helpers/ui";
+import { UNSPLASH_HOME_URL } from "@/constants";
+import { withUnsplashUtm } from "@/helpers/unsplash-photo";
 
 export const InformationScreen: React.FC = () => {
   const { styles, theme } = useTheme();
@@ -90,6 +92,26 @@ export const InformationScreen: React.FC = () => {
           extra moves to lose it entirely. Then squeeze your time under the
           target. Higher complexity can earn you more points, but a slow or
           wasteful solve will eat them quickly.
+        </Paragraph>
+      </Section>
+
+      <Divider />
+
+      <Section title="Photo Credits">
+        <Paragraph>
+          Puzzle images are provided by{" "}
+          <Text
+            style={[
+              typography.label,
+              { textDecorationLine: "underline" },
+            ]}
+            onPress={() => Linking.openURL(withUnsplashUtm(UNSPLASH_HOME_URL))}
+          >
+            Unsplash
+          </Text>
+          , a library of freely usable photos from a community of
+          photographers. The photographer's name shown under each puzzle
+          links to their Unsplash profile.
         </Paragraph>
       </Section>
     </View>

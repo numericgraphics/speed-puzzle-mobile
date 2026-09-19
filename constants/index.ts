@@ -38,3 +38,9 @@ export const COUNTER_MESSAGES = Object.freeze({
 export const PUZZLE_COOKIE = "puzzleCookie";
 
 export const DB_NAME = "my-db"; // Turso db name
+
+// Unsplash API attribution guidelines require a UTM-tagged link back to
+// both the photographer's profile and Unsplash itself:
+// https://help.unsplash.com/en/articles/2511315-guideline-attribution
+export const UNSPLASH_APP_NAME = "speed-puzzle";
+export const UNSPLASH_HOME_URL = "https://unsplash.com";
